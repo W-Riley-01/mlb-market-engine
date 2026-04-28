@@ -1,0 +1,92 @@
+# =============================================================================
+#  Daily outcome recorder
+# =============================================================================
+#  Runs record_outcomes.py once a day to resolve yesterday's MLB games.
+#  Plus an afternoon retry pass to catch West Coast games that finished late.
+#
+#  Schedule times are in UTC (GitHub Actions does not honor local time).
+#
+#  Setup checklist (do this once per repo):
+#    1. In GitHub: Settings → Secrets and variables → Actions → New repository secret
+#       Name:  DATABASE_URL
+#       Value: same SQLAlchemy URL you put in .streamlit/secrets.toml,
+#              i.e. postgresql+psycopg2://...:6543/postgres
+#    2. Commit this file at .github/workflows/record-outcomes.yml
+#    3. Push to main. The workflow appears under the "Actions" tab.
+#    4. Click "Run workflow" once manually to verify it works end-to-end
+#       before relying on the schedule.
+# =============================================================================
+
+name: Record MLB outcomes
+
+on:
+  # Manual trigger button in the Actions tab — use this for first-time
+  # testing and for backfilling a specific date.
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Single date YYYY-MM-DD (leave blank for yesterday)"
+        required: false
+        type: string
+      retry_pending:
+        description: "Re-fetch pending/postponed games"
+        required: false
+        type: boolean
+        default: false
+
+  # Scheduled runs — UTC.
+  #   13:00 UTC = 8:00 AM CT (early morning pass for last night's games)
+  #   23:00 UTC = 6:00 PM CT (afternoon pass to catch West Coast late finishes
+  #               and any postponed games that finished today)
+  schedule:
+    - cron: "0 13 * * *"
+    - cron: "0 23 * * *"
+
+jobs:
+  record:
+    name: Resolve outcomes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests sqlalchemy psycopg2-binary
+
+      - name: Run outcome recorder (manual / single date)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.date != '' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python record_outcomes.py --date "${{ inputs.date }}" \
+            ${{ inputs.retry_pending && '--retry-pending' || '' }}
+
+      - name: Run outcome recorder (manual / yesterday)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.date == '' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python record_outcomes.py \
+            ${{ inputs.retry_pending && '--retry-pending' || '' }}
+
+      - name: Run outcome recorder (morning pass — yesterday's finals)
+        if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 13 * * *' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python record_outcomes.py
+
+      - name: Run outcome recorder (afternoon retry — pending + today)
+        if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 23 * * *' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python record_outcomes.py --retry-pending --all-unresolved

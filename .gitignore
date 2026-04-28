@@ -1,12 +1,55 @@
-# Secrets — NEVER commit these
+# =============================================================================
+#  .gitignore for MLB Market Engine
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+#  SECRETS — never commit
+# -----------------------------------------------------------------------------
 .streamlit/secrets.toml
 .env
 *.env
 
-# Data files — too large for the repo
+# -----------------------------------------------------------------------------
+#  Office app lock files
+# -----------------------------------------------------------------------------
+.~lock.*#
+~$*
+
+# -----------------------------------------------------------------------------
+#  Data files
+# -----------------------------------------------------------------------------
+#  Strategy: by default, ignore everything that's typically build-output or
+#  raw bulk data. Then EXPLICITLY whitelist the small files the runtime
+#  engine needs (using ! to un-ignore). The 120MB pitch_matrix is fetched
+#  at runtime via bootstrap_data.py from a GitHub Release.
+# -----------------------------------------------------------------------------
+
+# Ignore everything in /data by default
+data/*
+
+# Allow the small runtime parquets the engine actually uses
+!data/contact_matrix_env.parquet
+!data/batter_arsenal_profiles.parquet
+!data/pitch_type_baselines.parquet
+!data/recent_form_hitters.parquet
+!data/recent_form_pitchers.parquet
+!data/pitcher_early_inning_record.parquet
+!data/game_metadata.parquet
+!data/game_weather_log.parquet
+!data/early_inning_tracker.parquet
+!data/xwoba_lookup.parquet
+
+# pitch_matrix.parquet stays IGNORED — it's >100MB. Fetched at runtime
+# via bootstrap_data.py from GitHub Releases.
+
+# Build-only files stay ignored:
+#   master_physics_vault.parquet  (130MB raw Statcast database)
+#   contact_matrix.parquet        (pre-environmental, only matrix_builder uses)
+#   statcast_chunks/              (raw monthly chunks)
+
+# Other data formats — never commit
 *.csv
 *.tsv
-*.parquet
 *.feather
 *.arrow
 *.pkl
@@ -18,32 +61,33 @@
 *.db
 *.sqlite
 *.sqlite3
-
-# Common ML/data artifacts
-data/
-datasets/
-raw_data/
 *.zip
 *.gz
 *.tar
 
-# Python
+# -----------------------------------------------------------------------------
+#  Python
+# -----------------------------------------------------------------------------
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 .venv/
 venv/
 env/
 .idea/
 .ipynb_checkpoints/
+*.egg-info/
 
-# Logs and temp
+# -----------------------------------------------------------------------------
+#  Logs and temp
+# -----------------------------------------------------------------------------
 *.log
 *.tmp
+test_file.txt
 
-# OS
+# -----------------------------------------------------------------------------
+#  OS
+# -----------------------------------------------------------------------------
 .DS_Store
 Thumbs.db
-
-# Office app lock files
-.~lock.*#
-~$*

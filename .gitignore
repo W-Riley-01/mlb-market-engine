@@ -1,0 +1,49 @@
+# Secrets — NEVER commit these
+.streamlit/secrets.toml
+.env
+*.env
+
+# Data files — too large for the repo
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.arrow
+*.pkl
+*.pickle
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.db
+*.sqlite
+*.sqlite3
+
+# Common ML/data artifacts
+data/
+datasets/
+raw_data/
+*.zip
+*.gz
+*.tar
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.idea/
+.ipynb_checkpoints/
+
+# Logs and temp
+*.log
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Office app lock files
+.~lock.*#
+~$*

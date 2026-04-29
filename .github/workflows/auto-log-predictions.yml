@@ -1,0 +1,125 @@
+# =============================================================================
+#  Auto-log predictions
+# =============================================================================
+#  Runs auto_log_predictions.py 3x per day to populate Supabase with Monte
+#  Carlo predictions for every pre-first-pitch game on today's MLB slate.
+#
+#  Each run re-simulates and re-logs every pre-first-pitch game. The upsert
+#  in prediction_logger.log_prediction (delete-then-insert keyed on
+#  game_id + game_date + model_version) means duplicate runs converge to one
+#  row per game, with last-write-wins semantics — the prediction made closest
+#  to first pitch (with confirmed lineups and tightest weather forecast) is
+#  the one that survives.
+#
+#  Schedule times are in UTC (GitHub Actions does not honor local time).
+#  These convert to EDT (UTC-4) during DST, which is when the MLB regular
+#  season runs. After Nov 5 they shift to EST (UTC-5) — but baseball is
+#  over by then so it doesn't matter for this year.
+#
+#  Setup checklist (done once per repo, same as record-outcomes.yml):
+#    1. DATABASE_URL secret already exists from the outcomes workflow.
+#    2. GITHUB_TOKEN is provided automatically by Actions runners; bootstrap_data
+#       uses it to authenticate the parquet download from the data-v1 release.
+#    3. Push this file to .github/workflows/auto-log-predictions.yml.
+#    4. Click "Run workflow" once manually to verify before relying on cron.
+# =============================================================================
+
+name: Auto-log MLB predictions
+
+on:
+  # Manual trigger button in the Actions tab. Useful for first-time testing,
+  # backfilling a missed cron run, or when lineups have just dropped and you
+  # want a fresh prediction snapshot before the next scheduled tick.
+  workflow_dispatch:
+    inputs:
+      iterations:
+        description: "Monte Carlo iterations per game (default 5000)"
+        required: false
+        type: string
+        default: "5000"
+      skip_existing:
+        description: "Skip games already logged today (default: re-sim and upsert)"
+        required: false
+        type: boolean
+        default: false
+
+  # Scheduled runs — UTC.
+  #   13:00 UTC = 9:00 AM ET — morning pass; catches matinee + getaway games
+  #   18:00 UTC = 2:00 PM ET — afternoon pass; most night-game lineups posted
+  #   21:30 UTC = 5:30 PM ET — final pre-first-pitch pass; tightest forecasts
+  schedule:
+    - cron: "0 13 * * *"
+    - cron: "0 18 * * *"
+    - cron: "30 21 * * *"
+
+jobs:
+  log:
+    name: Log predictions
+    runs-on: ubuntu-latest
+    timeout-minutes: 25       # Loose: ~3-5 min typical, 25 leaves headroom
+                              # for parquet download + 5000-iter slate of 15+ games
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        # Pinned to keep cron behavior reproducible. Bump deliberately
+        # alongside any engine changes that need newer pandas/numpy/etc.
+        # streamlit is included because prediction_logger imports it at
+        # the top level; the runtime falls back to raw SQLAlchemy via the
+        # _running_under_streamlit() detector when there's no script context.
+        run: |
+          python -m pip install --upgrade pip
+          pip install \
+            requests \
+            sqlalchemy \
+            psycopg2-binary \
+            numpy \
+            pandas \
+            pyarrow \
+            streamlit
+
+      - name: Bootstrap data files (downloads pitch_matrix.parquet)
+        # Done as a separate step so failures here surface clearly in the
+        # Actions log instead of being buried inside the slate run.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python bootstrap_data.py
+
+      - name: Run prediction logger (manual)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python auto_log_predictions.py \
+            --iterations "${{ inputs.iterations }}" \
+            ${{ inputs.skip_existing && '--skip-existing' || '' }}
+
+      - name: Run prediction logger (morning pass)
+        if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 13 * * *' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python auto_log_predictions.py
+
+      - name: Run prediction logger (afternoon pass)
+        if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 18 * * *' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python auto_log_predictions.py
+
+      - name: Run prediction logger (pre-first-pitch pass)
+        if: ${{ github.event_name == 'schedule' && github.event.schedule == '30 21 * * *' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python auto_log_predictions.py

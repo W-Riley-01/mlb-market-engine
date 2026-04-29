@@ -29,12 +29,14 @@ from __future__ import annotations
 
 import json
 import math
+import os
 from datetime import date, datetime
 from typing import Any
 
 import numpy as np
 import streamlit as st
-from sqlalchemy import text
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
 
 # Bump this when the simulator or resolver changes in a way that meaningfully
 # shifts predictions. Lets calibration analysis segment results by version so
@@ -47,16 +49,78 @@ K_THRESHOLDS = (3, 4, 5, 6, 7)
 
 
 # ---------------------------------------------------------------------------
-#  Connection (Streamlit-cached so we don't rebuild on every rerun)
+#  Connection (works in both Streamlit and headless / GitHub Actions contexts)
 # ---------------------------------------------------------------------------
+def _running_under_streamlit() -> bool:
+    """
+    Detect whether we're inside a real Streamlit script context.
+
+    `import streamlit as st` works anywhere — but `st.connection` and
+    related plumbing only work when there's an active ScriptRunContext.
+    Detecting that lets prediction_logger gracefully switch between:
+      • Streamlit runtime → uses st.connection (reads secrets.toml)
+      • Cron / scripts    → uses raw SQLAlchemy from DATABASE_URL env var
+
+    Both code paths return an object whose `.session` is a context-manager
+    yielding a SQLAlchemy session, so the rest of log_prediction() doesn't
+    care which one we got.
+    """
+    try:
+        from streamlit.runtime.scriptrunner import get_script_run_ctx
+        return get_script_run_ctx() is not None
+    except Exception:
+        return False
+
+
+class _HeadlessSQLConn:
+    """
+    Minimal stand-in for Streamlit's SQLConnection in non-Streamlit
+    contexts (GitHub Actions, local scripts, Jupyter notebooks).
+
+    Exposes only the surface area prediction_logger uses: a `.session`
+    property that returns a SQLAlchemy session usable as a context
+    manager. The session supports `s.execute(...)`, `s.commit()`, and
+    auto-rollback on exception — same as Streamlit's wrapper.
+    """
+    def __init__(self, url: str):
+        self._engine = create_engine(url, pool_pre_ping=True)
+        self._Session = sessionmaker(bind=self._engine)
+
+    @property
+    def session(self):
+        # SQLAlchemy ORM sessions support __enter__/__exit__ since 1.4:
+        # exit auto-rollbacks if an exception occurred, otherwise leaves
+        # the session intact (we still call s.commit() ourselves).
+        return self._Session()
+
+
 @st.cache_resource(show_spinner=False)
 def _get_conn():
     """
-    Returns the Streamlit SQL connection configured under
-    [connections.predictions_db] in .streamlit/secrets.toml.
-    See secrets.toml.example for the exact format.
+    Returns a SQL connection for prediction logging.
+
+    In Streamlit: returns st.connection("predictions_db", type="sql"),
+    which reads [connections.predictions_db] from secrets.toml — same as
+    before. The @st.cache_resource decorator memoizes per Streamlit
+    runtime so we don't rebuild on every rerun.
+
+    In headless mode: returns _HeadlessSQLConn built from the
+    DATABASE_URL environment variable. The cache_resource decorator is
+    a no-op outside Streamlit (it just returns the wrapped function's
+    result), so each cron invocation gets a fresh connection — fine for
+    a short-lived process.
     """
-    return st.connection("predictions_db", type="sql")
+    if _running_under_streamlit():
+        return st.connection("predictions_db", type="sql")
+
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        raise RuntimeError(
+            "DATABASE_URL environment variable is not set. "
+            "Required when running prediction_logger outside Streamlit "
+            "(e.g. from GitHub Actions cron jobs)."
+        )
+    return _HeadlessSQLConn(db_url)
 
 
 # ---------------------------------------------------------------------------

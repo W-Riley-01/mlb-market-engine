@@ -237,7 +237,7 @@ class AdvancedSimulatedGame:
 # 2. THE MARKET ORCHESTRATOR
 # ==========================================
 def run_advanced_monte_carlo(resolver, away_lineup, home_lineup, away_starter, home_starter, away_bullpen, home_bullpen,
-                             density_ratio, iterations=2000, as_of_date=None,
+                             density_ratio, iterations=5000, as_of_date=None,
                              first_inning_weight=0.20):
     arsenal_status = as_of_date if as_of_date else "DISABLED (no as_of_date passed)"
     print(f"\n--- RUNNING {iterations} MARKET SIMULATIONS (arsenal={arsenal_status}) ---")
@@ -289,8 +289,16 @@ def run_advanced_monte_carlo(resolver, away_lineup, home_lineup, away_starter, h
 
     # Global Trackers
     away_wins, f5_away_wins, f5_ties, nrfi_hits = 0, 0, 0, 0
+    home_wins_by_2_plus = 0   # for run line: home -1.5
+    away_wins_by_2_plus = 0   # for run line: away -1.5
     game_totals = []
     away_k_dist, home_k_dist = [], []
+
+    # Total-runs threshold ladder. We compute P(total >= X) for each X so
+    # downstream consumers (Supabase, the calibration notebook, the UI)
+    # can read the over/under for any standard market line without going
+    # back to the raw distribution. 6.5 to 11.5 covers ~99% of MLB totals.
+    TOTAL_THRESHOLDS_X = (6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5)
 
     # Prop Trackers (We track 1+ Hits, 2+ TB, 1+ HR, 1+ RBI for every batter)
     player_props = {}
@@ -310,6 +318,11 @@ def run_advanced_monte_carlo(resolver, away_lineup, home_lineup, away_starter, h
         # 1. Game & F5 Trackers
         game_totals.append(res['away_score'] + res['home_score'])
         if res['away_score'] > res['home_score']: away_wins += 1
+
+        # Run-line trackers (margin >= 2 in either direction)
+        margin = res['home_score'] - res['away_score']
+        if margin >=  2: home_wins_by_2_plus += 1
+        if margin <= -2: away_wins_by_2_plus += 1
 
         if res['f5_away'] > res['f5_home']:
             f5_away_wins += 1
@@ -332,15 +345,37 @@ def run_advanced_monte_carlo(resolver, away_lineup, home_lineup, away_starter, h
                 if team_box[i]['RBI'] >= 1:  player_props[p_name]['1+ RBI'] += 1
                 if team_box[i]['SB'] >= 1:   player_props[p_name]['1+ SB'] += 1
 
+    # Compute totals statistics from the full distribution. The raw list
+    # is also passed through so engine_runner can apply weather adjustments
+    # (carry_delta) and recompute the threshold ladder consistently.
+    totals_arr = np.asarray(game_totals)
+    total_thresholds = {
+        x: float(np.mean(totals_arr >= x)) for x in TOTAL_THRESHOLDS_X
+    }
+
     # Format the return dictionary
     final_results = {
         'away_win_prob': away_wins / iterations,
         'f5_away_win_prob': f5_away_wins / iterations,
         'f5_tie_prob': f5_ties / iterations,
         'nrfi_prob': nrfi_hits / iterations,
-        'median_total': np.median(game_totals),
-        'away_pitcher_median_k': np.median(away_k_dist),
-        'home_pitcher_median_k': np.median(home_k_dist),
+        'median_total': float(np.median(totals_arr)),
+        'total_mean':   float(np.mean(totals_arr)),
+        'total_std':    float(np.std(totals_arr)),
+        # Raw distribution kept on the return dict so weather adjustments
+        # can be applied downstream without re-running the simulation.
+        # Each consumer that wants weather-aware totals shifts this list,
+        # then re-derives median/mean/thresholds from the shifted version.
+        'game_totals_dist': game_totals,
+        # P(total >= X) for the standard market ladder. Pre-weather; the
+        # engine_runner re-derives a weather-adjusted version when carry
+        # delta is non-zero.
+        'total_thresholds': total_thresholds,
+        # Run lines: margin >= 2 in either direction.
+        'run_line_home_minus_1_5': home_wins_by_2_plus / iterations,
+        'run_line_away_minus_1_5': away_wins_by_2_plus / iterations,
+        'away_pitcher_median_k': float(np.median(away_k_dist)),
+        'home_pitcher_median_k': float(np.median(home_k_dist)),
         # Full K distributions — the app uses these to compute over-X thresholds
         'away_k_dist': away_k_dist,
         'home_k_dist': home_k_dist,

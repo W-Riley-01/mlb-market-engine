@@ -1,13 +1,21 @@
 import streamlit as st
-import pandas as pd
 import numpy as np
 from datetime import datetime
 
+# Ensure the large pitch_matrix.parquet (~120MB) is present locally before
+# the resolver tries to load it. On Streamlit Cloud's first cold start this
+# downloads from GitHub Releases; on subsequent runs it's a no-op. Wrapped
+# in try/except so a network failure produces a friendly error rather than
+# a Python stack trace.
+try:
+    from bootstrap_data import ensure_data_files
+    ensure_data_files()
+except Exception as e:
+    st.error(f"Could not bootstrap data files: {e}")
+    st.stop()
+
 from resolver import MatchupResolver
-from advanced_simulator import run_advanced_monte_carlo
-from daily_scraper import fetch_todays_schedule, fetch_game_rosters
-from weather import get_game_weather, apply_weather_to_props
-from prediction_logger import log_prediction
+from engine_runner import run_slate
 
 # ==========================================
 # UI CONFIG
@@ -509,14 +517,11 @@ def render_live_scoreboard(game: dict) -> str:
 # ==========================================
 # WEATHER / HR-CONDITIONS SECTION
 # ==========================================
-# Cache weather per (team, game_datetime) for 30 min so Streamlit reruns
-# don't hammer Open-Meteo. 30 min is a reasonable balance: forecasts near
-# game time will refresh, but rapid user interactions don't trigger fetches.
-@st.cache_data(ttl=1800, show_spinner=False)
-def get_weather_cached(home_team: str, game_datetime_iso: str | None):
-    if not home_team or not game_datetime_iso:
-        return None
-    return get_game_weather(home_team, game_datetime_iso)
+# Weather is now fetched inside engine_runner.run_slate() and arrives at
+# the UI via the GameRun.weather field on the per-game callback. The
+# render function below just consumes that dict — no caching layer needed
+# here, and importing get_game_weather directly into app.py is no longer
+# required.
 
 
 def render_weather_section(weather: dict) -> str:
@@ -749,8 +754,7 @@ resolver = load_engine()
 # ==========================================
 with st.sidebar:
     st.markdown("### Engine Settings")
-    iterations = st.slider("Simulations", min_value=500, max_value=5000, value=2000, step=500)
-    show_all_games = st.checkbox("Show in-progress games", value=False)
+    iterations = st.slider("Simulations", min_value=1000, max_value=10000, value=5000, step=500)
     st.markdown("---")
     st.markdown("### Prop Color Guide")
     st.markdown("""
@@ -817,179 +821,196 @@ with st.sidebar:
 # ==========================================
 # MAIN RUN
 # ==========================================
+# The slate pipeline (fetch schedule → fetch rosters → simulate → apply
+# weather → log to Supabase) lives in engine_runner.run_slate(). This file
+# is responsible only for the UI: the button, a per-game render callback,
+# and the summary footer. The same run_slate() is called headlessly by
+# auto_log_predictions.py from a GitHub Actions cron — keeping that single
+# source of truth means UI and cron can never drift.
 col_run, col_date = st.columns([2, 3])
 with col_run:
     run_button = st.button("Calculate Today's Edges", use_container_width=True)
 
-if run_button:
-    slate = fetch_todays_schedule()
 
-    if not slate:
+def _render_game_card(run, i: int, total: int, progress_bar) -> None:
+    """
+    Callback invoked by run_slate() once per game on the slate.
+
+    Renders one full game card. If the game was skipped (no lineups yet,
+    sim error, etc.), renders a short status message in place of the
+    markets/props sections so the user still sees the matchup, scoreboard,
+    and weather.
+
+    All sim + DB-write work has already been done by run_slate before this
+    fires — this function is purely presentation. Errors during DB logging
+    (which run_slate intentionally does NOT raise) surface as a soft toast
+    so a transient Supabase hiccup never breaks the page render.
+    """
+    game = run.game
+
+    # ---- Game card shell -------------------------------------------------
+    st.markdown('<div class="game-card">', unsafe_allow_html=True)
+    st.markdown(f'<div class="game-title">{game["matchup"]}</div>',
+                unsafe_allow_html=True)
+
+    # Live scoreboard for in-progress / final games (empty string for
+    # scheduled, so it's safe to always call).
+    scoreboard_html = render_live_scoreboard(game)
+    if scoreboard_html:
+        st.markdown(scoreboard_html, unsafe_allow_html=True)
+
+    # ---- First Pitch Conditions -----------------------------------------
+    # Rendered BEFORE any skip checks below so weather chips show even for
+    # games whose lineups haven't dropped yet — useful for pre-game research.
+    if run.weather:
+        st.markdown(render_weather_section(run.weather), unsafe_allow_html=True)
+
+    def _close_card_and_advance() -> None:
+        """Close the .game-card div and tick the progress bar. Called from
+        every return path so the DOM stays balanced and progress monotonic."""
+        st.markdown('</div>', unsafe_allow_html=True)
+        progress_bar.progress((i + 1) / total)
+
+    # ---- Skip cases ------------------------------------------------------
+    # Each branch shows a short status line, closes the card, advances
+    # progress, and returns BEFORE touching run.results (which is None
+    # for any skipped game and would crash the markets render).
+    if run.skipped_reason == "no_lineups":
+        st.info("Lineups not yet posted — check back closer to first pitch.")
+        _close_card_and_advance()
+        return
+    if run.skipped_reason == "sim_error":
+        st.warning("Simulation failed for this game. Check the server log.")
+        _close_card_and_advance()
+        return
+    if not run.results:
+        # Catch-all for any future skip reason or unexpected None results
+        # (e.g., 'already_logged' if someone flips the flag back on). Fail
+        # gracefully rather than crashing the loop.
+        st.info("No prediction available for this game.")
+        _close_card_and_advance()
+        return
+
+    # ---- Surface DB log errors as a soft toast ---------------------------
+    # run_slate keeps these as strings on GameRun.log_error rather than
+    # raising — one bad write never aborts the rest of the slate.
+    if run.log_error:
+        st.toast(f"Prediction logging failed: {run.log_error}", icon="⚠️")
+
+    # ---- Markets, pitcher props, lineups --------------------------------
+    away, home, results = run.away, run.home, run.results
+
+    st.markdown('<div class="section-label">Game Markets</div>',
+                unsafe_allow_html=True)
+
+    away_win   = results['away_win_prob']
+    home_win   = 1.0 - away_win
+    f5_away    = results['f5_away_win_prob']
+    f5_home    = 1.0 - f5_away - results['f5_tie_prob']
+    nrfi       = results['nrfi_prob']
+    total_runs = results['median_total']
+
+    def chip(label, value, market_key=None):
+        display = pct(value)
+        cc = color_for_game(market_key, value) if market_key else ""
+        return (f'<div class="metric-chip">'
+                f'<span class="label">{label}</span>'
+                f'<span class="value {cc}">{display}</span>'
+                f'</div>')
+
+    chips_html = (
+        '<div class="metric-row">'
+        + chip(f"{away['team_name']} ML", away_win, "ML")
+        + chip(f"{home['team_name']} ML", home_win, "ML")
+        + chip("F5 Away", f5_away, "F5")
+        + chip("F5 Home", f5_home, "F5")
+        + chip("F5 Tie", results['f5_tie_prob'])
+        + chip("NRFI", nrfi, "NRFI")
+        + f'<div class="metric-chip"><span class="label">Median Total</span>'
+          f'<span class="value">{total_runs}</span></div>'
+        + '</div>'
+    )
+    st.markdown(chips_html, unsafe_allow_html=True)
+
+    # ---- Pitcher Props ---------------------------------------------------
+    st.markdown('<div class="section-label">Starting Pitcher Props</div>',
+                unsafe_allow_html=True)
+    render_pitcher_section(
+        away_name=away['starter_name'],
+        home_name=home['starter_name'],
+        away_k_dist=results.get('away_k_dist', []),
+        home_k_dist=results.get('home_k_dist', []),
+        away_median_k=results['away_pitcher_median_k'],
+        home_median_k=results['home_pitcher_median_k'],
+        away_first_inn=results.get('away_starter_first_inn'),
+        home_first_inn=results.get('home_starter_first_inn'),
+    )
+
+    # ---- Full Lineup Props ----------------------------------------------
+    st.markdown('<div class="section-label">Full Lineup Player Props</div>',
+                unsafe_allow_html=True)
+    lineup_col1, lineup_col2 = st.columns(2)
+    with lineup_col1:
+        st.markdown(
+            build_lineup_table(away['team_name'], away['lineup_details'],
+                               results['player_props'], side='away'),
+            unsafe_allow_html=True,
+        )
+    with lineup_col2:
+        st.markdown(
+            build_lineup_table(home['team_name'], home['lineup_details'],
+                               results['player_props'], side='home'),
+            unsafe_allow_html=True,
+        )
+
+    _close_card_and_advance()
+
+
+if run_button:
+    progress_bar = st.progress(0)
+
+    # skip_already_logged=False so EVERY game re-renders on every click.
+    # Per requirement: the user should never see "Already calculated and
+    # logged earlier today" — they always get a fresh card. Idempotency
+    # lives in prediction_logger.log_prediction (delete-then-insert keyed
+    # on game_id + game_date + model_version) so re-running the slate
+    # doesn't pile up duplicate rows in Supabase. Last-write-wins
+    # semantics: the most recent prediction (closest to first pitch,
+    # tightest weather forecast, confirmed lineups) wins.
+    #
+    # Note: run_slate now processes every game on the slate regardless of
+    # status — Scheduled, In Progress, Final, etc. all get cards rendered.
+    # DB logging is gated inside run_slate to PRE_FIRST_PITCH_STATUSES
+    # only, so In Progress / Final cards show fresh markets next to their
+    # live scoreboard but don't overwrite morning predictions in the DB.
+    summary = run_slate(
+        resolver=resolver,
+        iterations=iterations,
+        skip_already_logged=False,
+        on_game_complete=lambda run, i, total: _render_game_card(
+            run, i, total, progress_bar
+        ),
+    )
+
+    if summary.total_games == 0:
         st.warning("No games found on today's slate.")
     else:
-        valid_statuses = ['Scheduled', 'Pre-Game'] + (['In Progress'] if show_all_games else [])
-        games_to_run = [g for g in slate if g['status'] in valid_statuses]
-
-        st.markdown(f"<div style='font-family:IBM Plex Mono,monospace; font-size:11px; color:#4a6080; margin-bottom:12px;'>"
-                    f"SLATE LOADED — {len(games_to_run)} GAMES · {iterations} SIMULATIONS EACH</div>",
-                    unsafe_allow_html=True)
-
-        progress_bar = st.progress(0)
-
-        for i, game in enumerate(games_to_run):
-            rosters = fetch_game_rosters(game['game_id'])
-
-            # ---- Game Card Shell ----
-            st.markdown(f'<div class="game-card">', unsafe_allow_html=True)
-            st.markdown(f'<div class="game-title">{game["matchup"]}</div>', unsafe_allow_html=True)
-
-            # Live scoreboard (empty string for scheduled games, so it's safe to always call)
-            scoreboard_html = render_live_scoreboard(game)
-            if scoreboard_html:
-                st.markdown(scoreboard_html, unsafe_allow_html=True)
-
-            # ---- First Pitch Conditions ----
-            # Rendered BEFORE the lineup check so weather shows even for games
-            # whose lineups haven't dropped yet (useful for pre-game research).
-            weather = get_weather_cached(game.get('home_team'), game.get('game_datetime'))
-            if weather:
-                st.markdown(render_weather_section(weather), unsafe_allow_html=True)
-
-            if not rosters or not rosters['Away']['lineup']:
-                st.info("Lineups not yet posted — check back closer to first pitch.")
-                st.markdown('</div>', unsafe_allow_html=True)
-                progress_bar.progress((i + 1) / len(games_to_run))
-                continue
-
-            away, home = rosters['Away'], rosters['Home']
-
-            with st.spinner(f"Running {iterations} simulations..."):
-                # Use today's date so the resolver activates arsenal-profile +
-                # recent-form blending. Without this, the resolver would fall
-                # back to the batter's overall contact rate (same as pre-upgrade
-                # behavior) and the arsenal work would be dormant.
-                today_str = datetime.today().strftime('%Y-%m-%d')
-                results = run_advanced_monte_carlo(
-                    resolver=resolver,
-                    away_lineup=away['lineup_details'],
-                    home_lineup=home['lineup_details'],
-                    away_starter=away['starter_id'],
-                    home_starter=home['starter_id'],
-                    away_bullpen=away['bullpen_ids'],
-                    home_bullpen=home['bullpen_ids'],
-                    density_ratio=1.0,
-                    iterations=iterations,
-                    as_of_date=today_str,
-                )
-
-            # ---- Weather adjustment ----
-            # The sim uses the contact matrix's historical env averages; we
-            # overlay today's actual carry delta onto the HR / 2+ TB props.
-            # Carry delta from get_game_weather() is already the full
-            if weather and not weather.get('is_dome'):
-                carry_delta = weather.get('carry_delta_ft', 0.0)
-                results['player_props'] = apply_weather_to_props(
-                    results['player_props'], carry_delta
-                )
-                if weather and not weather.get('is_dome'):
-                    carry_delta = weather.get('carry_delta_ft', 0.0)
-                    results['player_props'] = apply_weather_to_props(
-                        results['player_props'], carry_delta
-                    )
-
-                    # ---- Persist prediction for later calibration ----
-                    # Logged AFTER weather adjustment so DB matches what the user sees.
-                    # Wrapped in try/except so a Supabase hiccup never blocks the UI.
-                try:
-                    log_prediction(
-                        game=game,
-                        away=away,
-                        home=home,
-                        results=results,
-                        iterations=iterations,
-                        as_of_date=today_str,
-                        weather=weather,
-                    )
-                except Exception as e:
-                    st.toast(f"Prediction logging failed: {e}", icon="⚠️")
-
-                    # ---- Game Markets ----
-                st.markdown('<div class="section-label">Game Markets</div>', unsafe_allow_html=True)
-                # ---- Game Markets ----
-            st.markdown('<div class="section-label">Game Markets</div>', unsafe_allow_html=True)
-
-            away_win  = results['away_win_prob']
-            home_win  = 1.0 - away_win
-            f5_away   = results['f5_away_win_prob']
-            f5_home   = 1.0 - f5_away - results['f5_tie_prob']
-            nrfi      = results['nrfi_prob']
-            total     = results['median_total']
-
-            def chip(label, value, market_key=None):
-                display = pct(value)
-                cc = color_for_game(market_key, value) if market_key else ""
-                return (f'<div class="metric-chip">'
-                        f'<span class="label">{label}</span>'
-                        f'<span class="value {cc}">{display}</span>'
-                        f'</div>')
-
-            chips_html = (
-                f'<div class="metric-row">'
-                + chip(f"{away['team_name']} ML", away_win, "ML")
-                + chip(f"{home['team_name']} ML", home_win, "ML")
-                + chip("F5 Away", f5_away, "F5")
-                + chip("F5 Home", f5_home, "F5")
-                + chip("F5 Tie", results['f5_tie_prob'])
-                + chip("NRFI", nrfi, "NRFI")
-                + f'<div class="metric-chip"><span class="label">Median Total</span><span class="value">{total}</span></div>'
-                + '</div>'
-            )
-            st.markdown(chips_html, unsafe_allow_html=True)
-
-            # ---- Pitcher Props ----
-            st.markdown('<div class="section-label">Starting Pitcher Props</div>', unsafe_allow_html=True)
-
-            # Pull full K distributions if available (we add them to results below)
-            away_k_dist = results.get('away_k_dist', [])
-            home_k_dist = results.get('home_k_dist', [])
-
-            render_pitcher_section(
-                away_name=away['starter_name'],
-                home_name=home['starter_name'],
-                away_k_dist=away_k_dist,
-                home_k_dist=home_k_dist,
-                away_median_k=results['away_pitcher_median_k'],
-                home_median_k=results['home_pitcher_median_k'],
-                away_first_inn=results.get('away_starter_first_inn'),
-                home_first_inn=results.get('home_starter_first_inn'),
-            )
-
-            # ---- Full Lineup Props ----
-            st.markdown('<div class="section-label">Full Lineup Player Props</div>', unsafe_allow_html=True)
-
-            lineup_col1, lineup_col2 = st.columns(2)
-
-            with lineup_col1:
-                away_table = build_lineup_table(
-                    away['team_name'],
-                    away['lineup_details'],
-                    results['player_props'],
-                    side='away'
-                )
-                st.markdown(away_table, unsafe_allow_html=True)
-
-            with lineup_col2:
-                home_table = build_lineup_table(
-                    home['team_name'],
-                    home['lineup_details'],
-                    results['player_props'],
-                    side='home'
-                )
-                st.markdown(home_table, unsafe_allow_html=True)
-
-            st.markdown('</div>', unsafe_allow_html=True)  # close game-card
-            progress_bar.progress((i + 1) / len(games_to_run))
-
-        st.markdown(f"<div style='font-family:IBM Plex Mono,monospace; font-size:10px; color:#2a3a50; margin-top:20px; text-align:center;'>"
-                    f"SYNDICATE ENGINE · {datetime.today().strftime('%Y-%m-%d %H:%M')} · {iterations} ITERATIONS</div>",
-                    unsafe_allow_html=True)
+        # Slate-level result line — tells the user what just happened
+        # without making them count cards.
+        st.markdown(
+            "<div style='font-family:IBM Plex Mono,monospace; font-size:11px; "
+            "color:#4a6080; margin-top:14px;'>"
+            f"DONE — simulated {summary.simulated} · "
+            f"logged {summary.logged} · "
+            f"awaiting lineups {summary.skipped_no_lineups} · "
+            f"log failures {summary.log_failures}"
+            "</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            "<div style='font-family:IBM Plex Mono,monospace; font-size:10px; "
+            "color:#2a3a50; margin-top:20px; text-align:center;'>"
+            f"SYNDICATE ENGINE · {datetime.today().strftime('%Y-%m-%d %H:%M')} · "
+            f"{iterations} ITERATIONS</div>",
+            unsafe_allow_html=True,
+        )

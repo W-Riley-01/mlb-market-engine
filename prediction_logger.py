@@ -9,13 +9,25 @@ One log_prediction() call writes:
     - 1 row in game_predictions   (game markets + pitcher Ks + weather audit)
     - N rows in player_predictions (one per batter in each lineup)
 
-Designed to never crash the UI — the caller in app.py wraps this in try/except
-so a transient DB hiccup degrades to a soft toast warning instead of a stack
-trace. A single SQL transaction means partial writes are impossible.
+Idempotency
+-----------
+log_prediction() is a "last-write-wins" upsert keyed on
+(game_id, game_date, model_version). Re-running the slate — whether from a
+Streamlit reclick or a cron retry — replaces any prior prediction for the
+same game/day/version rather than piling up duplicates. The most recent
+prediction (closest to first pitch, with confirmed lineups and the tightest
+weather forecast) is the one that survives. The delete-and-reinsert runs in
+a single SQL transaction, so a crash mid-write leaves the DB in its prior
+state, not partially erased.
+
+Designed to never crash the UI — the caller wraps this in try/except so a
+transient DB hiccup degrades to a soft toast warning instead of a stack
+trace.
 """
 
 from __future__ import annotations
 
+import json
 import math
 from datetime import date, datetime
 from typing import Any
@@ -183,6 +195,27 @@ def log_prediction(
         "nrfi_prob":      float(results.get("nrfi_prob", 0.0)),
         "median_total":   float(results.get("median_total", 0.0)),
 
+        # totals distribution & threshold ladder -----------------------------
+        # Falls back to median_total for total_mean if the simulator predates
+        # the dist-aware return shape — keeps old slates loggable. Same idea
+        # for total_std (0.0 default) and total_thresholds ({} default).
+        "total_mean":       float(results.get("total_mean",
+                                              results.get("median_total", 0.0))),
+        "total_std":        float(results.get("total_std", 0.0)),
+        # JSONB column. Serialize here so SQLAlchemy binds a string and the
+        # ::jsonb cast in the INSERT statement parses it server-side. Keys
+        # are stringified (Postgres JSONB doesn't support numeric keys).
+        "total_thresholds": json.dumps({
+            str(k): float(v)
+            for k, v in (results.get("total_thresholds") or {}).items()
+        }),
+        "run_line_home_minus_1_5_prob": float(
+            results.get("run_line_home_minus_1_5", 0.0)
+        ),
+        "run_line_away_minus_1_5_prob": float(
+            results.get("run_line_away_minus_1_5", 0.0)
+        ),
+
         # pitcher Ks --------------------------------------------------------
         "away_pitcher_median_k": float(results.get("away_pitcher_median_k", 0.0)),
         "away_p_3k": away_k_probs[3],
@@ -201,7 +234,47 @@ def log_prediction(
 
     conn = _get_conn()
     with conn.session as s:
+        # ---- Idempotency: clear any prior prediction for this slot --------
+        # Keyed on (game_id, game_date, model_version) so re-runs replace
+        # rather than duplicate. player_predictions is wiped first via its
+        # FK back to game_predictions.id — this is precise (only THIS
+        # version's player rows) so a future v2 run alongside v1 wouldn't
+        # clobber v1's batter rows. The whole block runs in the same
+        # transaction as the inserts below; commit happens once at the end.
+        idempotency_keys = {
+            "gid": game_row["game_id"],
+            "gd":  game_row["game_date"],
+            "mv":  game_row["model_version"],
+        }
+        s.execute(
+            text("""
+                DELETE FROM player_predictions
+                WHERE game_prediction_id IN (
+                    SELECT id FROM game_predictions
+                    WHERE game_id = :gid
+                      AND game_date = :gd
+                      AND model_version = :mv
+                )
+            """),
+            idempotency_keys,
+        )
+        s.execute(
+            text("""
+                DELETE FROM game_predictions
+                WHERE game_id = :gid
+                  AND game_date = :gd
+                  AND model_version = :mv
+            """),
+            idempotency_keys,
+        )
+
         # ---- Insert game-level row, capture the new id --------------------
+        # NOTE: predicted_at is INTENTIONALLY omitted from this INSERT.
+        # The column has DEFAULT NOW() in the schema, so Postgres assigns
+        # the timestamp at the moment of insertion — which is what we want
+        # for calibration ("when did this prediction actually land in the
+        # DB?"). Letting Python pass a datetime would risk drift if the
+        # caller built game_row early and inserted late.
         result = s.execute(
             text("""
                 INSERT INTO game_predictions (
@@ -214,6 +287,8 @@ def log_prediction(
                     away_win_prob, home_win_prob,
                     f5_away_prob, f5_home_prob, f5_tie_prob,
                     nrfi_prob, median_total,
+                    total_mean, total_std, total_thresholds,
+                    run_line_home_minus_1_5_prob, run_line_away_minus_1_5_prob,
                     away_pitcher_median_k,
                     away_p_3k, away_p_4k, away_p_5k, away_p_6k, away_p_7k,
                     home_pitcher_median_k,
@@ -228,6 +303,8 @@ def log_prediction(
                     :away_win_prob, :home_win_prob,
                     :f5_away_prob, :f5_home_prob, :f5_tie_prob,
                     :nrfi_prob, :median_total,
+                    :total_mean, :total_std, CAST(:total_thresholds AS JSONB),
+                    :run_line_home_minus_1_5_prob, :run_line_away_minus_1_5_prob,
                     :away_pitcher_median_k,
                     :away_p_3k, :away_p_4k, :away_p_5k, :away_p_6k, :away_p_7k,
                     :home_pitcher_median_k,

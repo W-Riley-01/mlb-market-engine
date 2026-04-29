@@ -3,12 +3,22 @@ auto_log_predictions.py
 -----------------------
 Headless wrapper around engine_runner.run_slate() that runs in GitHub
 Actions on a schedule. No Streamlit, no UI — just fetches today's slate,
-runs sims for any game with posted lineups we haven't already logged,
-and writes predictions to Supabase.
+runs sims for every pre-first-pitch game with posted lineups, and writes
+predictions to Supabase.
 
-Designed to run multiple times per day. Idempotency in run_slate() means
-each run only processes games that haven't been logged yet, so you get
-incremental coverage as more lineups post throughout the afternoon.
+Cron strategy: every run re-simulates and re-logs every pre-first-pitch
+game on the slate (skip_already_logged=False). The upsert pattern in
+prediction_logger.log_prediction (delete-then-insert keyed on game_id +
+game_date + model_version) makes this safe — duplicate runs converge to
+exactly one row per game, with last-write-wins semantics. The status
+gate inside run_slate prevents post-first-pitch overwrites: once a game
+starts, its prediction is frozen.
+
+Why re-sim instead of skip-already-logged: as the day progresses, weather
+forecasts tighten and lineups get confirmed (or scratched). The latest
+pre-first-pitch prediction is the most informed one, and that's what we
+want in the DB for calibration analysis. The compute cost is modest —
+a 15-game slate at 5000 iterations runs in a few minutes on Actions.
 
 Environment
 -----------
@@ -18,8 +28,10 @@ Environment
 
 Exit codes
 ----------
-    0   At least one game logged, OR slate was empty/all-already-logged.
-    1   Logged zero games AND had simulation/log failures (something's wrong).
+    0   Slate processed successfully (or empty slate — nothing to do).
+    1   At least one logging failure with no successful logs (treated
+        as a hard error so the Action surfaces it).
+    2   Missing DATABASE_URL — config error.
 """
 
 from __future__ import annotations
@@ -58,12 +70,11 @@ def _build_resolver() -> MatchupResolver:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Auto-log MLB predictions to Supabase.")
-    parser.add_argument("--iterations", type=int, default=2000,
-                        help="Monte Carlo iterations per game (default: 2000)")
-    parser.add_argument("--include-in-progress", action="store_true",
-                        help="Also process In Progress games (default: skip)")
-    parser.add_argument("--force", action="store_true",
-                        help="Re-log games even if already in DB (rarely useful)")
+    parser.add_argument("--iterations", type=int, default=5000,
+                        help="Monte Carlo iterations per game (default: 5000)")
+    parser.add_argument("--skip-existing", action="store_true",
+                        help="Skip games already logged today (default: re-sim and "
+                             "upsert every pre-first-pitch game; last-write-wins).")
     args = parser.parse_args(argv or sys.argv[1:])
 
     db_url = os.environ.get("DATABASE_URL")
@@ -79,8 +90,7 @@ def main(argv: list[str] | None = None) -> int:
         resolver=resolver,
         iterations=args.iterations,
         db_url=db_url,
-        skip_compute_if_already_logged=not args.force,  # ← ADD THIS LINE
-        include_in_progress=args.include_in_progress,
+        skip_already_logged=args.skip_existing,
         on_game_complete=None,
         log_predictions=True,
     )
@@ -95,12 +105,18 @@ def main(argv: list[str] | None = None) -> int:
     log.info("  Sim/log failures:           %d", summary.log_failures + len(summary.failed_game_ids))
     log.info("=" * 60)
 
-    # Exit code logic: zero is healthy unless we did real work and got nothing
-    if summary.simulated == 0 and summary.skipped_already_logged == summary.total_games:
-        log.info("Nothing new to do — all games already logged.")
-        return 0
+    # Exit code logic
+    # ----------------
+    # 0 = healthy. Includes empty slates and runs where everything already
+    #     started (so log_predictions sim'd but didn't write — that's
+    #     correct behavior, not a failure).
+    # 1 = real problem. We did work and got nothing out of it: either every
+    #     log attempt failed, or every game errored in simulation.
     if summary.total_games == 0:
         log.info("Empty slate — nothing to do.")
+        return 0
+    if summary.simulated == 0 and summary.skipped_no_lineups == summary.total_games:
+        log.info("All games still awaiting lineups — will retry on next cron tick.")
         return 0
     if summary.logged == 0 and (summary.log_failures > 0 or summary.failed_game_ids):
         log.error("Logged 0 games but had failures. Treating as error.")

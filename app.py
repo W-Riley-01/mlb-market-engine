@@ -934,7 +934,7 @@ def _render_beat_the_streak(date_iso: str) -> None:
         top = []
 
     with beat_streak_placeholder.container():
-        st.markdown("### 🎯 Beat the Streak")
+        st.markdown("### Beat the Streak")
         st.caption("Top 5 batters by 1+ Hit probability today")
         if not top:
             st.markdown(

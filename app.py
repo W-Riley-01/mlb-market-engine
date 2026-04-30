@@ -1,21 +1,33 @@
 import streamlit as st
 import numpy as np
-from datetime import datetime
+from datetime import datetime, date
 
-# Ensure the large pitch_matrix.parquet (~120MB) is present locally before
-# the resolver tries to load it. On Streamlit Cloud's first cold start this
-# downloads from GitHub Releases; on subsequent runs it's a no-op. Wrapped
-# in try/except so a network failure produces a friendly error rather than
-# a Python stack trace.
-try:
-    from bootstrap_data import ensure_data_files
-    ensure_data_files()
-except Exception as e:
-    st.error(f"Could not bootstrap data files: {e}")
-    st.stop()
-
-from resolver import MatchupResolver
-from engine_runner import run_slate
+# Read-only viewer architecture
+# -----------------------------
+# This Streamlit app does NOT run simulations. Predictions are produced
+# by GitHub Actions cron jobs (auto_log_predictions.py) that write to
+# Supabase three times daily. The UI's job is purely to display what's
+# in the database — fast, lightweight, and safe to share publicly.
+#
+# Why this matters for deployment:
+#   - No parquet matrices needed → no 120MB cold-start download
+#   - No resolver, no simulator, no engine_runner imports
+#   - Streamlit Cloud free tier handles this comfortably
+#   - Friends visiting the URL can't accidentally pollute the DB
+#
+# Engine modules (resolver, simulator) are still required by the cron
+# jobs running on GitHub Actions — that path is unaffected by this file.
+from prediction_logger import (
+    fetch_predictions_for_date,
+    fetch_game_detail,
+    fetch_player_props_for_game,
+    fetch_lineups_for_game,
+    fetch_top_batter_props,
+)
+# daily_scraper is only used pre-cron (before the morning data run) to
+# show today's schedule when no predictions are in the DB yet (the A3
+# morning-gap fallback). Lightweight, no parquet dependency.
+from daily_scraper import fetch_todays_schedule
 
 # ==========================================
 # UI CONFIG
@@ -736,25 +748,71 @@ def render_pitcher_section(
     with pcol2:
         st.markdown(pitcher_card_html(home_name, "Home", home_k_dist, home_median_k, home_first_inn), unsafe_allow_html=True)
 
+# ==========================================
+# DATA LOADERS (cached against Supabase)
+# ==========================================
+# We cache the slate query for 5 minutes — long enough that the typical
+# user clicking around doesn't re-hit Supabase on every interaction, but
+# short enough that a cron tick during a session is reflected without a
+# manual refresh. ttl=300 means: every 5 minutes, the next page action
+# triggers a fresh fetch.
+#
+# The per-game heavy data (K dists, lineups, props) is cached separately
+# so re-rendering one game doesn't invalidate the others. Each game key
+# is the game_prediction_id — changes on the next cron run because the
+# upsert pattern in log_prediction issues a new id, which auto-busts the
+# cache for that specific game.
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _cached_predictions_for_date(d: str) -> list[dict]:
+    return fetch_predictions_for_date(d)
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def _cached_game_detail(game_pred_id: int) -> dict | None:
+    return fetch_game_detail(game_pred_id)
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def _cached_player_props(game_pred_id: int) -> dict[str, dict]:
+    return fetch_player_props_for_game(game_pred_id)
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def _cached_lineups(game_pred_id: int) -> dict[str, list[dict]]:
+    return fetch_lineups_for_game(game_pred_id)
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _cached_top_hits(d: str, limit: int) -> list[dict]:
+    return fetch_top_batter_props(d, prop_key="p_1h", limit=limit)
+
+
+@st.cache_data(ttl=900, show_spinner=False)
+def _cached_schedule() -> list[dict]:
+    """A3 morning-gap fallback: when no predictions exist yet, show the
+    raw schedule. Cached longer (15 min) since the schedule rarely changes
+    intraday."""
+    try:
+        return fetch_todays_schedule() or []
+    except Exception:
+        return []
+
 
 # ==========================================
-# ENGINE LOAD
+# SIDEBAR
 # ==========================================
-@st.cache_resource
-def load_engine():
-    return MatchupResolver(
-        pqm_path='./data/pitch_matrix.parquet',
-        cqm_path='./data/contact_matrix_env.parquet'
-    )
+# Read-only viewer: no iterations slider, no calculate button. The sidebar
+# is purely informational — the prop color guide (preserved from the
+# interactive version) and the Beat the Streak top-5 widget.
 
-resolver = load_engine()
-
-# ==========================================
-# SIDEBAR CONTROLS
-# ==========================================
 with st.sidebar:
-    st.markdown("### Engine Settings")
-    iterations = st.slider("Simulations", min_value=1000, max_value=10000, value=5000, step=500)
+    # ---- Beat the Streak top 5 (filled in below) -----------------------
+    # Rendered FIRST in the sidebar so it's the first thing visible. The
+    # actual data is fetched after we know what date to query, so we use
+    # an empty placeholder here and fill it in after the slate load.
+    beat_streak_placeholder = st.empty()
+
     st.markdown("---")
     st.markdown("### Prop Color Guide")
     st.markdown("""
@@ -818,97 +876,132 @@ with st.sidebar:
 </div>
     """, unsafe_allow_html=True)
 
-# ==========================================
-# MAIN RUN
-# ==========================================
-# The slate pipeline (fetch schedule → fetch rosters → simulate → apply
-# weather → log to Supabase) lives in engine_runner.run_slate(). This file
-# is responsible only for the UI: the button, a per-game render callback,
-# and the summary footer. The same run_slate() is called headlessly by
-# auto_log_predictions.py from a GitHub Actions cron — keeping that single
-# source of truth means UI and cron can never drift.
-col_run, col_date = st.columns([2, 3])
-with col_run:
-    run_button = st.button("Calculate Today's Edges", use_container_width=True)
 
-
-def _render_game_card(run, i: int, total: int, progress_bar) -> None:
+def _render_beat_the_streak(date_iso: str) -> None:
     """
-    Callback invoked by run_slate() once per game on the slate.
+    Render the Beat the Streak top-5 widget into the sidebar placeholder.
+    Called after we know the date and have queried the DB.
 
-    Renders one full game card. If the game was skipped (no lineups yet,
-    sim error, etc.), renders a short status message in place of the
-    markets/props sections so the user still sees the matchup, scoreboard,
-    and weather.
-
-    All sim + DB-write work has already been done by run_slate before this
-    fires — this function is purely presentation. Errors during DB logging
-    (which run_slate intentionally does NOT raise) surface as a soft toast
-    so a transient Supabase hiccup never breaks the page render.
+    Empty-state behavior: when the slate has no predictions yet (early
+    morning before the cron, or empty slate), render a one-line placeholder
+    rather than the full widget. Keeps the sidebar quiet on quiet days.
     """
-    game = run.game
+    try:
+        top = _cached_top_hits(date_iso, limit=5)
+    except Exception as e:
+        # Fail soft — DB hiccup shouldn't break the page. Silent placeholder
+        # rather than an alarming error in the sidebar.
+        top = []
 
-    # ---- Game card shell -------------------------------------------------
+    with beat_streak_placeholder.container():
+        st.markdown("### 🎯 Beat the Streak")
+        st.caption("Top 5 batters by 1+ Hit probability today")
+        if not top:
+            st.markdown(
+                "<div style='font-family:IBM Plex Mono,monospace; font-size:10px; "
+                "color:#4a6080; padding:8px 0;'>No predictions yet — check back after "
+                "the morning data run.</div>",
+                unsafe_allow_html=True,
+            )
+            return
+
+        rows_html = []
+        for idx, row in enumerate(top, start=1):
+            opponent = (row["away_team"] if row["side"] == "home"
+                        else row["home_team"])
+            vs_or_at = "vs" if row["side"] == "home" else "@"
+            prob_pct = pct(row["prob"])
+            color = color_for_prop("1+ Hits", row["prob"])
+            rows_html.append(f"""
+<div style="display:flex; justify-content:space-between; align-items:center;
+            padding:6px 0; border-bottom:1px solid #1a2535;
+            font-family:'IBM Plex Mono',monospace; font-size:11px;">
+    <div>
+        <div style="color:#c5cdd9;">{idx}. {row["player_name"]}</div>
+        <div style="color:#4a6080; font-size:9px;">{vs_or_at} {opponent}</div>
+    </div>
+    <div class="value {color}" style="font-weight:600;">{prob_pct}</div>
+</div>""")
+        st.markdown(
+            "<div style='margin-top:4px;'>" + "".join(rows_html) + "</div>",
+            unsafe_allow_html=True,
+        )
+
+
+# ==========================================
+# MAIN VIEW
+# ==========================================
+# Read-only flow:
+#   1. Pick the date — defaults to today, optional date picker for history
+#   2. Fetch logged predictions from Supabase (cached 5 min)
+#   3. If empty: A3 fallback — show today's schedule from MLB Stats API
+#   4. Otherwise: render one card per game using cached per-game lookups
+
+today_iso = date.today().strftime("%Y-%m-%d")
+predictions = _cached_predictions_for_date(today_iso)
+
+# Beat the Streak widget gets the same date as the main slate
+_render_beat_the_streak(today_iso)
+
+
+def _render_game_card_from_db(pred: dict) -> None:
+    """
+    Render one game card from a DB row. Mirrors the structure of the
+    interactive version's _render_game_card so the visual output is
+    identical — only the data source changed (Supabase vs live sim).
+
+    Per-game heavy data (K dist arrays, lineups, props) is fetched lazily
+    via the cached helpers, so the slate-overview query stays light.
+    """
+    game_pred_id = pred["id"]
+
     st.markdown('<div class="game-card">', unsafe_allow_html=True)
-    st.markdown(f'<div class="game-title">{game["matchup"]}</div>',
-                unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="game-title">{pred["away_team"]} @ {pred["home_team"]}</div>',
+        unsafe_allow_html=True,
+    )
 
-    # Live scoreboard for in-progress / final games (empty string for
-    # scheduled, so it's safe to always call).
-    scoreboard_html = render_live_scoreboard(game)
-    if scoreboard_html:
-        st.markdown(scoreboard_html, unsafe_allow_html=True)
+    # Predicted-at staleness chip — useful in the read-only view since
+    # the user wasn't the one who triggered the prediction. Lets them
+    # see how old the cron-logged prediction is.
+    predicted_at = pred.get("predicted_at")
+    if predicted_at:
+        # Format depends on what the DB driver returns; both datetime
+        # and ISO string are possible. Be lenient.
+        if hasattr(predicted_at, "strftime"):
+            stamp = predicted_at.strftime("%Y-%m-%d %H:%M UTC")
+        else:
+            stamp = str(predicted_at)[:19].replace("T", " ") + " UTC"
+        st.markdown(
+            f"<div style='font-family:IBM Plex Mono,monospace; font-size:9px; "
+            f"color:#4a6080; margin-bottom:8px;'>predicted: {stamp}</div>",
+            unsafe_allow_html=True,
+        )
 
-    # ---- First Pitch Conditions -----------------------------------------
-    # Rendered BEFORE any skip checks below so weather chips show even for
-    # games whose lineups haven't dropped yet — useful for pre-game research.
-    if run.weather:
-        st.markdown(render_weather_section(run.weather), unsafe_allow_html=True)
+    # ---- Weather ----------------------------------------------------------
+    # Reconstruct the weather dict from the columns logged at prediction time.
+    # render_weather_section accepts None gracefully (returns a dome chip).
+    weather = {
+        "park":            pred.get("weather_park"),
+        "is_dome":         pred.get("weather_is_dome"),
+        "temp_f":          pred.get("weather_temp_f"),
+        "wind_speed_mph":  pred.get("weather_wind_mph"),
+        "carry_delta_ft":  pred.get("weather_carry_delta_ft"),
+        "score":           pred.get("weather_hr_score"),
+    }
+    if weather["park"]:  # only render if we have actual weather data
+        st.markdown(render_weather_section(weather), unsafe_allow_html=True)
 
-    def _close_card_and_advance() -> None:
-        """Close the .game-card div and tick the progress bar. Called from
-        every return path so the DOM stays balanced and progress monotonic."""
-        st.markdown('</div>', unsafe_allow_html=True)
-        progress_bar.progress((i + 1) / total)
-
-    # ---- Skip cases ------------------------------------------------------
-    # Each branch shows a short status line, closes the card, advances
-    # progress, and returns BEFORE touching run.results (which is None
-    # for any skipped game and would crash the markets render).
-    if run.skipped_reason == "no_lineups":
-        st.info("Lineups not yet posted — check back closer to first pitch.")
-        _close_card_and_advance()
-        return
-    if run.skipped_reason == "sim_error":
-        st.warning("Simulation failed for this game. Check the server log.")
-        _close_card_and_advance()
-        return
-    if not run.results:
-        # Catch-all for any future skip reason or unexpected None results
-        # (e.g., 'already_logged' if someone flips the flag back on). Fail
-        # gracefully rather than crashing the loop.
-        st.info("No prediction available for this game.")
-        _close_card_and_advance()
-        return
-
-    # ---- Surface DB log errors as a soft toast ---------------------------
-    # run_slate keeps these as strings on GameRun.log_error rather than
-    # raising — one bad write never aborts the rest of the slate.
-    if run.log_error:
-        st.toast(f"Prediction logging failed: {run.log_error}", icon="⚠️")
-
-    # ---- Markets, pitcher props, lineups --------------------------------
-    away, home, results = run.away, run.home, run.results
-
+    # ---- Game Markets ----------------------------------------------------
     st.markdown('<div class="section-label">Game Markets</div>',
                 unsafe_allow_html=True)
 
-    away_win   = results['away_win_prob']
-    home_win   = 1.0 - away_win
-    f5_away    = results['f5_away_win_prob']
-    f5_home    = 1.0 - f5_away - results['f5_tie_prob']
-    nrfi       = results['nrfi_prob']
-    total_runs = results['median_total']
+    away_win   = float(pred["away_win_prob"])
+    home_win   = float(pred["home_win_prob"])
+    f5_away    = float(pred["f5_away_prob"])
+    f5_home    = float(pred["f5_home_prob"])
+    nrfi       = float(pred["nrfi_prob"])
+    median_tot = float(pred["median_total"])
 
     def chip(label, value, market_key=None):
         display = pct(value)
@@ -920,97 +1013,126 @@ def _render_game_card(run, i: int, total: int, progress_bar) -> None:
 
     chips_html = (
         '<div class="metric-row">'
-        + chip(f"{away['team_name']} ML", away_win, "ML")
-        + chip(f"{home['team_name']} ML", home_win, "ML")
+        + chip(f"{pred['away_team']} ML", away_win, "ML")
+        + chip(f"{pred['home_team']} ML", home_win, "ML")
         + chip("F5 Away", f5_away, "F5")
         + chip("F5 Home", f5_home, "F5")
-        + chip("F5 Tie", results['f5_tie_prob'])
+        + chip("F5 Tie", float(pred["f5_tie_prob"]))
         + chip("NRFI", nrfi, "NRFI")
         + f'<div class="metric-chip"><span class="label">Median Total</span>'
-          f'<span class="value">{total_runs}</span></div>'
+          f'<span class="value">{median_tot}</span></div>'
         + '</div>'
     )
     st.markdown(chips_html, unsafe_allow_html=True)
 
-    # ---- Pitcher Props ---------------------------------------------------
+    # ---- Pitcher Card ----------------------------------------------------
+    # Heavy fetch: K dists + first-inning dicts. Cached per game_pred_id so
+    # rerunning this view doesn't re-hit Supabase.
+    detail = _cached_game_detail(game_pred_id) or {}
+
     st.markdown('<div class="section-label">Starting Pitcher Props</div>',
                 unsafe_allow_html=True)
     render_pitcher_section(
-        away_name=away['starter_name'],
-        home_name=home['starter_name'],
-        away_k_dist=results.get('away_k_dist', []),
-        home_k_dist=results.get('home_k_dist', []),
-        away_median_k=results['away_pitcher_median_k'],
-        home_median_k=results['home_pitcher_median_k'],
-        away_first_inn=results.get('away_starter_first_inn'),
-        home_first_inn=results.get('home_starter_first_inn'),
+        away_name      = pred["away_starter_name"],
+        home_name      = pred["home_starter_name"],
+        away_k_dist    = detail.get("away_k_dist") or [],
+        home_k_dist    = detail.get("home_k_dist") or [],
+        away_median_k  = float(pred["away_pitcher_median_k"]),
+        home_median_k  = float(pred["home_pitcher_median_k"]),
+        away_first_inn = detail.get("away_starter_first_inn"),
+        home_first_inn = detail.get("home_starter_first_inn"),
     )
 
-    # ---- Full Lineup Props ----------------------------------------------
+    # ---- Full Lineup Props -----------------------------------------------
+    lineups = _cached_lineups(game_pred_id)
+    props   = _cached_player_props(game_pred_id)
+
     st.markdown('<div class="section-label">Full Lineup Player Props</div>',
                 unsafe_allow_html=True)
     lineup_col1, lineup_col2 = st.columns(2)
     with lineup_col1:
         st.markdown(
-            build_lineup_table(away['team_name'], away['lineup_details'],
-                               results['player_props'], side='away'),
+            build_lineup_table(pred["away_team"], lineups["away"], props, side="away"),
             unsafe_allow_html=True,
         )
     with lineup_col2:
         st.markdown(
-            build_lineup_table(home['team_name'], home['lineup_details'],
-                               results['player_props'], side='home'),
+            build_lineup_table(pred["home_team"], lineups["home"], props, side="home"),
             unsafe_allow_html=True,
         )
 
-    _close_card_and_advance()
+    st.markdown('</div>', unsafe_allow_html=True)  # close .game-card
 
 
-if run_button:
-    progress_bar = st.progress(0)
+def _render_schedule_only_fallback() -> None:
+    """
+    A3 morning-gap fallback. Rendered when no predictions exist for today
+    (e.g. before the 9 AM ET cron). Shows the raw schedule from MLB Stats
+    API so users see what's on the slate without an empty page.
+    """
+    schedule = _cached_schedule()
+    if not schedule:
+        st.info(
+            "No games on today's slate, or the schedule API is temporarily "
+            "unavailable. Check back later."
+        )
+        return
 
-    # skip_already_logged=False so EVERY game re-renders on every click.
-    # Per requirement: the user should never see "Already calculated and
-    # logged earlier today" — they always get a fresh card. Idempotency
-    # lives in prediction_logger.log_prediction (delete-then-insert keyed
-    # on game_id + game_date + model_version) so re-running the slate
-    # doesn't pile up duplicate rows in Supabase. Last-write-wins
-    # semantics: the most recent prediction (closest to first pitch,
-    # tightest weather forecast, confirmed lineups) wins.
-    #
-    # Note: run_slate now processes every game on the slate regardless of
-    # status — Scheduled, In Progress, Final, etc. all get cards rendered.
-    # DB logging is gated inside run_slate to PRE_FIRST_PITCH_STATUSES
-    # only, so In Progress / Final cards show fresh markets next to their
-    # live scoreboard but don't overwrite morning predictions in the DB.
-    summary = run_slate(
-        resolver=resolver,
-        iterations=iterations,
-        skip_already_logged=False,
-        on_game_complete=lambda run, i, total: _render_game_card(
-            run, i, total, progress_bar
-        ),
+    st.info(
+        "Today's predictions will be available after the morning data run "
+        "(around 9 AM ET). Showing today's schedule for reference."
     )
 
-    if summary.total_games == 0:
-        st.warning("No games found on today's slate.")
+    for game in schedule:
+        st.markdown('<div class="game-card">', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="game-title">{game.get("matchup", "")}</div>',
+            unsafe_allow_html=True,
+        )
+        scoreboard = render_live_scoreboard(game) if game.get("status") else ""
+        if scoreboard:
+            st.markdown(scoreboard, unsafe_allow_html=True)
+        else:
+            game_time = game.get("game_datetime", "")
+            if game_time:
+                st.markdown(
+                    f"<div style='font-family:IBM Plex Mono,monospace; "
+                    f"font-size:11px; color:#8090a8; margin-top:6px;'>"
+                    f"first pitch: {game_time}</div>",
+                    unsafe_allow_html=True,
+                )
+        st.markdown('</div>', unsafe_allow_html=True)
+
+
+# ==========================================
+# RENDER
+# ==========================================
+if not predictions:
+    _render_schedule_only_fallback()
+else:
+    for pred in predictions:
+        _render_game_card_from_db(pred)
+
+    # Footer — different content from the interactive version. Shows the
+    # number of games rendered and the time range of predictions, since
+    # there's no "iterations" or "calculate button" context anymore.
+    pred_times = [p.get("predicted_at") for p in predictions if p.get("predicted_at")]
+    if pred_times:
+        try:
+            stamps = sorted(str(t) for t in pred_times)
+            earliest = stamps[0][:16].replace("T", " ")
+            latest   = stamps[-1][:16].replace("T", " ")
+            range_str = (f"{earliest} → {latest}" if earliest != latest
+                         else earliest)
+        except Exception:
+            range_str = "—"
     else:
-        # Slate-level result line — tells the user what just happened
-        # without making them count cards.
-        st.markdown(
-            "<div style='font-family:IBM Plex Mono,monospace; font-size:11px; "
-            "color:#4a6080; margin-top:14px;'>"
-            f"DONE — simulated {summary.simulated} · "
-            f"logged {summary.logged} · "
-            f"awaiting lineups {summary.skipped_no_lineups} · "
-            f"log failures {summary.log_failures}"
-            "</div>",
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            "<div style='font-family:IBM Plex Mono,monospace; font-size:10px; "
-            "color:#2a3a50; margin-top:20px; text-align:center;'>"
-            f"SYNDICATE ENGINE · {datetime.today().strftime('%Y-%m-%d %H:%M')} · "
-            f"{iterations} ITERATIONS</div>",
-            unsafe_allow_html=True,
-        )
+        range_str = "—"
+
+    st.markdown(
+        "<div style='font-family:IBM Plex Mono,monospace; font-size:10px; "
+        "color:#2a3a50; margin-top:20px; text-align:center;'>"
+        f"SYNDICATE ENGINE · {len(predictions)} GAMES · predicted {range_str}"
+        "</div>",
+        unsafe_allow_html=True,
+    )

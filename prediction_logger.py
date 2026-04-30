@@ -189,6 +189,22 @@ def _native(v: Any) -> Any:
     return v
 
 
+def _native_list(seq) -> list:
+    """Coerce every element of a sequence to native Python types. Used
+    before json.dumps on K-distribution arrays so numpy ints don't crash
+    serialization."""
+    return [_native(v) for v in seq]
+
+
+def _native_dict(d) -> dict | None:
+    """Coerce every value of a dict to native Python. None-safe — passes
+    None straight through, which json.dumps serializes as `null`. Keys are
+    assumed to be strings already (which they are for first-inning stats)."""
+    if d is None:
+        return None
+    return {k: _native(v) for k, v in d.items()}
+
+
 # ---------------------------------------------------------------------------
 #  Public API
 # ---------------------------------------------------------------------------
@@ -294,6 +310,22 @@ def log_prediction(
         "home_p_5k": home_k_probs[5],
         "home_p_6k": home_k_probs[6],
         "home_p_7k": home_k_probs[7],
+
+        # Full K distributions and 1st-inning stat dicts ---------------------
+        # Persisted so the read-only Streamlit Cloud viewer can render the
+        # K histogram and the 1st-inning section in the pitcher card without
+        # re-running the simulator. Coerced to lists/dicts of native types
+        # so json.dumps doesn't choke on numpy values. None-safe: pitchers
+        # without enough starts get null, and the renderer's existing
+        # fallback path handles that.
+        "away_k_dist": json.dumps(_native_list(results.get("away_k_dist") or [])),
+        "home_k_dist": json.dumps(_native_list(results.get("home_k_dist") or [])),
+        "away_starter_first_inn": json.dumps(
+            _native_dict(results.get("away_starter_first_inn"))
+        ),
+        "home_starter_first_inn": json.dumps(
+            _native_dict(results.get("home_starter_first_inn"))
+        ),
     }
 
     conn = _get_conn()
@@ -356,7 +388,9 @@ def log_prediction(
                     away_pitcher_median_k,
                     away_p_3k, away_p_4k, away_p_5k, away_p_6k, away_p_7k,
                     home_pitcher_median_k,
-                    home_p_3k, home_p_4k, home_p_5k, home_p_6k, home_p_7k
+                    home_p_3k, home_p_4k, home_p_5k, home_p_6k, home_p_7k,
+                    away_k_dist, home_k_dist,
+                    away_starter_first_inn, home_starter_first_inn
                 ) VALUES (
                     :game_id, :game_date, :away_team, :home_team,
                     :away_starter_id, :away_starter_name,
@@ -372,7 +406,10 @@ def log_prediction(
                     :away_pitcher_median_k,
                     :away_p_3k, :away_p_4k, :away_p_5k, :away_p_6k, :away_p_7k,
                     :home_pitcher_median_k,
-                    :home_p_3k, :home_p_4k, :home_p_5k, :home_p_6k, :home_p_7k
+                    :home_p_3k, :home_p_4k, :home_p_5k, :home_p_6k, :home_p_7k,
+                    CAST(:away_k_dist AS JSONB), CAST(:home_k_dist AS JSONB),
+                    CAST(:away_starter_first_inn AS JSONB),
+                    CAST(:home_starter_first_inn AS JSONB)
                 )
                 RETURNING id
             """),
@@ -423,3 +460,193 @@ def log_prediction(
         s.commit()
 
     return game_pred_id
+
+# ===========================================================================
+#  READ-SIDE PUBLIC API
+# ===========================================================================
+# Functions used by the read-only Streamlit Cloud viewer (app.py). The
+# viewer never simulates — it queries Supabase for the cron-logged
+# predictions and renders them. These functions are the inverse of
+# log_prediction(): they reconstruct the dicts the renderer expects from
+# the rows on disk.
+#
+# Two design points worth noting:
+#   1. We DON'T fetch the K distribution arrays in fetch_predictions_for_date
+#      because at slate-overview level we don't need them — they're only
+#      needed for the per-game pitcher histogram. fetch_game_detail() pulls
+#      them on demand. Keeps the slate query light (~8KB/game vs ~50KB/game).
+#   2. JSONB columns come back as already-parsed Python objects from
+#      psycopg2 — no manual json.loads needed. This is true for both the
+#      Streamlit SQLConnection path and the raw SQLAlchemy path.
+# ===========================================================================
+
+def fetch_predictions_for_date(game_date_iso: str,
+                               model_version: str = MODEL_VERSION) -> list[dict]:
+    """
+    Fetch every game prediction logged for a given date. Returns a list
+    of dicts, one per game, in game_id order. Each dict mimics the shape
+    the renderer expects — same key names as the in-memory `results` dict
+    from the simulator, plus the game/team metadata.
+
+    K distribution arrays and 1st-inning stat dicts are NOT included here
+    (use fetch_game_detail for those). This keeps the slate-overview
+    query small.
+    """
+    conn = _get_conn()
+    with conn.session as s:
+        rows = s.execute(
+            text("""
+                SELECT
+                    id,
+                    game_id, game_date, predicted_at,
+                    away_team, home_team,
+                    away_starter_id, away_starter_name,
+                    home_starter_id, home_starter_name,
+                    iterations,
+                    weather_park, weather_is_dome, weather_temp_f,
+                    weather_wind_mph, weather_carry_delta_ft, weather_hr_score,
+                    away_win_prob, home_win_prob,
+                    f5_away_prob, f5_home_prob, f5_tie_prob,
+                    nrfi_prob, median_total,
+                    total_mean, total_std, total_thresholds,
+                    run_line_home_minus_1_5_prob, run_line_away_minus_1_5_prob,
+                    away_pitcher_median_k,
+                    away_p_3k, away_p_4k, away_p_5k, away_p_6k, away_p_7k,
+                    home_pitcher_median_k,
+                    home_p_3k, home_p_4k, home_p_5k, home_p_6k, home_p_7k
+                FROM game_predictions
+                WHERE game_date = :d
+                  AND model_version = :mv
+                ORDER BY game_id
+            """),
+            {"d": game_date_iso, "mv": model_version},
+        ).mappings().all()
+    return [dict(r) for r in rows]
+
+
+def fetch_game_detail(game_prediction_id: int) -> dict | None:
+    """
+    Fetch the full prediction for a single game, including the heavy
+    JSONB columns (K dists, 1st-inning stat dicts) needed for the per-game
+    pitcher card. Used when rendering an individual game card.
+
+    Returns None if the row doesn't exist (e.g. stale link, deleted row).
+    """
+    conn = _get_conn()
+    with conn.session as s:
+        row = s.execute(
+            text("""
+                SELECT
+                    away_k_dist, home_k_dist,
+                    away_starter_first_inn, home_starter_first_inn
+                FROM game_predictions
+                WHERE id = :id
+            """),
+            {"id": game_prediction_id},
+        ).mappings().first()
+    return dict(row) if row else None
+
+
+def fetch_player_props_for_game(game_prediction_id: int) -> dict[str, dict]:
+    """
+    Reconstruct the per-batter player_props dict for one game. Output
+    matches the simulator's `results['player_props']` shape exactly — keys
+    are batter names, values are dicts with '1+ Hits', '2+ TB', '1+ HR',
+    '1+ RBI', '1+ SB' probabilities. Empty dict if no rows.
+    """
+    conn = _get_conn()
+    with conn.session as s:
+        rows = s.execute(
+            text("""
+                SELECT player_name, p_1h, p_2tb, p_1hr, p_1rbi, p_1sb
+                FROM player_predictions
+                WHERE game_prediction_id = :id
+            """),
+            {"id": game_prediction_id},
+        ).mappings().all()
+    return {
+        r["player_name"]: {
+            "1+ Hits": float(r["p_1h"]),
+            "2+ TB":   float(r["p_2tb"]),
+            "1+ HR":   float(r["p_1hr"]),
+            "1+ RBI":  float(r["p_1rbi"]),
+            "1+ SB":   float(r["p_1sb"]),
+        }
+        for r in rows
+    }
+
+
+def fetch_lineups_for_game(game_prediction_id: int) -> dict[str, list[dict]]:
+    """
+    Reconstruct the home/away lineup-detail lists from player_predictions,
+    sorted by batting order. Returns:
+        {"away": [{...}, ...], "home": [{...}, ...]}
+    Each entry has 'name', 'id' (player_id), 'order' — the minimum the
+    lineup-table renderer needs. Empty side lists if no rows.
+    """
+    conn = _get_conn()
+    with conn.session as s:
+        rows = s.execute(
+            text("""
+                SELECT player_name, player_id, side, batting_order
+                FROM player_predictions
+                WHERE game_prediction_id = :id
+                ORDER BY side, batting_order
+            """),
+            {"id": game_prediction_id},
+        ).mappings().all()
+
+    lineups = {"away": [], "home": []}
+    for r in rows:
+        lineups[r["side"]].append({
+            "name":  r["player_name"],
+            "id":    r["player_id"],
+            "order": r["batting_order"],
+        })
+    return lineups
+
+
+def fetch_top_batter_props(game_date_iso: str,
+                           prop_key: str = "p_1h",
+                           limit: int = 5,
+                           model_version: str = MODEL_VERSION) -> list[dict]:
+    """
+    Top-N batters by a single prop probability across the entire slate.
+    Used by the Beat the Streak sidebar (default: top 5 by 1+ Hits).
+
+    Each row includes the batter, both teams (so the user sees who's
+    playing whom), the probability, and predicted_at so they can see
+    how fresh the prediction is. Joined to game_predictions for team
+    context and to filter by date + version in one shot.
+
+    `prop_key` must be one of: 'p_1h', 'p_2tb', 'p_1hr', 'p_1rbi', 'p_1sb'.
+    Validated against an allow-list to keep this safe from SQL injection
+    (prop_key gets interpolated into the SELECT/ORDER BY, not bound).
+    """
+    ALLOWED_PROPS = {"p_1h", "p_2tb", "p_1hr", "p_1rbi", "p_1sb"}
+    if prop_key not in ALLOWED_PROPS:
+        raise ValueError(
+            f"prop_key must be one of {ALLOWED_PROPS}, got {prop_key!r}"
+        )
+
+    conn = _get_conn()
+    with conn.session as s:
+        rows = s.execute(
+            text(f"""
+                SELECT
+                    pp.player_name,
+                    pp.{prop_key} AS prob,
+                    gp.away_team,
+                    gp.home_team,
+                    pp.side,
+                    gp.predicted_at
+                FROM player_predictions pp
+                JOIN game_predictions gp ON gp.id = pp.game_prediction_id
+                WHERE gp.game_date = :d
+                  AND gp.model_version = :mv
+                ORDER BY pp.{prop_key} DESC
+                LIMIT :n
+            """),
+            {"d": game_date_iso, "mv": model_version, "n": limit},
+        ).mappings().all()
+    return [dict(r) for r in rows]

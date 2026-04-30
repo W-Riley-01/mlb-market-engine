@@ -538,11 +538,25 @@ def render_live_scoreboard(game: dict) -> str:
 
 def render_weather_section(weather: dict) -> str:
     """Renders the First Pitch Conditions panel — environmental readout
-    plus the physics-based HR-conditions score. Input is the dict
-    returned by weather.get_game_weather()."""
-    park         = weather['park']
+    plus the physics-based HR-conditions score.
+
+    Accepts two slightly different input shapes:
+      • Live-sim path (engine_runner): dict from weather.get_game_weather()
+        with all ~10 fields populated (temp, humidity, pressure, wind
+        components, carry delta, score, label, etc.).
+      • Read-only path (Supabase): dict reconstructed from the 6 weather
+        columns logged in game_predictions (park, is_dome, temp_f,
+        wind_speed_mph, carry_delta_ft, score). Missing fields render
+        as placeholder dashes rather than crashing the page.
+
+    All accesses go through .get() with explicit defaults so the
+    function is safe to call with either shape. Adding the missing fields
+    to the schema later (humidity, pressure, wind_from_compass) would
+    automatically light up the chips that currently show '—'.
+    """
+    park         = weather.get('park', 'Unknown park')
     first_pitch  = weather.get('first_pitch_local')
-    is_dome      = weather['is_dome']
+    is_dome      = bool(weather.get('is_dome'))
 
     # Section header carries park name and (if known) local first-pitch time.
     header_bits = [park]
@@ -553,38 +567,64 @@ def render_weather_section(weather: dict) -> str:
     # Domes: skip the environmental chips — the HR score is fixed at 50 and
     # showing fake "72F indoors" values would be misleading.
     if is_dome:
+        score    = weather.get('score', 50)
+        label    = weather.get('label', 'Dome')
+        carry_ft = weather.get('carry_delta_ft', 0) or 0
         chips = (
             f'<div class="metric-chip">'
             f'<span class="label">Conditions</span>'
             f'<span class="value">Dome</span>'
             f'</div>'
-            + _hr_score_chip(weather['score'], weather['label'],
-                             weather.get('carry_delta_ft', 0))
+            + _hr_score_chip(score, label, carry_ft)
         )
         return (
             f'<div class="section-label">First Pitch Conditions · {header}</div>'
             f'<div class="metric-row">{chips}</div>'
         )
 
-    # Outdoor chips
-    temp_str = f"{weather['temp_f']:.0f}°F"
-    hum_str  = f"{weather['humidity_pct']}%"
-    wind_str = f"{weather['wind_speed_mph']:.0f} mph {weather['wind_from_compass']}"
-    press_str = f"{weather['pressure_inhg']:.2f} inHg"
+    # Outdoor chips. Each chip handles its own field absence — read-only
+    # rows from Supabase have temp, wind speed, carry delta, score, but
+    # are missing humidity, pressure, wind direction, and the wind labels.
+    # Missing values render as a dash so the chip layout stays consistent.
+    temp_f  = weather.get('temp_f')
+    temp_str = f"{temp_f:.0f}°F" if isinstance(temp_f, (int, float)) else "—"
+
+    hum_pct = weather.get('humidity_pct')
+    hum_str = f"{hum_pct}%" if hum_pct is not None else "—"
+
+    wind_speed = weather.get('wind_speed_mph')
+    wind_compass = weather.get('wind_from_compass')
+    if isinstance(wind_speed, (int, float)) and wind_compass:
+        wind_str = f"{wind_speed:.0f} mph {wind_compass}"
+    elif isinstance(wind_speed, (int, float)):
+        wind_str = f"{wind_speed:.0f} mph"
+    else:
+        wind_str = "—"
+
+    pressure = weather.get('pressure_inhg')
+    press_str = f"{pressure:.2f} inHg" if isinstance(pressure, (int, float)) else "—"
 
     # CF-axis wind chip color: green if out, yellow if in, neutral if calm
-    wind_out = weather['wind_out_mph']
-    if   wind_out >= 3:  cf_class = 'good'
-    elif wind_out <= -3: cf_class = 'warn'
-    else:                cf_class = ''
+    # or if the data isn't available (read-only path).
+    wind_out = weather.get('wind_out_mph')
+    if isinstance(wind_out, (int, float)):
+        if   wind_out >= 3:  cf_class = 'good'
+        elif wind_out <= -3: cf_class = 'warn'
+        else:                cf_class = ''
+    else:
+        cf_class = ''
+    wind_label = weather.get('wind_label', '—')
 
     # Carry delta — the most physically meaningful single number. Each foot
     # of carry change maps directly to score points.
-    carry_ft = weather['carry_delta_ft']
+    carry_ft = weather.get('carry_delta_ft', 0) or 0
     if   carry_ft >= 5:  carry_class = 'good'
     elif carry_ft <= -5: carry_class = 'warn'
     else:                carry_class = ''
     carry_str = f"{carry_ft:+.0f} ft"
+
+    score = weather.get('score', 50)
+    label = weather.get('label', '—')
 
     chips = (
         f'<div class="metric-chip">'
@@ -605,13 +645,13 @@ def render_weather_section(weather: dict) -> str:
         f'</div>'
         f'<div class="metric-chip">'
         f'<span class="label">CF Axis</span>'
-        f'<span class="value {cf_class}">{weather["wind_label"]}</span>'
+        f'<span class="value {cf_class}">{wind_label}</span>'
         f'</div>'
         f'<div class="metric-chip">'
         f'<span class="label">Carry Δ</span>'
         f'<span class="value {carry_class}">{carry_str}</span>'
         f'</div>'
-        + _hr_score_chip(weather['score'], weather['label'], carry_ft)
+        + _hr_score_chip(score, label, carry_ft)
     )
 
     return (
@@ -894,7 +934,7 @@ def _render_beat_the_streak(date_iso: str) -> None:
         top = []
 
     with beat_streak_placeholder.container():
-        st.markdown("### Beat the Streak")
+        st.markdown("### 🎯 Beat the Streak")
         st.caption("Top 5 batters by 1+ Hit probability today")
         if not top:
             st.markdown(

@@ -1043,7 +1043,7 @@ def _render_game_card_from_db(pred: dict) -> None:
     )
 
 stamp = _to_central(pred.get("predicted_at"), "%Y-%m-%d %H:%M %Z")
-if stamp:
+    if stamp:
         st.markdown(
             f"<div style='font-family:IBM Plex Mono,monospace; font-size:9px; "
             f"color:#4a6080; margin-bottom:8px;'>predicted: {stamp}</div>",

@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
-from datetime import datetime, date
+from datetime import datetime, date, timezone
+from zoneinfo import ZoneInfo
 
 # Read-only viewer architecture
 # -----------------------------
@@ -33,6 +34,48 @@ from daily_scraper import fetch_todays_schedule
 # UI CONFIG
 # ==========================================
 st.set_page_config(page_title="MLB Engine", layout="wide")
+
+
+# ==========================================
+# TIME FORMATTING
+# ==========================================
+# All UTC datetimes in the DB (predicted_at) and from MLB Stats API
+# (game_datetime) are converted to America/Chicago at render time.
+# IANA zone, not a fixed offset, so DST handles itself: %Z renders
+# 'CDT' March–November and 'CST' November–March automatically.
+CENTRAL_TZ = ZoneInfo("America/Chicago")
+
+
+def _to_central(value, fmt: str) -> str | None:
+    """
+    Convert a UTC datetime or ISO 8601 string to America/Chicago and
+    format it. Returns None if the input is None or unparseable so
+    callers can use truthiness to gate rendering.
+
+    Accepts:
+      - datetime.datetime (aware or naive — naive treated as UTC)
+      - ISO 8601 string, including the MLB Stats API trailing 'Z' form
+        ('2026-04-15T23:05:00Z')
+    """
+    if value is None:
+        return None
+
+    if hasattr(value, "astimezone"):
+        dt = value
+    else:
+        try:
+            # MLB Stats API emits trailing 'Z'; fromisoformat handles it
+            # natively from Python 3.11+, but normalize for older runtimes.
+            s = str(value).replace("Z", "+00:00")
+            dt = datetime.fromisoformat(s)
+        except (ValueError, AttributeError):
+            return None
+
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+
+    return dt.astimezone(CENTRAL_TZ).strftime(fmt)
+
 
 st.markdown("""
 <style>
@@ -964,14 +1007,8 @@ def _render_game_card_from_db(pred: dict) -> None:
     # Predicted-at staleness chip — useful in the read-only view since
     # the user wasn't the one who triggered the prediction. Lets them
     # see how old the cron-logged prediction is.
-    predicted_at = pred.get("predicted_at")
-    if predicted_at:
-        # Format depends on what the DB driver returns; both datetime
-        # and ISO string are possible. Be lenient.
-        if hasattr(predicted_at, "strftime"):
-            stamp = predicted_at.strftime("%Y-%m-%d %H:%M UTC")
-        else:
-            stamp = str(predicted_at)[:19].replace("T", " ") + " UTC"
+    stamp = _to_central(pred.get("predicted_at"), "%Y-%m-%d %H:%M %Z")
+    if stamp:
         st.markdown(
             f"<div style='font-family:IBM Plex Mono,monospace; font-size:9px; "
             f"color:#4a6080; margin-bottom:8px;'>predicted: {stamp}</div>",
@@ -1093,7 +1130,7 @@ def _render_schedule_only_fallback() -> None:
         if scoreboard:
             st.markdown(scoreboard, unsafe_allow_html=True)
         else:
-            game_time = game.get("game_datetime", "")
+            game_time = _to_central(game.get("game_datetime"), "%-I:%M %p %Z")
             if game_time:
                 st.markdown(
                     f"<div style='font-family:IBM Plex Mono,monospace; "

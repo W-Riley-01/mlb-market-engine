@@ -581,11 +581,15 @@ def render_live_scoreboard(game: dict) -> str:
 
 def render_weather_section(weather: dict) -> str:
     """Renders the First Pitch Conditions panel — environmental readout
-    plus the physics-based HR-conditions score. Input is the dict
-    returned by weather.get_game_weather()."""
-    park         = weather['park']
+    plus the physics-based HR-conditions score. Input is either the dict
+    returned by weather.get_game_weather() (live-sim path, all fields
+    populated) or a partial reconstruction from DB columns (read-only
+    viewer path — missing humidity, pressure, wind direction, CF axis,
+    HR-conditions label until Priority 3 adds those columns to the
+    schema). Missing fields render as '—' rather than raising KeyError."""
+    park         = weather.get('park') or '—'
     first_pitch  = weather.get('first_pitch_local')
-    is_dome      = weather['is_dome']
+    is_dome      = bool(weather.get('is_dome'))
 
     # Section header carries park name and (if known) local first-pitch time.
     header_bits = [park]
@@ -601,29 +605,50 @@ def render_weather_section(weather: dict) -> str:
             f'<span class="label">Conditions</span>'
             f'<span class="value">Dome</span>'
             f'</div>'
-            + _hr_score_chip(weather['score'], weather['label'],
-                             weather.get('carry_delta_ft', 0))
+            + _hr_score_chip(weather.get('score'), weather.get('label'),
+                             weather.get('carry_delta_ft') or 0)
         )
         return (
             f'<div class="section-label">First Pitch Conditions · {header}</div>'
             f'<div class="metric-row">{chips}</div>'
         )
 
-    # Outdoor chips
-    temp_str = f"{weather['temp_f']:.0f}°F"
-    hum_str  = f"{weather['humidity_pct']}%"
-    wind_str = f"{weather['wind_speed_mph']:.0f} mph {weather['wind_from_compass']}"
-    press_str = f"{weather['pressure_inhg']:.2f} inHg"
+    # Outdoor chips. Each value is .get()'d so the DB-reconstructed dict
+    # (which lacks humidity_pct, pressure_inhg, wind_from_compass, wind_label,
+    # wind_out_mph until Priority 3) renders '—' instead of KeyError.
+    temp_f         = weather.get('temp_f')
+    humidity_pct   = weather.get('humidity_pct')
+    wind_speed_mph = weather.get('wind_speed_mph')
+    wind_compass   = weather.get('wind_from_compass')
+    pressure_inhg  = weather.get('pressure_inhg')
+    wind_out_mph   = weather.get('wind_out_mph')
+    wind_label     = weather.get('wind_label')
 
-    # CF-axis wind chip color: green if out, yellow if in, neutral if calm
-    wind_out = weather['wind_out_mph']
-    if   wind_out >= 3:  cf_class = 'good'
-    elif wind_out <= -3: cf_class = 'warn'
-    else:                cf_class = ''
+    temp_str  = f"{temp_f:.0f}°F"            if temp_f         is not None else '—'
+    hum_str   = f"{humidity_pct}%"           if humidity_pct   is not None else '—'
+    press_str = f"{pressure_inhg:.2f} inHg"  if pressure_inhg  is not None else '—'
 
-    # Carry delta — the most physically meaningful single number. Each foot
-    # of carry change maps directly to score points.
-    carry_ft = weather['carry_delta_ft']
+    if wind_speed_mph is not None and wind_compass:
+        wind_str = f"{wind_speed_mph:.0f} mph {wind_compass}"
+    elif wind_speed_mph is not None:
+        wind_str = f"{wind_speed_mph:.0f} mph"
+    else:
+        wind_str = '—'
+
+    # CF-axis wind chip color: green if out, yellow if in, neutral if calm.
+    # No coloring when the axis component isn't available from the DB.
+    if wind_out_mph is None:
+        cf_class = ''
+        cf_label = '—'
+    else:
+        if   wind_out_mph >= 3:  cf_class = 'good'
+        elif wind_out_mph <= -3: cf_class = 'warn'
+        else:                    cf_class = ''
+        cf_label = wind_label or '—'
+
+    # Carry delta — always persisted in the DB schema (weather_carry_delta_ft),
+    # so no fallback path is needed in practice; keep the `or 0` for safety.
+    carry_ft = weather.get('carry_delta_ft') or 0
     if   carry_ft >= 5:  carry_class = 'good'
     elif carry_ft <= -5: carry_class = 'warn'
     else:                carry_class = ''
@@ -648,13 +673,13 @@ def render_weather_section(weather: dict) -> str:
         f'</div>'
         f'<div class="metric-chip">'
         f'<span class="label">CF Axis</span>'
-        f'<span class="value {cf_class}">{weather["wind_label"]}</span>'
+        f'<span class="value {cf_class}">{cf_label}</span>'
         f'</div>'
         f'<div class="metric-chip">'
         f'<span class="label">Carry Δ</span>'
         f'<span class="value {carry_class}">{carry_str}</span>'
         f'</div>'
-        + _hr_score_chip(weather['score'], weather['label'], carry_ft)
+        + _hr_score_chip(weather.get('score'), weather.get('label'), carry_ft)
     )
 
     return (
@@ -663,16 +688,28 @@ def render_weather_section(weather: dict) -> str:
     )
 
 
-def _hr_score_chip(score: int, label: str, carry_ft: float = 0) -> str:
+def _hr_score_chip(score, label, carry_ft: float = 0) -> str:
     """The headline HR-conditions chip. The tier color (left bar + score
     color) reflects the score, and the subtitle shows the tier name plus
-    the carry delta in feet — which is the physically meaningful number."""
+    the carry delta in feet — which is the physically meaningful number.
+    Renders a neutral placeholder when score is missing (e.g. a partial
+    DB reconstruction in the read-only viewer before Priority 3 lands
+    the label column)."""
+    if score is None:
+        return (
+            f'<div class="hr-chip">'
+            f'<span class="label">HR Conditions</span>'
+            f'<span class="score">—</span>'
+            f'<div class="tier">—</div>'
+            f'</div>'
+        )
     tier = color_for_hr_score(score)
+    label_text = label or '—'
     # Don't show carry delta for domes (it's always 0 and would look odd)
     if abs(carry_ft) < 0.5:
-        subtitle = label
+        subtitle = label_text
     else:
-        subtitle = f'{label} · {carry_ft:+.0f} ft carry'
+        subtitle = f'{label_text} · {carry_ft:+.0f} ft carry'
     return (
         f'<div class="hr-chip {tier}">'
         f'<span class="label">HR Conditions</span>'

@@ -1054,14 +1054,31 @@ def _render_game_card_from_db(pred: dict) -> None:
 
     # ---- Weather ----------------------------------------------------------
     # Reconstruct the weather dict from the columns logged at prediction time.
-    # render_weather_section accepts None gracefully (returns a dome chip).
+    # The Priority-2 hotfix in render_weather_section tolerates any of these
+    # being None, so the dict can be partial without crashing — useful for
+    # historical rows from before the Priority-3 columns were persisted.
+    #
+    # first_pitch_local is derived at render time from game_datetime_utc
+    # (TIMESTAMPTZ in DB) via the _to_central() helper, so the section
+    # header reads like "Yankee Stadium · 6:10 PM CDT". For older rows
+    # where game_datetime_utc is NULL, _to_central returns None and the
+    # section header gracefully degrades to just the park name.
     weather = {
-        "park":            pred.get("weather_park"),
-        "is_dome":         pred.get("weather_is_dome"),
-        "temp_f":          pred.get("weather_temp_f"),
-        "wind_speed_mph":  pred.get("weather_wind_mph"),
-        "carry_delta_ft":  pred.get("weather_carry_delta_ft"),
-        "score":           pred.get("weather_hr_score"),
+        "park":              pred.get("weather_park"),
+        "is_dome":           pred.get("weather_is_dome"),
+        "temp_f":            pred.get("weather_temp_f"),
+        "wind_speed_mph":    pred.get("weather_wind_mph"),
+        "carry_delta_ft":    pred.get("weather_carry_delta_ft"),
+        "score":             pred.get("weather_hr_score"),
+        # Priority 3 additions ---------------------------------------------
+        "humidity_pct":      pred.get("weather_humidity_pct"),
+        "pressure_inhg":     pred.get("weather_pressure_inhg"),
+        "wind_from_compass": pred.get("weather_wind_from_compass"),
+        "wind_label":        pred.get("weather_wind_label"),
+        "wind_out_mph":      pred.get("weather_wind_out_mph"),
+        "label":             pred.get("weather_label"),
+        "first_pitch_local": _to_central(pred.get("game_datetime_utc"),
+                                         "%-I:%M %p %Z"),
     }
     if weather["park"]:  # only render if we have actual weather data
         st.markdown(render_weather_section(weather), unsafe_allow_html=True)

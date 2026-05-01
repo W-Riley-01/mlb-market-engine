@@ -176,6 +176,24 @@ def _parse_game_date(game_datetime: str | None, fallback: str) -> date:
         return date.today()
 
 
+def _parse_game_datetime(game_datetime: str | None) -> datetime | None:
+    """
+    Parse the MLB Stats API ISO 8601 first-pitch timestamp into a
+    timezone-aware UTC datetime. SQLAlchemy/psycopg2 binds aware datetimes
+    cleanly to TIMESTAMPTZ. Returns None on missing or unparseable input so
+    the column lands as NULL rather than aborting the whole insert — the
+    read-only viewer's _to_central() helper renders missing times as a
+    blank header anyway.
+    """
+    if not game_datetime:
+        return None
+    try:
+        cleaned = game_datetime.replace("Z", "+00:00")
+        return datetime.fromisoformat(cleaned)
+    except (ValueError, AttributeError):
+        return None
+
+
 def _native(v: Any) -> Any:
     """Convert numpy scalars to native Python so SQL parameter binding is clean."""
     if v is None:
@@ -265,6 +283,27 @@ def log_prediction(
         "weather_wind_mph":       _native((weather or {}).get("wind_speed_mph")),
         "weather_carry_delta_ft": _native((weather or {}).get("carry_delta_ft")),
         "weather_hr_score":       _native((weather or {}).get("score")),
+
+        # weather snapshot — Priority 3 additions ----------------------------
+        # These columns let the read-only viewer render the full HR-conditions
+        # readout (humidity, pressure, wind direction + CF axis component +
+        # tier label) without re-running the simulator. Same defensive
+        # pattern as the original weather block: `(weather or {}).get(...)`
+        # so a None weather dict (e.g. weather API timeout) doesn't crash
+        # the write — the columns just land as NULL and the viewer's
+        # hotfixed render path shows '—' chips.
+        "weather_humidity_pct":      _native((weather or {}).get("humidity_pct")),
+        "weather_pressure_inhg":     _native((weather or {}).get("pressure_inhg")),
+        "weather_wind_from_compass": _native((weather or {}).get("wind_from_compass")),
+        "weather_wind_label":        _native((weather or {}).get("wind_label")),
+        "weather_wind_out_mph":      _native((weather or {}).get("wind_out_mph")),
+        "weather_label":             _native((weather or {}).get("label")),
+
+        # First-pitch UTC timestamp. Stored as TIMESTAMPTZ (aware datetime);
+        # converted to America/Chicago at render time by app.py's
+        # _to_central() helper. Source is the same MLB Stats API
+        # game_datetime string the engine already uses for game_date.
+        "game_datetime_utc":         _parse_game_datetime(game.get("game_datetime")),
 
         # game markets ------------------------------------------------------
         "away_win_prob":  away_win,
@@ -380,6 +419,10 @@ def log_prediction(
                     iterations, as_of_date, model_version,
                     weather_park, weather_is_dome, weather_temp_f,
                     weather_wind_mph, weather_carry_delta_ft, weather_hr_score,
+                    weather_humidity_pct, weather_pressure_inhg,
+                    weather_wind_from_compass, weather_wind_label,
+                    weather_wind_out_mph, weather_label,
+                    game_datetime_utc,
                     away_win_prob, home_win_prob,
                     f5_away_prob, f5_home_prob, f5_tie_prob,
                     nrfi_prob, median_total,
@@ -398,6 +441,10 @@ def log_prediction(
                     :iterations, :as_of_date, :model_version,
                     :weather_park, :weather_is_dome, :weather_temp_f,
                     :weather_wind_mph, :weather_carry_delta_ft, :weather_hr_score,
+                    :weather_humidity_pct, :weather_pressure_inhg,
+                    :weather_wind_from_compass, :weather_wind_label,
+                    :weather_wind_out_mph, :weather_label,
+                    :game_datetime_utc,
                     :away_win_prob, :home_win_prob,
                     :f5_away_prob, :f5_home_prob, :f5_tie_prob,
                     :nrfi_prob, :median_total,

@@ -113,6 +113,19 @@ class AdvancedSimulatedGame:
 
         # Resolving the play
         if event == 'Out':
+            # Sac fly / productive out: with R3 and < 2 outs, the runner
+            # on third scores ~35% of the time. The simulator can't
+            # distinguish fly outs from grounders, so this is the blended
+            # league-wide rate at which a generic "Out" event with R3
+            # and <2 outs converts to a run. RBI is credited via score_run.
+            # Calibration target: real MLB sac-fly + productive-out RBI
+            # rate is ~30-40% of qualifying outs depending on outs and
+            # runner speed; 0.35 is a reasonable midpoint to start.
+            SAC_FLY_RATE_R3_LT2OUTS = 0.35
+            if self.bases[2] is not None and self.outs < 2:
+                if np.random.rand() < SAC_FLY_RATE_R3_LT2OUTS:
+                    self.score_run(self.bases[2], batter_index)
+                    self.bases[2] = None
             self.outs += 1
 
         elif event == 'K':  # NEW: Explicit Strikeout logic
@@ -142,17 +155,44 @@ class AdvancedSimulatedGame:
             box[batter_index]['TB'] += 2
             box[batter_index]['2B'] += 1
             box[batter_index]['Hits'] += 1
-            if self.bases[2] is not None: self.score_run(self.bases[2], batter_index)
-            if self.bases[1] is not None: self.score_run(self.bases[1], batter_index)
-            self.bases[2] = self.bases[0]
+            # R3 and R2 always score on a double (R2 scores ~95% in reality;
+            # we round to 100% for simplicity since the small miss is
+            # systematically the same direction across all teams).
+            if self.bases[2] is not None:
+                self.score_run(self.bases[2], batter_index)
+            if self.bases[1] is not None:
+                self.score_run(self.bases[1], batter_index)
+            # R1 scores ~55% of the time on a double. When held, ends up on 3B.
+            R1_SCORE_ON_2B = 0.55
+            r1_scored = False
+            if self.bases[0] is not None and np.random.rand() < R1_SCORE_ON_2B:
+                self.score_run(self.bases[0], batter_index)
+                r1_scored = True
+            self.bases[2] = None if r1_scored else self.bases[0]
             self.bases[1] = batter_index
             self.bases[0] = None
 
         elif event == '1B':
             box[batter_index]['TB'] += 1
             box[batter_index]['Hits'] += 1
-            if self.bases[2] is not None: self.score_run(self.bases[2], batter_index)
-            self.bases[2], self.bases[1], self.bases[0] = self.bases[1], self.bases[0], batter_index
+            # R3 always scores on a single
+            if self.bases[2] is not None:
+                self.score_run(self.bases[2], batter_index)
+            # R2 scores ~40% of the time on a single. When held, advances
+            # to 3B in the standard rotation. The 40% is a season-long
+            # average across all R2/single situations — the actual rate
+            # depends on hit type (line drive vs. ground ball), runner
+            # speed, and number of outs, but those second-order effects
+            # aren't modeled here.
+            R2_SCORE_ON_1B = 0.40
+            r2_scored = False
+            if self.bases[1] is not None and np.random.rand() < R2_SCORE_ON_1B:
+                self.score_run(self.bases[1], batter_index)
+                r2_scored = True
+            # Standard advancement: R2 (if held) → 3B, R1 → 2B, batter → 1B
+            self.bases[2] = None if r2_scored else self.bases[1]
+            self.bases[1] = self.bases[0]
+            self.bases[0] = batter_index
             self.attempt_steal(batter_index, box)  # Check for steal
 
         elif event == 'BB':

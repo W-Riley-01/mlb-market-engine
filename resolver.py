@@ -398,13 +398,37 @@ class MatchupResolver:
             return arsenal_weighted_rate(key, batter_profile, pitcher_arsenal, baselines_by_pt)
 
         # ------------------------------------------
-        # STEP 4: MERGE PLATOON + ARSENAL
-        # Average the platoon-aware rate and the
-        # arsenal-weighted rate equally
+        # STEP 4: MERGE PLATOON + ARSENAL  (sample-size weighted)
+        # The arsenal blend is more granular than the platoon blend but
+        # noisier — at the per-pitch-type level, samples can be very thin.
+        # Previously we averaged platoon and arsenal 50/50 regardless of
+        # how much arsenal data the batter had, which meant a batter with
+        # 600 PAs of platoon data and only 18 PAs against fastballs got
+        # the noisy 18-PA arsenal signal weighted equally with the well-
+        # sampled platoon signal.
+        #
+        # The fix: weight arsenal by an "expected matchup sample size" —
+        # the pitcher-arsenal-weighted sum of batter pitch-type samples.
+        # This measures "how much do we know about this batter against
+        # THIS pitcher's pitch mix specifically" rather than blanket
+        # arsenal exposure. Arsenal weight maxes at 0.5 only when the
+        # weighted batter sample exceeds CONTACT_THRESHOLD; below that
+        # it scales linearly toward zero.
         # ------------------------------------------
+        arsenal_n_weighted = 0.0
+        if batter_profile is not None and pitcher_arsenal is not None:
+            for pt, pct in pitcher_arsenal.items():
+                if pct == 0 or pt not in batter_profile:
+                    continue
+                n_pt = batter_profile[pt].get('n', 0) or 0
+                arsenal_n_weighted += float(n_pt) * float(pct)
+        arsenal_confidence = min(arsenal_n_weighted / self.CONTACT_THRESHOLD, 1.0)
+        arsenal_weight     = 0.5 * arsenal_confidence
+
         merged = {}
         for key in ['single', 'double', 'triple', 'hr']:
-            merged[key] = (blended_rate(key) + arsenal_blended(key)) / 2.0
+            merged[key] = (blended_rate(key)  * (1.0 - arsenal_weight) +
+                           arsenal_blended(key) * arsenal_weight)
 
         # ------------------------------------------
         # STEP 4.5: RECENT FORM BLEND (if available)

@@ -41,7 +41,15 @@ from sqlalchemy.orm import sessionmaker
 # Bump this when the simulator or resolver changes in a way that meaningfully
 # shifts predictions. Lets calibration analysis segment results by version so
 # we don't mix pre- and post-change predictions in the same reliability curve.
-MODEL_VERSION = "v1"
+#
+# v1 → v2 (Tier 1 model improvements, May 2026):
+#   - Base-running model now scores R2 from 1B (~40%) and R1 from 2B (~55%)
+#   - Sac-fly RBI logic on outs with R3 and <2 outs (~35%)
+#   - Arsenal blend in resolver now sample-size weighted instead of flat 50/50
+#   These changes shift totals predictions up ~0.3-0.5 runs/game on average
+#   and rebalance player-prop probabilities; pre-cutover (v1) and post-cutover
+#   (v2) calibration data must NOT be pooled.
+MODEL_VERSION = "v2"
 
 # K thresholds we report on. Must match what's rendered in app.py so the
 # logged probability == the displayed probability (no drift between UI & DB).

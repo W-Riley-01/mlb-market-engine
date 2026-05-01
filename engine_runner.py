@@ -51,7 +51,7 @@ from resolver import MatchupResolver
 from advanced_simulator import run_advanced_monte_carlo
 from daily_scraper import fetch_todays_schedule, fetch_game_rosters
 from weather import get_game_weather, apply_weather_to_props
-from prediction_logger import log_prediction
+from prediction_logger import log_prediction, MODEL_VERSION
 
 log = logging.getLogger(__name__)
 
@@ -107,7 +107,8 @@ class SlateRunSummary:
 # ---------------------------------------------------------------------------
 #  Idempotency check
 # ---------------------------------------------------------------------------
-def _already_logged_game_ids(db_url: str, game_date: str, model_version: str = "v1") -> set[str]:
+def _already_logged_game_ids(db_url: str, game_date: str,
+                              model_version: str = MODEL_VERSION) -> set[str]:
     """
     Returns the set of game_ids that already have a prediction logged for
     this date + model version. Used to skip games we've already processed.

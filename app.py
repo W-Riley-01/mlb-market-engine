@@ -1138,58 +1138,82 @@ def _render_game_card_from_db(pred: dict) -> None:
     st.markdown('</div>', unsafe_allow_html=True)  # close .game-card
 
 
-def _render_schedule_only_fallback() -> None:
+def _render_schedule_only_card(game: dict) -> None:
     """
-    A3 morning-gap fallback. Rendered when no predictions exist for today
-    (e.g. before the 9 AM ET cron). Shows the raw schedule from MLB Stats
-    API so users see what's on the slate without an empty page.
+    Minimal game card for an entry on the slate that doesn't (yet) have a
+    logged prediction. Used both when rendering the day's full schedule
+    alongside predicted games and as the empty-state when no predictions
+    exist at all. Shows matchup, live scoreboard if the game has started,
+    or first pitch time otherwise.
     """
-    schedule = _cached_schedule()
-    if not schedule:
-        st.info(
-            "No games on today's slate, or the schedule API is temporarily "
-            "unavailable. Check back later."
-        )
-        return
-
-    st.info(
-        "Today's predictions will be available after the morning data run "
-        "(around 9 AM ET). Showing today's schedule for reference."
+    st.markdown('<div class="game-card">', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="game-title">{game.get("matchup", "")}</div>',
+        unsafe_allow_html=True,
     )
-
-    for game in schedule:
-        st.markdown('<div class="game-card">', unsafe_allow_html=True)
-        st.markdown(
-            f'<div class="game-title">{game.get("matchup", "")}</div>',
-            unsafe_allow_html=True,
-        )
-        scoreboard = render_live_scoreboard(game) if game.get("status") else ""
-        if scoreboard:
-            st.markdown(scoreboard, unsafe_allow_html=True)
-        else:
-            game_time = _to_central(game.get("game_datetime"), "%-I:%M %p %Z")
-            if game_time:
-                st.markdown(
-                    f"<div style='font-family:IBM Plex Mono,monospace; "
-                    f"font-size:11px; color:#8090a8; margin-top:6px;'>"
-                    f"first pitch: {game_time}</div>",
-                    unsafe_allow_html=True,
-                )
-        st.markdown('</div>', unsafe_allow_html=True)
+    scoreboard = render_live_scoreboard(game) if game.get("status") else ""
+    if scoreboard:
+        st.markdown(scoreboard, unsafe_allow_html=True)
+    else:
+        game_time = _to_central(game.get("game_datetime"), "%-I:%M %p %Z")
+        if game_time:
+            st.markdown(
+                f"<div style='font-family:IBM Plex Mono,monospace; "
+                f"font-size:11px; color:#8090a8; margin-top:6px;'>"
+                f"first pitch: {game_time}</div>",
+                unsafe_allow_html=True,
+            )
+    # Subtle hint that this game has no prediction yet — distinguishes
+    # a schedule-only card from a full one without being alarming.
+    st.markdown(
+        "<div style='font-family:IBM Plex Mono,monospace; font-size:9px; "
+        "color:#4a6080; margin-top:4px;'>prediction pending — check back "
+        "after the next data run</div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ==========================================
 # RENDER
 # ==========================================
-if not predictions:
-    _render_schedule_only_fallback()
-else:
+# Unified rendering loop: schedule from MLB Stats API is the master list of
+# what's on today, so every game gets a card. Games with a logged prediction
+# render the full prediction card; the rest get a minimal schedule-only card
+# so users can still see the matchup and first pitch time.
+schedule = _cached_schedule()
+predicted_by_id = {str(p["game_id"]): p for p in predictions}
+
+# Empty-state messaging — only when there's literally nothing to show, or
+# when there's a schedule but no predictions yet (morning-gap window).
+if not schedule and not predictions:
+    st.info(
+        "No games on today's slate, or the schedule API is temporarily "
+        "unavailable. Check back later."
+    )
+elif schedule and not predictions:
+    st.info(
+        "Today's predictions will be available after the morning data run "
+        "(around 9 AM ET). Showing today's schedule for reference."
+    )
+
+# Render every scheduled game. If schedule is unavailable but predictions
+# exist (rare: API blip after the cron ran), fall back to predictions order.
+if schedule:
+    for game in schedule:
+        gid = str(game.get("game_id", ""))
+        pred = predicted_by_id.get(gid)
+        if pred:
+            _render_game_card_from_db(pred)
+        else:
+            _render_schedule_only_card(game)
+elif predictions:
     for pred in predictions:
         _render_game_card_from_db(pred)
 
-    # Footer — different content from the interactive version. Shows the
-    # number of games rendered and the time range of predictions, since
-    # there's no "iterations" or "calculate button" context anymore.
+# Footer — only when we have predictions. Reports coverage (predicted / total)
+# so users can tell at a glance how complete the slate is.
+if predictions:
     pred_times = [p.get("predicted_at") for p in predictions if p.get("predicted_at")]
     if pred_times:
         try:
@@ -1203,10 +1227,12 @@ else:
     else:
         range_str = "—"
 
+    total_on_slate = len(schedule) if schedule else len(predictions)
     st.markdown(
         "<div style='font-family:IBM Plex Mono,monospace; font-size:10px; "
         "color:#2a3a50; margin-top:20px; text-align:center;'>"
-        f"SYNDICATE ENGINE · {len(predictions)} GAMES · predicted {range_str}"
+        f"SYNDICATE ENGINE · {len(predictions)}/{total_on_slate} predicted · "
+        f"latest run {range_str}"
         "</div>",
         unsafe_allow_html=True,
     )

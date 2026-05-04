@@ -107,20 +107,54 @@ def main(argv: list[str] | None = None) -> int:
 
     # Exit code logic
     # ----------------
-    # 0 = healthy. Includes empty slates and runs where everything already
-    #     started (so log_predictions sim'd but didn't write — that's
-    #     correct behavior, not a failure).
-    # 1 = real problem. We did work and got nothing out of it: either every
-    #     log attempt failed, or every game errored in simulation.
+    # 0 = healthy. Includes:
+    #     - empty slates (no games today)
+    #     - all games still awaiting lineups (normal morning cron)
+    #     - mostly-still-awaiting-lineups runs where ≥1 game errored
+    #       (real-world: 14/15 games no-lineups + 1 sim error from a
+    #       half-posted lineup hitting the cron mid-update)
+    # 1 = real problem. The slate had material work to do and got
+    #     nothing out of it: most games had lineups but everything we
+    #     attempted failed.
     if summary.total_games == 0:
         log.info("Empty slate — nothing to do.")
         return 0
     if summary.simulated == 0 and summary.skipped_no_lineups == summary.total_games:
         log.info("All games still awaiting lineups — will retry on next cron tick.")
         return 0
-    if summary.logged == 0 and (summary.log_failures > 0 or summary.failed_game_ids):
-        log.error("Logged 0 games but had failures. Treating as error.")
+
+    # Distinguish "couldn't sim because no lineups posted yet" from
+    # "tried to sim, everything broke." The morning-gap case is normal
+    # and shouldn't page us. The mass-failure case is a real bug.
+    #
+    # Threshold: only treat as exit 1 if ≥ 3 games had lineups AND every
+    # single one failed. With a single isolated failure (e.g. a half-
+    # posted lineup hitting the cron mid-update), the next cron tick
+    # will retry; alerting on it would be noise. Three failures in a
+    # row implies a systemic problem (resolver broken, DB down, etc.).
+    games_with_lineups = summary.total_games - summary.skipped_no_lineups
+    games_failed       = len(summary.failed_game_ids) + summary.log_failures
+    MASS_FAILURE_THRESHOLD = 3
+    if (games_with_lineups >= MASS_FAILURE_THRESHOLD
+            and summary.logged == 0
+            and games_failed >= games_with_lineups):
+        log.error(
+            "All %d game(s) with lineups failed to log. Treating as error.",
+            games_with_lineups,
+        )
         return 1
+
+    # If we got here, at least some games either logged successfully or
+    # are still legitimately waiting for lineups. Individual sim errors
+    # on a mostly-pending slate are noise, not a cron-level failure —
+    # they're already captured in summary.failed_game_ids and visible in
+    # the run log. The next cron tick will retry them.
+    if games_failed > 0:
+        log.warning(
+            "Completed with %d game-level failure(s) but slate made progress "
+            "(logged=%d, awaiting_lineups=%d). Exiting 0.",
+            games_failed, summary.logged, summary.skipped_no_lineups,
+        )
     return 0
 
 

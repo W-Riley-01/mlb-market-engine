@@ -218,10 +218,23 @@ def run_slate(
         run.weather = _safe_get_weather(game)
 
         # 3c. Rosters / lineups
+        # The simulator's AdvancedSimulatedGame indexes lineup[0..8], so
+        # both sides need at least 9 batters in `lineup_details`. Earlier
+        # versions only checked the away `lineup` field — but the sim
+        # consumes `lineup_details`, and only validated one side. A real-
+        # world half-posted slate (away lineup up, home lineup partial)
+        # crashed game 822987 with IndexError on 2026-05-03. This stricter
+        # gate guarantees we never feed a malformed roster to the sim.
         rosters = fetch_game_rosters(game_id)
-        if not rosters or not rosters.get("Away", {}).get("lineup"):
+        away_lu = (rosters or {}).get("Away", {}).get("lineup_details") or []
+        home_lu = (rosters or {}).get("Home", {}).get("lineup_details") or []
+        if not rosters or len(away_lu) < 9 or len(home_lu) < 9:
             run.skipped_reason = "no_lineups"
             summary.skipped_no_lineups += 1
+            log.info(
+                "Skipping game_id=%s: insufficient lineups (away=%d, home=%d)",
+                game_id, len(away_lu), len(home_lu),
+            )
             _safe_callback(on_game_complete, run, i, summary.total_games)
             continue
 

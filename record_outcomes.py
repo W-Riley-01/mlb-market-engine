@@ -398,9 +398,23 @@ def fetch_unresolved_predictions(
         params["dates"] = target_dates
 
     if retry_pending:
+        # Broaden "unresolved" to include games whose game_outcome is final
+        # but whose player_outcomes have non-final rows stuck underneath.
+        # Without the EXISTS clause, --retry-pending only catches game-level
+        # state and skips the case where the 23:00 UTC pass wrote pending
+        # player rows for an in-flight evening game and a later pass
+        # refreshed the game outcome but left the player rows orphaned.
+        # See diagnostic_player_outcomes.py (2026-05-27).
         outcome_filter = """
             (go.id IS NULL
-             OR go.status IN ('pending', 'postponed', 'suspended'))
+             OR go.status IN ('pending', 'postponed', 'suspended')
+             OR EXISTS (
+                 SELECT 1
+                 FROM player_predictions ppe
+                 LEFT JOIN player_outcomes poe ON poe.player_prediction_id = ppe.id
+                 WHERE ppe.game_prediction_id = gp.id
+                   AND (poe.id IS NULL OR poe.status <> 'final')
+             ))
         """
     else:
         outcome_filter = "go.id IS NULL"
@@ -420,13 +434,21 @@ def fetch_unresolved_predictions(
 
 
 def fetch_player_predictions_for_game(engine: Engine, game_prediction_id: int) -> list[dict]:
+    # Returns player_predictions that still need an outcome row written or
+    # refreshed. The relaxed filter (po.id IS NULL OR po.status <> 'final')
+    # also picks up player rows currently stuck at 'pending', 'postponed',
+    # 'suspended', or 'cancelled'. The original `po.id IS NULL` filter
+    # excluded them, which left orphaned pending rows for every evening
+    # game first touched by the in-progress 23:00 UTC record_outcomes pass.
+    # upsert_player_outcomes' ON CONFLICT clause handles the refresh
+    # idempotently. See diagnostic_player_outcomes.py (2026-05-27).
     sql = """
         SELECT pp.id, pp.game_id, pp.game_date,
                pp.player_id, pp.player_name, pp.side
         FROM player_predictions pp
         LEFT JOIN player_outcomes po ON po.player_prediction_id = pp.id
         WHERE pp.game_prediction_id = :gpid
-          AND po.id IS NULL
+          AND (po.id IS NULL OR po.status <> 'final')
     """
     with engine.connect() as conn:
         result = conn.execute(text(sql), {"gpid": game_prediction_id})

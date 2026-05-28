@@ -21,18 +21,26 @@ name: Record MLB outcomes
 
 on:
   # Manual trigger button in the Actions tab — use this for first-time
-  # testing and for backfilling a specific date.
+  # testing and for backfilling a specific date or date range.
   workflow_dispatch:
     inputs:
       date:
-        description: "Single date YYYY-MM-DD (leave blank for yesterday)"
+        description: "Single date YYYY-MM-DD (overrides start/end if set)"
+        required: false
+        type: string
+      start_date:
+        description: "Backfill range start YYYY-MM-DD (use with end_date)"
+        required: false
+        type: string
+      end_date:
+        description: "Backfill range end YYYY-MM-DD (use with start_date)"
         required: false
         type: string
       retry_pending:
-        description: "Re-fetch pending/postponed games"
+        description: "Re-fetch pending/postponed/stuck-player rows (recommended on for manual runs)"
         required: false
         type: boolean
-        default: false
+        default: true
 
   # Scheduled runs — UTC.
   #   13:00 UTC = 8:00 AM CT (early morning pass for last night's games)
@@ -46,7 +54,7 @@ jobs:
   record:
     name: Resolve outcomes
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     steps:
       - name: Check out repo
@@ -63,6 +71,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests sqlalchemy psycopg2-binary
 
+      # ----- Manual: single date (date input takes precedence over range) -----
       - name: Run outcome recorder (manual / single date)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.date != '' }}
         env:
@@ -71,20 +80,38 @@ jobs:
           python record_outcomes.py --date "${{ inputs.date }}" \
             ${{ inputs.retry_pending && '--retry-pending' || '' }}
 
+      # ----- Manual: explicit date range (backfill use case) -----
+      - name: Run outcome recorder (manual / date range)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.date == '' && inputs.start_date != '' && inputs.end_date != '' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python record_outcomes.py \
+            --start "${{ inputs.start_date }}" \
+            --end "${{ inputs.end_date }}" \
+            ${{ inputs.retry_pending && '--retry-pending' || '' }}
+
+      # ----- Manual: no date provided → defaults to yesterday -----
       - name: Run outcome recorder (manual / yesterday)
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.date == '' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.date == '' && inputs.start_date == '' && inputs.end_date == '' }}
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           python record_outcomes.py \
             ${{ inputs.retry_pending && '--retry-pending' || '' }}
 
+      # ----- Scheduled: morning pass for yesterday's finals + any
+      #       stuck-pending rows from the previous night's afternoon pass.
+      #       --retry-pending is required for the cron to be self-healing:
+      #       without it, evening games that the 23:00 UTC pass wrote as
+      #       pending will never transition to final.
       - name: Run outcome recorder (morning pass — yesterday's finals)
         if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 13 * * *' }}
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: python record_outcomes.py
+        run: python record_outcomes.py --retry-pending
 
+      # ----- Scheduled: afternoon retry pass -----
       - name: Run outcome recorder (afternoon retry — pending + today)
         if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 23 * * *' }}
         env:

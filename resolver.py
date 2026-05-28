@@ -19,10 +19,21 @@ class MatchupResolver:
 
         self.fastballs = ['FF', 'SI', 'FC']
 
-        # League averages — used as the regression anchor for all players
+        # League averages — used as the regression anchor for all players AND
+        # as the log5 baseline for K/BB matchup resolution.
+        #
+        # k_rate / bb_rate are computed per-PA (terminal events) and match the
+        # pitch_matrix-wide rates: 2019-2025 K=0.235, BB=0.084. These were
+        # previously 0.222 / 0.082, which was ~1.3pts low on K and pulled every
+        # thin-sample pitcher slightly toward too few strikeouts. The contact
+        # rates (single..hr) are per-batted-ball, matching contact_matrix_env.
+        #
+        # NOTE: the K/BB league baseline also feeds the log5 odds-ratio in
+        # _log5(). If you refresh these from a newer season, the matchup
+        # resolution baseline updates automatically.
         self.league_avg = {
-            'k_rate':  0.222,
-            'bb_rate': 0.082,
+            'k_rate':  0.235,
+            'bb_rate': 0.084,
             'single':  0.150,
             'double':  0.047,
             'triple':  0.004,
@@ -84,6 +95,69 @@ class MatchupResolver:
     def _blend(player_val: float, league_val: float, sample_n: int, threshold: int) -> float:
         weight = min(sample_n / threshold, 1.0)
         return (player_val * weight) + (league_val * (1.0 - weight))
+
+    # ==========================================
+    # UTILITY: LOG5 (odds-ratio matchup resolution)
+    # Combines a pitcher rate and a batter rate against the league
+    # baseline so the matchup outcome reflects BOTH parties, not just
+    # the pitcher. This is the core fix for K/BB over-confidence: an
+    # elite-K pitcher facing a contact hitter no longer gets the
+    # pitcher's flat rate — it pulls toward a blended expectation.
+    #
+    #   p_matchup = (P*B/L) / [ (P*B/L) + (1-P)(1-B)/(1-L) ]
+    #
+    # Sanity properties:
+    #   - batter == league  -> returns the pitcher rate unchanged
+    #   - pitcher == league  -> returns the batter rate unchanged
+    #   - both == league     -> returns league
+    #   - both extreme high  -> superadditive (more than either alone)
+    # ==========================================
+    @staticmethod
+    def _log5(p_pitcher: float, p_batter: float, p_league: float) -> float:
+        # Guard against degenerate league baseline or rates at the 0/1 rails,
+        # which would divide by zero or blow up the odds ratio.
+        eps = 1e-6
+        L = min(max(p_league, eps), 1.0 - eps)
+        P = min(max(p_pitcher, eps), 1.0 - eps)
+        B = min(max(p_batter, eps), 1.0 - eps)
+        num = (P * B) / L
+        den = num + ((1.0 - P) * (1.0 - B)) / (1.0 - L)
+        if den <= 0:
+            return p_pitcher
+        return num / den
+
+    # ==========================================
+    # UTILITY: BATTER K / BB RATE (from the PQM)
+    # The contact matrix (cqm) is batted-ball-only and has no strikeout
+    # or walk events, so the batter's plate-discipline rates must come
+    # from the pitch matrix, computed exactly the way the pitcher's are
+    # (terminal-event PA denominator, regression-to-mean toward league).
+    # This keeps the two sides of the log5 symmetric.
+    #
+    # Returns (k_rate, bb_rate, terminal_pa). On a thin sample the rates
+    # are regressed toward league average using the same PITCHER_THRESHOLD
+    # machinery; on essentially no data they return league average.
+    # ==========================================
+    def _batter_k_bb_rate(self, batter_id: int, as_of_date: str = None) -> tuple:
+        b_data = self.pqm[self.pqm['batter'] == batter_id]
+        if as_of_date is not None and 'game_date' in b_data.columns and len(b_data) > 0:
+            cutoff = pd.Timestamp(as_of_date)
+            b_data = b_data[b_data['game_date'] < cutoff]
+
+        terminal_pa = self._count_terminal_pa(b_data)
+        if terminal_pa < self.PITCHER_THRESHOLD:
+            # Not enough to trust; lean on league average. We still return a
+            # partial blend rather than the flat league value so a batter with,
+            # say, 120 PA still contributes some signal.
+            if terminal_pa == 0:
+                return self.league_avg['k_rate'], self.league_avg['bb_rate'], 0
+
+        ev = b_data['events'].value_counts()
+        raw_k  = ev.get('strikeout', 0) / terminal_pa
+        raw_bb = (ev.get('walk', 0) + ev.get('intent_walk', 0)) / terminal_pa
+        k_rate  = self._blend(raw_k,  self.league_avg['k_rate'],  terminal_pa, self.PITCHER_THRESHOLD)
+        bb_rate = self._blend(raw_bb, self.league_avg['bb_rate'], terminal_pa, self.PITCHER_THRESHOLD)
+        return k_rate, bb_rate, int(terminal_pa)
 
     # ==========================================
     # UTILITY: TERMINAL EVENT PA COUNTER
@@ -310,14 +384,34 @@ class MatchupResolver:
                     k_rate  = (1.0 - w) * k_rate  + w * fi['k_rate_1st']
                     bb_rate = (1.0 - w) * bb_rate + w * fi['bb_rate_1st']
 
-            # Hard caps — no pitcher walks 25% or strikes out 45%
-            k_rate  = min(k_rate,  0.40)
-            bb_rate = min(bb_rate, 0.20)
-
             fb_count = p_data['pitch_type'].isin(self.fastballs).sum()
             fb_pct   = fb_count / max(len(p_data), 1)
 
         os_pct = 1.0 - fb_pct
+
+        # ------------------------------------------
+        # STEP 1.5: LOG5 MATCHUP RESOLUTION FOR K / BB
+        # The pitcher rates above describe the pitcher in a vacuum. Resolve
+        # them against THIS batter's plate discipline so the strikeout and
+        # walk probabilities reflect the actual 1v1 confrontation. An elite-K
+        # pitcher facing a contact hitter gets pulled down; facing a whiff-
+        # prone hitter, pushed up. This applies in BOTH the high-sample and
+        # low-sample pitcher branches above — even a thin-sample pitcher
+        # (league-average rates) gets correctly differentiated by opponent.
+        #
+        # Batter rates come from the PQM (cqm has no K/BB events) with the
+        # same regression-to-mean as the pitcher side, so a thin-sample
+        # batter doesn't inject its own overconfidence.
+        # ------------------------------------------
+        b_k_rate, b_bb_rate, _b_pa = self._batter_k_bb_rate(batter_id, as_of_date=as_of_date)
+        k_rate  = self._log5(k_rate,  b_k_rate,  self.league_avg['k_rate'])
+        bb_rate = self._log5(bb_rate, b_bb_rate, self.league_avg['bb_rate'])
+
+        # Hard caps — applied AFTER log5 since the odds-ratio can push an
+        # extreme-vs-extreme matchup past these bounds. No pitcher-batter
+        # pairing realistically sustains a 45% K or 25% BB rate over a game.
+        k_rate  = min(k_rate,  0.45)
+        bb_rate = min(bb_rate, 0.22)
 
         # ------------------------------------------
         # STEP 2: BATTER PROFILE (Platoon-aware)
@@ -527,6 +621,15 @@ class MatchupResolver:
             # No bullpen data — use league avg with a slight K boost (relievers K more)
             k_rate  = self.league_avg['k_rate'] * 1.05
             bb_rate = self.league_avg['bb_rate']
+
+        # Log5 matchup resolution: resolve the aggregate bullpen K/BB against
+        # THIS batter's plate discipline, same as the starter card. Without
+        # this, every batter would face the same flat bullpen K rate.
+        b_k_rate, b_bb_rate, _ = self._batter_k_bb_rate(batter_id, as_of_date=as_of_date)
+        k_rate  = self._log5(k_rate,  b_k_rate,  self.league_avg['k_rate'])
+        bb_rate = self._log5(bb_rate, b_bb_rate, self.league_avg['bb_rate'])
+        k_rate  = min(k_rate,  0.45)
+        bb_rate = min(bb_rate, 0.22)
 
         # Batter contact profile vs. bullpen (use overall, no platoon split needed here)
         b_data = self.cqm[self.cqm['batter'] == batter_id]

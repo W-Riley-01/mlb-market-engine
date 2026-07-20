@@ -94,18 +94,56 @@ class AdvancedSimulatedGame:
             self.home_box_score[batter_index]['RBI'] += 1
 
     def attempt_steal(self, runner_index, box):
-        """Temporary baseline steal logic. Uses 6% average attempt/success rate."""
-        # Only steal if 2nd base is open
-        if self.bases[1] is None and np.random.rand() < 0.06:
-            self.bases[1] = runner_index
-            self.bases[0] = None
-            box[runner_index]['SB'] += 1
+        """Steal of second base, with realistic attempt and success rates.
+
+        Interim model (v3): a flat per-opportunity attempt rate with a
+        proper success/failure split. This is NOT yet runner-specific —
+        every runner uses the same propensity — which is a known
+        limitation (audit Finding #3). A future revision should key the
+        attempt rate on the batter's own SB history via a steal-propensity
+        input similar to the arsenal profile.
+
+        Fixes versus the old logic:
+          - Old: 6% attempt that ALWAYS succeeded, no caught-stealing.
+            That overstated SB (no downside) and never removed a runner.
+          - New: ~9% attempt per opportunity, 79% success (league post
+            pitch-clock + bigger bases). On a caught steal the runner is
+            removed and an out is recorded.
+
+        Attempt rate is per-PA-with-R1-and-2B-open. Calibrated so that
+        league-average baserunning yields ~0.7 SB + ~0.2 CS per team-game.
+        """
+        ATTEMPT_RATE = 0.09
+        SUCCESS_RATE = 0.79
+        if self.bases[1] is None and np.random.rand() < ATTEMPT_RATE:
+            if np.random.rand() < SUCCESS_RATE:
+                # Successful steal of second
+                self.bases[1] = runner_index
+                self.bases[0] = None
+                box[runner_index]['SB'] += 1
+            else:
+                # Caught stealing: runner erased, out recorded. We do NOT
+                # call reset_inning here — the single `outs >= 3` check at
+                # the end of process_event handles inning transitions, so
+                # resetting here too would advance the inning twice.
+                self.bases[0] = None
+                self.outs += 1
 
     def process_event(self, event: str, batter_index: int):
         box = self.away_box_score if self.top_of_inning else self.home_box_score
 
-        # Pitch Count Estimation
-        pitch_increment = np.random.choice([3, 4, 5, 6], p=[0.3, 0.4, 0.2, 0.1])
+        # Pitch Count Estimation. Distribution matches the real pitch-matrix
+        # pitches-per-PA shape (mean ~3.90, with a meaningful short-PA tail:
+        # ~11% of PAs end on 1 pitch, ~15% on 2). The old [3,4,5,6] model
+        # averaged 4.10 and ignored the short tail entirely, which made
+        # starters accumulate pitch count too fast and get pulled a batter or
+        # two early — biasing total Ks and bullpen exposure. Pitch count
+        # drives the >85 pull threshold in check_pitching_changes, so this
+        # shape matters for how deep starters go.
+        pitch_increment = np.random.choice(
+            [1, 2, 3, 4, 5, 6, 7],
+            p=[0.11, 0.15, 0.18, 0.19, 0.17, 0.12, 0.08],
+        )
         if self.top_of_inning:
             self.home_pitch_count += pitch_increment
         else:

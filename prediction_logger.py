@@ -49,7 +49,7 @@ from sqlalchemy.orm import sessionmaker
 #   These changes shift totals predictions up ~0.3-0.5 runs/game on average
 #   and rebalance player-prop probabilities; pre-cutover (v1) and post-cutover
 #   (v2) calibration data must NOT be pooled.
-MODEL_VERSION = "v2"
+MODEL_VERSION = "v3"
 
 # K thresholds we report on. Must match what's rendered in app.py so the
 # logged probability == the displayed probability (no drift between UI & DB).

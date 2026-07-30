@@ -2,18 +2,20 @@
 bootstrap_data.py
 -----------------
 Ensures large data files are present locally, downloading them from
-GitHub Releases if missing. Run this at startup before any code that
-touches the engine matrices.
+S3 if missing. Run this at startup before any code that touches the
+engine matrices.
 
 Why this exists
 ---------------
-pitch_matrix.parquet is ~120MB — too large to commit to the Git repo
-(GitHub's hard limit is 100MB per file). Hosting it as a GitHub Release
-asset gives us a free CDN with no bandwidth limits.
+Several of these parquet files are too large to comfortably commit to
+the Git repo (pitch_matrix.parquet alone is ~120MB, well past GitHub's
+100MB hard limit). Hosting them in S3 gives us a single, versioned
+source of truth for all engine data files, with lifecycle rules
+(Standard-IA at 30 days, Glacier at 90) keeping storage costs down.
 
 Usage
 -----
-    # As a script (idempotent — only downloads if missing)
+    # As a script (idempotent — only downloads what's missing)
     python bootstrap_data.py
 
     # As a module
@@ -22,52 +24,63 @@ Usage
 
 Authentication
 --------------
-For PRIVATE repos, you must set GITHUB_TOKEN as an env var (already
-available inside GitHub Actions runners; for Streamlit Cloud you'll
-add it as a secret). For PUBLIC repos no token is needed.
+Uses standard boto3 credential resolution — AWS CLI config, environment
+variables (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY), or an IAM role
+if running on EC2/Actions with one attached. No credentials are
+hardcoded here.
 
 Configuration
 -------------
-The release tag and asset list live in DATA_FILES below. To roll a new
-matrix version, you'll bump the release tag (e.g., data-v2) and update
-this file. See README_data_releases.md for the full upload workflow.
+The bucket and prefix live in the constants below. DATA_FILES lists
+every parquet file the engine may need locally. Add new entries here
+as new files are uploaded to S3.
 """
 
 from __future__ import annotations
 
-import os
 import sys
 import logging
 from pathlib import Path
 from typing import NamedTuple
 
-import requests
+import boto3
+from botocore.exceptions import ClientError
 
 # ---------------------------------------------------------------------------
 #  Configuration
 # ---------------------------------------------------------------------------
-# Update these to match YOUR repo:
-GITHUB_OWNER = "W-Riley-01"          # e.g., "wrileyjr"
-GITHUB_REPO  = "mlb-market-engine"      # the repo name
-RELEASE_TAG  = "data-v1"                # bump when you upload new matrices
+S3_BUCKET = "mlb-engine-data-4462"
+S3_PREFIX = "parquet/"   # all data files live under this prefix in the bucket
 
 # Where to place files locally (relative to repo root)
 DATA_DIR = Path("data")
 
+# Default sanity-check floor for files where we haven't set a specific
+# threshold below — just enough to catch a zero-byte / truncated download.
+DEFAULT_MIN_BYTES = 1_024
+
 
 class DataFile(NamedTuple):
-    """One large data file to fetch."""
-    asset_name: str   # filename of the asset attached to the GitHub Release
-    local_path: Path  # where to write it locally
-    min_bytes: int    # sanity check — abort if download is suspiciously tiny
+    """One data file to fetch from S3."""
+    s3_key: str        # key under S3_PREFIX, e.g. "pitch_matrix.parquet"
+    local_path: Path   # where to write it locally
+    min_bytes: int      # sanity check — abort if download is suspiciously small
 
 
 DATA_FILES = [
-    DataFile(
-        asset_name="pitch_matrix.parquet",
-        local_path=DATA_DIR / "pitch_matrix.parquet",
-        min_bytes=50_000_000,   # full file is ~120MB; abort if <50MB
-    ),
+    DataFile("batter_arsenal_profiles.parquet",     DATA_DIR / "batter_arsenal_profiles.parquet",     DEFAULT_MIN_BYTES),
+    DataFile("contact_matrix.parquet",               DATA_DIR / "contact_matrix.parquet",               DEFAULT_MIN_BYTES),
+    DataFile("contact_matrix_env.parquet",           DATA_DIR / "contact_matrix_env.parquet",           DEFAULT_MIN_BYTES),
+    DataFile("early_inning_tracker.parquet",         DATA_DIR / "early_inning_tracker.parquet",         DEFAULT_MIN_BYTES),
+    DataFile("game_metadata.parquet",                DATA_DIR / "game_metadata.parquet",                DEFAULT_MIN_BYTES),
+    DataFile("game_weather_log.parquet",             DATA_DIR / "game_weather_log.parquet",             DEFAULT_MIN_BYTES),
+    DataFile("master_physics_vault.parquet",         DATA_DIR / "master_physics_vault.parquet",         DEFAULT_MIN_BYTES),
+    DataFile("pitch_matrix.parquet",                 DATA_DIR / "pitch_matrix.parquet",                 50_000_000),  # ~120MB full file
+    DataFile("pitch_type_baselines.parquet",         DATA_DIR / "pitch_type_baselines.parquet",         DEFAULT_MIN_BYTES),
+    DataFile("pitcher_early_inning_record.parquet",  DATA_DIR / "pitcher_early_inning_record.parquet",  DEFAULT_MIN_BYTES),
+    DataFile("recent_form_hitters.parquet",          DATA_DIR / "recent_form_hitters.parquet",          DEFAULT_MIN_BYTES),
+    DataFile("recent_form_pitchers.parquet",         DATA_DIR / "recent_form_pitchers.parquet",         DEFAULT_MIN_BYTES),
+    DataFile("xwoba_lookup.parquet",                 DATA_DIR / "xwoba_lookup.parquet",                 DEFAULT_MIN_BYTES),
 ]
 
 
@@ -83,81 +96,35 @@ log = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-#  GitHub Releases API
+#  S3 download
 # ---------------------------------------------------------------------------
-def _auth_headers() -> dict:
+def _s3_client():
+    return boto3.client("s3")
+
+
+def _download_from_s3(s3, s3_key: str, dest: Path) -> None:
     """
-    Build request headers. GITHUB_TOKEN is required for private repos.
-    On Streamlit Cloud, it should be added as a secret. On Actions,
-    GITHUB_TOKEN is provided automatically by the runner.
-    """
-    headers = {"Accept": "application/vnd.github+json"}
-    token = os.environ.get("GITHUB_TOKEN")
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
-    return headers
-
-
-def _fetch_release_metadata() -> dict:
-    """
-    Pull the release info from GitHub's API. Returns the parsed JSON,
-    which includes an `assets` list with download URLs.
-    """
-    url = (f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}"
-           f"/releases/tags/{RELEASE_TAG}")
-    log.info("Fetching release metadata from %s", url)
-    resp = requests.get(url, headers=_auth_headers(), timeout=30)
-    if resp.status_code == 404:
-        raise RuntimeError(
-            f"Release {RELEASE_TAG!r} not found in {GITHUB_OWNER}/{GITHUB_REPO}. "
-            f"Did you create it on GitHub and attach the parquet?"
-        )
-    if resp.status_code == 401:
-        raise RuntimeError(
-            "GitHub authentication failed. For private repos, set "
-            "GITHUB_TOKEN env var with a token that has 'repo' scope."
-        )
-    resp.raise_for_status()
-    return resp.json()
-
-
-def _find_asset(release: dict, asset_name: str) -> dict | None:
-    for asset in release.get("assets", []):
-        if asset["name"] == asset_name:
-            return asset
-    return None
-
-
-def _download_asset(asset: dict, dest: Path) -> None:
-    """
-    Stream the asset to disk. Uses the API endpoint with the Accept header
-    'application/octet-stream' to get the actual binary instead of JSON.
-    Streaming chunks avoids loading 100+ MB into memory.
+    Download one object from S3 to a local path, streaming to disk.
     """
     dest.parent.mkdir(parents=True, exist_ok=True)
-    headers = _auth_headers()
-    headers["Accept"] = "application/octet-stream"
+    full_key = f"{S3_PREFIX}{s3_key}"
 
-    url = asset["url"]   # API URL, not browser_download_url — works for private repos
-    log.info("Downloading %s (%.1f MB) → %s",
-             asset["name"], asset["size"] / 1e6, dest)
-
-    with requests.get(url, headers=headers, stream=True, timeout=300) as resp:
-        resp.raise_for_status()
-        total = int(resp.headers.get("Content-Length") or asset["size"])
-        downloaded = 0
-        last_pct = -10
-        with dest.open("wb") as f:
-            for chunk in resp.iter_content(chunk_size=1024 * 1024):  # 1MB chunks
-                if not chunk:
-                    continue
-                f.write(chunk)
-                downloaded += len(chunk)
-                pct = int(downloaded * 100 / total) if total else 0
-                if pct >= last_pct + 10:
-                    log.info("  ... %d%% (%.1f / %.1f MB)",
-                             pct, downloaded / 1e6, total / 1e6)
-                    last_pct = pct
+    log.info("Downloading s3://%s/%s → %s", S3_BUCKET, full_key, dest)
+    try:
+        s3.download_file(S3_BUCKET, full_key, str(dest))
+    except ClientError as e:
+        code = e.response.get("Error", {}).get("Code", "")
+        if code in ("404", "NoSuchKey"):
+            raise RuntimeError(
+                f"Object {full_key!r} not found in bucket {S3_BUCKET!r}. "
+                f"Did you upload it under the '{S3_PREFIX}' prefix?"
+            ) from e
+        if code in ("403", "AccessDenied"):
+            raise RuntimeError(
+                f"Access denied fetching {full_key!r} from {S3_BUCKET!r}. "
+                f"Check your AWS credentials / IAM permissions."
+            ) from e
+        raise
 
     log.info("Downloaded %s OK (%.1f MB)", dest.name, dest.stat().st_size / 1e6)
 
@@ -168,7 +135,7 @@ def _download_asset(asset: dict, dest: Path) -> None:
 def ensure_data_files(force: bool = False) -> None:
     """
     Make sure every file in DATA_FILES is present locally. Downloads
-    missing ones from the GitHub Release.
+    missing ones from S3.
 
     Parameters
     ----------
@@ -199,22 +166,16 @@ def ensure_data_files(force: bool = False) -> None:
         return
 
     log.info("Need to fetch %d file(s)", len(missing))
-    release = _fetch_release_metadata()
+    s3 = _s3_client()
 
     for df in missing:
-        asset = _find_asset(release, df.asset_name)
-        if asset is None:
-            raise RuntimeError(
-                f"Asset {df.asset_name!r} not found in release {RELEASE_TAG!r}. "
-                f"Did you attach it to the release on GitHub?"
-            )
-        _download_asset(asset, df.local_path)
+        _download_from_s3(s3, df.s3_key, df.local_path)
 
         size = df.local_path.stat().st_size
         if size < df.min_bytes:
             df.local_path.unlink()  # remove the bad file
             raise RuntimeError(
-                f"Downloaded {df.asset_name} is only {size/1e6:.1f}MB "
+                f"Downloaded {df.s3_key} is only {size/1e6:.1f}MB "
                 f"(expected ≥{df.min_bytes/1e6:.1f}MB). Aborting."
             )
 

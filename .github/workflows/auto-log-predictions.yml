@@ -18,8 +18,11 @@
 #
 #  Setup checklist (done once per repo, same as record-outcomes.yml):
 #    1. DATABASE_URL secret already exists from the outcomes workflow.
-#    2. GITHUB_TOKEN is provided automatically by Actions runners; bootstrap_data
-#       uses it to authenticate the parquet download from the data-v1 release.
+#    2. AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY secrets must be set —
+#       these belong to a least-privilege IAM user scoped to read-only
+#       access on the mlb-engine-data-4462 S3 bucket. bootstrap_data.py
+#       uses them (via boto3) to download all engine parquet files from
+#       S3 under the parquet/ prefix.
 #    3. Push this file to .github/workflows/auto-log-predictions.yml.
 #    4. Click "Run workflow" once manually to verify before relying on cron.
 # =============================================================================
@@ -75,6 +78,7 @@ jobs:
         # streamlit is included because prediction_logger imports it at
         # the top level; the runtime falls back to raw SQLAlchemy via the
         # _running_under_streamlit() detector when there's no script context.
+        # boto3 is required by bootstrap_data.py to pull parquet files from S3.
         run: |
           python -m pip install --upgrade pip
           pip install \
@@ -84,13 +88,16 @@ jobs:
             numpy \
             pandas \
             pyarrow \
-            streamlit
+            streamlit \
+            boto3
 
-      - name: Bootstrap data files (downloads pitch_matrix.parquet)
+      - name: Bootstrap data files (downloads parquet files from S3)
         # Done as a separate step so failures here surface clearly in the
         # Actions log instead of being buried inside the slate run.
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
         run: python bootstrap_data.py
 
       - name: Run prediction logger (manual)

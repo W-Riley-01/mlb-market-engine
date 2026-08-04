@@ -1,8 +1,9 @@
 # =============================================================================
 #  Auto-log predictions
 # =============================================================================
-#  Runs auto_log_predictions.py 3x per day to populate Supabase with Monte
-#  Carlo predictions for every pre-first-pitch game on today's MLB slate.
+#  Runs auto_log_predictions.py 3x per day to populate RDS PostgreSQL with
+#  Monte Carlo predictions for every pre-first-pitch game on today's MLB
+#  slate.
 #
 #  Each run re-simulates and re-logs every pre-first-pitch game. The upsert
 #  in prediction_logger.log_prediction (delete-then-insert keyed on
@@ -17,12 +18,15 @@
 #  over by then so it doesn't matter for this year.
 #
 #  Setup checklist (done once per repo, same as record-outcomes.yml):
-#    1. DATABASE_URL secret already exists from the outcomes workflow.
-#    2. AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY secrets must be set —
-#       these belong to a least-privilege IAM user scoped to read-only
-#       access on the mlb-engine-data-4462 S3 bucket. bootstrap_data.py
-#       uses them (via boto3) to download all engine parquet files from
-#       S3 under the parquet/ prefix.
+#    1. AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY secrets must be set —
+#       these belong to a least-privilege IAM user (github-actions-mlb-engine)
+#       scoped to: read-only S3 access on mlb-engine-data-4462 (for
+#       bootstrap_data.py's parquet downloads), and secretsmanager:GetSecretValue
+#       on the RDS master credentials secret (for prediction_logger.py's
+#       and record_outcomes.py's DB connections). No DATABASE_URL secret
+#       is needed anymore — both scripts fetch RDS credentials live from
+#       Secrets Manager.
+#    2. GITHUB_TOKEN is provided automatically by Actions runners.
 #    3. Push this file to .github/workflows/auto-log-predictions.yml.
 #    4. Click "Run workflow" once manually to verify before relying on cron.
 # =============================================================================
@@ -62,6 +66,15 @@ jobs:
     timeout-minutes: 25       # Loose: ~3-5 min typical, 25 leaves headroom
                               # for parquet download + 5000-iter slate of 15+ games
 
+    # Job-level AWS credentials — used by bootstrap_data.py (S3) and by
+    # prediction_logger.py's headless path (Secrets Manager, via
+    # auto_log_predictions.py). Scoped tightly in IAM to only these two
+    # actions; see mlb-engine-bootstrap-readonly policy.
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
+
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -78,7 +91,8 @@ jobs:
         # streamlit is included because prediction_logger imports it at
         # the top level; the runtime falls back to raw SQLAlchemy via the
         # _running_under_streamlit() detector when there's no script context.
-        # boto3 is required by bootstrap_data.py to pull parquet files from S3.
+        # boto3 is required by both bootstrap_data.py (S3) and
+        # prediction_logger.py (Secrets Manager).
         run: |
           python -m pip install --upgrade pip
           pip install \
@@ -94,16 +108,11 @@ jobs:
       - name: Bootstrap data files (downloads parquet files from S3)
         # Done as a separate step so failures here surface clearly in the
         # Actions log instead of being buried inside the slate run.
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
         run: python bootstrap_data.py
 
       - name: Run prediction logger (manual)
         if: ${{ github.event_name == 'workflow_dispatch' }}
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python auto_log_predictions.py \
@@ -113,20 +122,17 @@ jobs:
       - name: Run prediction logger (morning pass)
         if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 13 * * *' }}
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python auto_log_predictions.py
 
       - name: Run prediction logger (afternoon pass)
         if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 18 * * *' }}
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python auto_log_predictions.py
 
       - name: Run prediction logger (pre-first-pitch pass)
         if: ${{ github.event_name == 'schedule' && github.event.schedule == '30 21 * * *' }}
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python auto_log_predictions.py

@@ -22,24 +22,32 @@ a 15-game slate at 5000 iterations runs in a few minutes on Actions.
 
 Environment
 -----------
-    DATABASE_URL  Required. Same Supabase URL as record_outcomes.py.
-    GITHUB_TOKEN  Required for private repo (provided automatically in
-                  GitHub Actions; set manually for local testing).
+    RDS_SECRET_ARN  Optional. Overrides the default Secrets Manager ARN
+                    holding the RDS master credentials. Not sensitive
+                    itself — it's an identifier, not a credential.
+    DATABASE_URL    Optional override. If set, used directly instead of
+                    fetching from Secrets Manager — useful for local
+                    testing against a different database.
+    GITHUB_TOKEN    Required for private repo (provided automatically in
+                    GitHub Actions; set manually for local testing).
 
 Exit codes
 ----------
     0   Slate processed successfully (or empty slate — nothing to do).
     1   At least one logging failure with no successful logs (treated
         as a hard error so the Action surfaces it).
-    2   Missing DATABASE_URL — config error.
+    2   Could not obtain database credentials — config error.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import os
 import sys
+
+import boto3
 
 # Ensure data files are present BEFORE any engine module imports parquet
 from bootstrap_data import ensure_data_files
@@ -54,6 +62,36 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 log = logging.getLogger("auto_log_predictions")
+
+# ---------------------------------------------------------------------------
+#  RDS / Secrets Manager configuration
+# ---------------------------------------------------------------------------
+# Same pattern as prediction_logger.py and record_outcomes.py — the RDS
+# master password is generated and stored by AWS itself, never set or
+# seen by us in plaintext.
+AWS_REGION = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
+RDS_SECRET_ARN = os.environ.get(
+    "RDS_SECRET_ARN",
+    "arn:aws:secretsmanager:us-east-1:687050094462:secret:rds!db-16e1cf61-de84-4850-9d01-7315eaa97bcf-65Fnln",
+)
+
+
+def _fetch_db_url_from_secrets_manager() -> str:
+    """
+    Build a full SQLAlchemy connection string from the RDS-managed
+    master credentials in Secrets Manager. Identical logic to
+    prediction_logger.py / record_outcomes.py — kept as a local copy
+    since this script, like record_outcomes.py, is a standalone headless
+    entrypoint with no dependency on Streamlit being installed.
+    """
+    client = boto3.client("secretsmanager", region_name=AWS_REGION)
+    secret = client.get_secret_value(SecretId=RDS_SECRET_ARN)
+    creds = json.loads(secret["SecretString"])
+
+    return (
+        f"postgresql+psycopg2://{creds['username']}:{creds['password']}"
+        f"@{creds['host']}:{creds['port']}/{creds['dbname']}"
+    )
 
 
 def _build_resolver() -> MatchupResolver:
@@ -79,8 +117,11 @@ def main(argv: list[str] | None = None) -> int:
 
     db_url = os.environ.get("DATABASE_URL")
     if not db_url:
-        log.error("DATABASE_URL environment variable is not set.")
-        return 2
+        try:
+            db_url = _fetch_db_url_from_secrets_manager()
+        except Exception as e:
+            log.error("Could not obtain database credentials from Secrets Manager: %s", e)
+            return 2
 
     log.info("Loading resolver (this may take ~10s)...")
     resolver = _build_resolver()

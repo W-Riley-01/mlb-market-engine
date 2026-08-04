@@ -7,10 +7,12 @@
 #  Schedule times are in UTC (GitHub Actions does not honor local time).
 #
 #  Setup checklist (do this once per repo):
-#    1. In GitHub: Settings → Secrets and variables → Actions → New repository secret
-#       Name:  DATABASE_URL
-#       Value: same SQLAlchemy URL you put in .streamlit/secrets.toml,
-#              i.e. postgresql+psycopg2://...:6543/postgres
+#    1. AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY secrets must be set —
+#       same least-privilege IAM user used by auto-log-predictions.yml
+#       (github-actions-mlb-engine), with secretsmanager:GetSecretValue
+#       permission on the RDS master credentials secret. No DATABASE_URL
+#       secret is needed anymore — record_outcomes.py fetches RDS
+#       credentials live from Secrets Manager.
 #    2. Commit this file at .github/workflows/record-outcomes.yml
 #    3. Push to main. The workflow appears under the "Actions" tab.
 #    4. Click "Run workflow" once manually to verify it works end-to-end
@@ -56,6 +58,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
+    # Job-level AWS credentials — record_outcomes.py's headless path fetches
+    # RDS master credentials from Secrets Manager. Scoped tightly in IAM;
+    # see mlb-engine-bootstrap-readonly policy.
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
+
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -67,15 +77,14 @@ jobs:
           cache: pip
 
       - name: Install dependencies
+        # boto3 added for the Secrets Manager fetch in record_outcomes.py.
         run: |
           python -m pip install --upgrade pip
-          pip install requests sqlalchemy psycopg2-binary
+          pip install requests sqlalchemy psycopg2-binary boto3
 
       # ----- Manual: single date (date input takes precedence over range) -----
       - name: Run outcome recorder (manual / single date)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.date != '' }}
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           python record_outcomes.py --date "${{ inputs.date }}" \
             ${{ inputs.retry_pending && '--retry-pending' || '' }}
@@ -83,8 +92,6 @@ jobs:
       # ----- Manual: explicit date range (backfill use case) -----
       - name: Run outcome recorder (manual / date range)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.date == '' && inputs.start_date != '' && inputs.end_date != '' }}
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           python record_outcomes.py \
             --start "${{ inputs.start_date }}" \
@@ -94,8 +101,6 @@ jobs:
       # ----- Manual: no date provided → defaults to yesterday -----
       - name: Run outcome recorder (manual / yesterday)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.date == '' && inputs.start_date == '' && inputs.end_date == '' }}
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           python record_outcomes.py \
             ${{ inputs.retry_pending && '--retry-pending' || '' }}
@@ -107,13 +112,9 @@ jobs:
       #       pending will never transition to final.
       - name: Run outcome recorder (morning pass — yesterday's finals)
         if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 13 * * *' }}
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: python record_outcomes.py --retry-pending
 
       # ----- Scheduled: afternoon retry pass -----
       - name: Run outcome recorder (afternoon retry — pending + today)
         if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 23 * * *' }}
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: python record_outcomes.py --retry-pending --all-unresolved

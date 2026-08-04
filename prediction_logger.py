@@ -53,6 +53,15 @@ RDS_SECRET_ARN = os.environ.get(
     "RDS_SECRET_ARN",
     "arn:aws:secretsmanager:us-east-1:687050094462:secret:rds!db-16e1cf61-de84-4850-9d01-7315eaa97bcf-65Fnln",
 )
+# The RDS-managed secret reliably contains username/password. host/port/
+# dbname are NOT guaranteed to be present in the secret's JSON payload —
+# observed in practice to be absent — so we specify them explicitly here,
+# matching the values Terraform actually created. .get() with these as
+# fallbacks still prefers the secret's own values if a future rotation
+# adds them.
+RDS_ENDPOINT = os.environ.get("RDS_ENDPOINT", "mlb-engine-db.cyzm64iqm3q4.us-east-1.rds.amazonaws.com")
+RDS_PORT = os.environ.get("RDS_PORT", "5432")
+RDS_DB_NAME = os.environ.get("RDS_DB_NAME", "mlb_engine")
 
 # Bump this when the simulator or resolver changes in a way that meaningfully
 # shifts predictions. Lets calibration analysis segment results by version so
@@ -137,7 +146,7 @@ def _fetch_db_url_from_secrets_manager() -> str:
 
     return (
         f"postgresql+psycopg2://{creds['username']}:{creds['password']}"
-        f"@{creds['host']}:{creds['port']}/{creds['dbname']}"
+        f"@{creds.get('host', RDS_ENDPOINT)}:{creds.get('port', RDS_PORT)}/{creds.get('dbname', RDS_DB_NAME)}"
     )
 
 

@@ -38,6 +38,22 @@ import streamlit as st
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
+import boto3
+
+# ---------------------------------------------------------------------------
+#  RDS / Secrets Manager configuration
+# ---------------------------------------------------------------------------
+# The RDS instance's master password is managed entirely by AWS (see
+# manage_master_user_password in rds.tf) — it's never set, seen, or stored
+# by us in plaintext anywhere. This ARN identifies the auto-generated
+# secret; the secret's JSON payload includes host/port/dbname/username/
+# password, so we don't need to duplicate those as separate constants.
+AWS_REGION = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
+RDS_SECRET_ARN = os.environ.get(
+    "RDS_SECRET_ARN",
+    "arn:aws:secretsmanager:us-east-1:687050094462:secret:rds!db-16e1cf61-de84-4850-9d01-7315eaa97bcf-65Fnln",
+)
+
 # Bump this when the simulator or resolver changes in a way that meaningfully
 # shifts predictions. Lets calibration analysis segment results by version so
 # we don't mix pre- and post-change predictions in the same reliability curve.
@@ -102,6 +118,29 @@ class _HeadlessSQLConn:
         return self._Session()
 
 
+def _fetch_db_url_from_secrets_manager() -> str:
+    """
+    Build a full SQLAlchemy connection string using the RDS-managed
+    master credentials stored in Secrets Manager.
+
+    The secret's JSON payload (auto-populated by RDS because rds.tf sets
+    manage_master_user_password = true) contains username, password,
+    host, port, and dbname — so this single call gives us everything
+    needed, with the password never touching an env var, a .env file,
+    or GitHub Actions logs at any point. boto3 picks up AWS credentials
+    the same way bootstrap_data.py does (env vars in Actions, or local
+    AWS CLI config).
+    """
+    client = boto3.client("secretsmanager", region_name=AWS_REGION)
+    secret = client.get_secret_value(SecretId=RDS_SECRET_ARN)
+    creds = json.loads(secret["SecretString"])
+
+    return (
+        f"postgresql+psycopg2://{creds['username']}:{creds['password']}"
+        f"@{creds['host']}:{creds['port']}/{creds['dbname']}"
+    )
+
+
 @st.cache_resource(show_spinner=False)
 def _get_conn():
     """
@@ -112,22 +151,21 @@ def _get_conn():
     before. The @st.cache_resource decorator memoizes per Streamlit
     runtime so we don't rebuild on every rerun.
 
-    In headless mode: returns _HeadlessSQLConn built from the
-    DATABASE_URL environment variable. The cache_resource decorator is
-    a no-op outside Streamlit (it just returns the wrapped function's
-    result), so each cron invocation gets a fresh connection — fine for
-    a short-lived process.
+    In headless mode: returns _HeadlessSQLConn built from RDS credentials
+    fetched live from Secrets Manager. DATABASE_URL is still honored as
+    an explicit override (useful for local testing against a different
+    database), but the default — and what GitHub Actions uses — is the
+    Secrets Manager fetch. The cache_resource decorator is a no-op
+    outside Streamlit, so each cron invocation gets a fresh connection —
+    fine for a short-lived process, and means the password is re-fetched
+    (never cached to disk) on every run.
     """
     if _running_under_streamlit():
         return st.connection("predictions_db", type="sql")
 
     db_url = os.environ.get("DATABASE_URL")
     if not db_url:
-        raise RuntimeError(
-            "DATABASE_URL environment variable is not set. "
-            "Required when running prediction_logger outside Streamlit "
-            "(e.g. from GitHub Actions cron jobs)."
-        )
+        db_url = _fetch_db_url_from_secrets_manager()
     return _HeadlessSQLConn(db_url)
 
 

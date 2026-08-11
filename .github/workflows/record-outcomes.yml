@@ -44,13 +44,13 @@ on:
         type: boolean
         default: true
 
-  # Scheduled runs — UTC.
-  #   13:00 UTC = 8:00 AM CT (early morning pass for last night's games)
-  #   23:00 UTC = 6:00 PM CT (afternoon pass to catch West Coast late finishes
-  #               and any postponed games that finished today)
-  schedule:
-    - cron: "0 13 * * *"
-    - cron: "0 23 * * *"
+# DISABLED — superseded by EventBridge Scheduler + ECS Fargate (Weekend 5).
+  # Kept commented rather than deleted as a rollback path. See
+  # eventbridge_scheduler.tf for the replacement schedules.
+  # schedule:
+  #   - cron: "0 13 * * *"
+  #   - cron: "0 23 * * *"
+  
 
 jobs:
   record:

@@ -32,6 +32,8 @@ on:
       - "bootstrap_data.py"
       - "resolver.py"
       - "engine_runner.py"
+      - "app.py"
+      - "daily_scraper.py"
       - "Dockerfile"
       - "entrypoint.sh"
       - "requirements.txt"

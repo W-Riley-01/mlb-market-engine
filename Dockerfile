@@ -1,11 +1,12 @@
 # MLB Market Engine — shared image for the three scheduled jobs
 # (auto_log_predictions.py, record_outcomes.py, prediction_logger.py)
+# plus, as of Weekend 6, the standing Streamlit web service (app.py).
 #
-# One image, dispatched to the right script via entrypoint.sh + the
-# ECS task definition's `command` override. Data files (parquet) are
-# NOT baked in — bootstrap_data.py pulls them from S3 at container
-# start, same as it does today in GitHub Actions. This keeps the image
-# small and means updated parquet files propagate without a rebuild.
+# One image, dispatched to the right entrypoint via entrypoint.sh + the
+# ECS task/service definition's `command` override. Data files (parquet)
+# are NOT baked in — bootstrap_data.py pulls them from S3 at container
+# start for the batch jobs. app.py doesn't need them at all (read-only
+# DB viewer), so the app service's cold start is fast.
 
 FROM python:3.11-slim
 
@@ -19,12 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir boto3
-    # ^ boto3 installed explicitly here as a stopgap since it's not yet
-    # in requirements.txt (see note in chat). Once boto3 is added to
-    # requirements.txt directly, this second pip install line can be
-    # removed — but leaving both doesn't hurt in the meantime.
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the full repo context — these scripts use flat relative imports
 # (from bootstrap_data import ..., from resolver import ..., from
@@ -45,5 +41,9 @@ RUN chmod +x /entrypoint.sh
 RUN useradd --create-home --shell /bin/false appuser \
     && chown -R appuser:appuser /app
 USER appuser
+
+# Only meaningful for the Weekend 6 app service (streamlit_app command) —
+# the batch-job commands never bind a port, so this is a no-op for them.
+EXPOSE 8501
 
 ENTRYPOINT ["/entrypoint.sh"]

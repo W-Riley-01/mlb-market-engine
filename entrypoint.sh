@@ -7,6 +7,7 @@
 #   ["auto_log_predictions"]
 #   ["record_outcomes", "--retry-pending"]
 #   ["prediction_logger"]   (manual/one-off use — it's primarily a library)
+#   ["streamlit_app"]       (Weekend 6 — standing web service, not a batch job)
 
 set -e
 
@@ -23,8 +24,18 @@ case "$SCRIPT" in
   prediction_logger)
     exec python prediction_logger.py "$@"
     ;;
+  streamlit_app)
+    # --server.address=0.0.0.0 is required inside a container — Streamlit
+    # defaults to localhost, which the ALB health check / target group
+    # can't reach from outside the container's network namespace.
+    exec streamlit run app.py \
+      --server.port=8501 \
+      --server.address=0.0.0.0 \
+      --server.headless=true \
+      "$@"
+    ;;
   *)
-    echo "Unknown script '$SCRIPT'. Expected one of: auto_log_predictions, record_outcomes, prediction_logger" >&2
+    echo "Unknown script '$SCRIPT'. Expected one of: auto_log_predictions, record_outcomes, prediction_logger, streamlit_app" >&2
     exit 64
     ;;
 esac

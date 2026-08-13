@@ -2,20 +2,22 @@
 #  Build and push mlb-engine-jobs image
 # =============================================================================
 #  Replaces the RDS-touching logic in auto-log-predictions.yml and
-#  record-outcomes.yml. This workflow's only job now is: build the shared
-#  Docker image and push it to ECR. Actual execution — and all RDS access —
-#  moves to ECS Fargate tasks triggered by EventBridge Scheduler.
+#  record-outcomes.yml. This workflow's job: build the shared Docker image,
+#  push it to ECR, then force the standing Streamlit app service to redeploy
+#  with the new image. Actual batch-job execution — and all RDS access —
+#  happens in ECS Fargate tasks triggered by EventBridge Scheduler, which
+#  pull :latest fresh on every scheduled run and don't need this step.
 #
 #  Triggers:
 #    - Push to main touching any of the files the image actually depends on
-#      (the three scripts, bootstrap_data.py, Dockerfile, entrypoint.sh,
-#      requirements.txt, and whatever other modules resolver.py/
-#      engine_runner.py need — adjust the `paths:` list to match your repo).
+#      (the batch scripts, bootstrap_data.py, app.py, Dockerfile,
+#      entrypoint.sh, requirements.txt, generate_streamlit_secrets.py).
 #    - Manual dispatch, for rebuilding without a code change (e.g. after a
 #      base-image security patch).
 #
 #  Required secrets (same AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY as
-#  before, now scoped to ECR push instead of RDS/S3 access):
+#  before — now also scoped to ecs:UpdateService on mlb-engine-app only,
+#  see iam_github_actions_ecr.tf):
 #    AWS_ACCESS_KEY_ID
 #    AWS_SECRET_ACCESS_KEY
 # =============================================================================
@@ -34,6 +36,7 @@ on:
       - "engine_runner.py"
       - "app.py"
       - "daily_scraper.py"
+      - "generate_streamlit_secrets.py"
       - "Dockerfile"
       - "entrypoint.sh"
       - "requirements.txt"
@@ -42,10 +45,12 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: mlb-engine-jobs
+  ECS_CLUSTER: mlb-engine-cluster
+  ECS_APP_SERVICE: mlb-engine-app
 
 jobs:
   build-and-push:
-    name: Build and push image
+    name: Build, push, and redeploy app service
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -73,3 +78,17 @@ jobs:
                         -t "$ECR_REGISTRY/$ECR_REPOSITORY:latest" .
           docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           docker push "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+
+      - name: Force mlb-engine-app to redeploy with the new image
+        # Batch jobs (auto_log_predictions / record_outcomes) don't need
+        # this — each EventBridge-triggered run launches a fresh task
+        # that pulls :latest at start time. The standing app service is
+        # different: it keeps running the image it started with until
+        # explicitly told to redeploy, so without this step a push here
+        # would sit in ECR unused until someone noticed and ran this by
+        # hand (which is what happened during Weekend 6 testing).
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$ECS_APP_SERVICE" \
+            --force-new-deployment

@@ -46,20 +46,28 @@ import boto3
 # The RDS instance's master password is managed entirely by AWS (see
 # manage_master_user_password in rds.tf) — it's never set, seen, or stored
 # by us in plaintext anywhere. This ARN identifies the auto-generated
-# secret; the secret's JSON payload includes host/port/dbname/username/
-# password, so we don't need to duplicate those as separate constants.
+# secret. IMPORTANT: the secret's JSON payload contains ONLY username and
+# password — host/port/dbname are NOT in the payload and must be supplied
+# explicitly (see RDS_ENDPOINT/RDS_PORT/RDS_DB_NAME below). This has bitten
+# us before (KeyError on 'host') — don't assume the payload shape without
+# checking.
+#
+# Note on RDS_SECRET_ARN: this is an RDS-managed secret, and its ARN is
+# NOT stable — toggling "Manage master credentials in Secrets Manager"
+# off/on (e.g. to force a credential resync after drift) creates a brand
+# new secret with a new ARN. If auth starts failing with
+# ResourceNotFoundException, check `aws rds describe-db-instances
+# --db-instance-identifier mlb-engine-db --query
+# "DBInstances[0].MasterUserSecret"` for the current ARN and update the
+# fallback below (and ecs.tf / iam_ecs.tf) accordingly.
 AWS_REGION = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
 RDS_SECRET_ARN = os.environ.get(
     "RDS_SECRET_ARN",
-    "arn:aws:secretsmanager:us-east-1:687050094462:secret:rds!db-16e1cf61-de84-4850-9d01-7315eaa97bcf-65Fnln",
+    "arn:aws:secretsmanager:us-east-1:687050094462:secret:rds!db-e3e1711b-71a6-4339-9ebb-79ace00465a4-hT3Uzj",
 )
-# The RDS-managed secret reliably contains username/password. host/port/
-# dbname are NOT guaranteed to be present in the secret's JSON payload —
-# observed in practice to be absent — so we specify them explicitly here,
-# matching the values Terraform actually created. .get() with these as
-# fallbacks still prefers the secret's own values if a future rotation
-# adds them.
-RDS_ENDPOINT = os.environ.get("RDS_ENDPOINT", "mlb-engine-db.cyzm64iqm3q4.us-east-1.rds.amazonaws.com")
+RDS_ENDPOINT = os.environ.get(
+    "RDS_ENDPOINT", "mlb-engine-db.cyzm64iqm3q4.us-east-1.rds.amazonaws.com"
+)
 RDS_PORT = os.environ.get("RDS_PORT", "5432")
 RDS_DB_NAME = os.environ.get("RDS_DB_NAME", "mlb_engine")
 
@@ -133,12 +141,14 @@ def _fetch_db_url_from_secrets_manager() -> str:
     master credentials stored in Secrets Manager.
 
     The secret's JSON payload (auto-populated by RDS because rds.tf sets
-    manage_master_user_password = true) contains username, password,
-    host, port, and dbname — so this single call gives us everything
-    needed, with the password never touching an env var, a .env file,
-    or GitHub Actions logs at any point. boto3 picks up AWS credentials
-    the same way bootstrap_data.py does (env vars in Actions, or local
-    AWS CLI config).
+    manage_master_user_password = true) contains ONLY username and
+    password — host/port/dbname are supplied explicitly via the
+    RDS_ENDPOINT/RDS_PORT/RDS_DB_NAME constants above, with .get()
+    fallbacks here as defense-in-depth in case a future secret payload
+    shape ever does include them. The password never touches an env var,
+    a .env file, or GitHub Actions logs at any point. boto3 picks up AWS
+    credentials the same way bootstrap_data.py does (env vars in Actions,
+    or local AWS CLI config).
     """
     client = boto3.client("secretsmanager", region_name=AWS_REGION)
     secret = client.get_secret_value(SecretId=RDS_SECRET_ARN)
@@ -146,7 +156,8 @@ def _fetch_db_url_from_secrets_manager() -> str:
 
     return (
         f"postgresql+psycopg2://{creds['username']}:{creds['password']}"
-        f"@{creds.get('host', RDS_ENDPOINT)}:{creds.get('port', RDS_PORT)}/{creds.get('dbname', RDS_DB_NAME)}"
+        f"@{creds.get('host', RDS_ENDPOINT)}:{creds.get('port', RDS_PORT)}"
+        f"/{creds.get('dbname', RDS_DB_NAME)}"
     )
 
 

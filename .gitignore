@@ -91,3 +91,8 @@ test_file.txt
 # -----------------------------------------------------------------------------
 .DS_Store
 Thumbs.db
+
+# Archived historical files are intentionally tracked, even though they're
+# CSVs - this is a deliberate exception to the blanket *.csv rule above,
+# scoped only to files we've moved here specifically to keep as history.
+!archive/**

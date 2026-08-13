@@ -1,0 +1,201 @@
+Date,Matchup,Model Favored,Win Prob,Actual Winner,Bet Won
+2024-05-01,St. Louis Cardinals @ Detroit Tigers,Detroit Tigers,57.9,Detroit Tigers,True
+2024-05-01,Tampa Bay Rays @ Milwaukee Brewers,Milwaukee Brewers,56.1,Milwaukee Brewers,True
+2024-05-01,Minnesota Twins @ Chicago White Sox,Chicago White Sox,70.3,Minnesota Twins,False
+2024-05-01,Kansas City Royals @ Toronto Blue Jays,Toronto Blue Jays,56.9,Kansas City Royals,False
+2024-05-01,Pittsburgh Pirates @ Oakland Athletics,Oakland Athletics,61.7,Oakland Athletics,True
+2024-05-01,Atlanta Braves @ Seattle Mariners,Seattle Mariners,74.0,Atlanta Braves,False
+2024-05-01,Philadelphia Phillies @ Los Angeles Angels,Los Angeles Angels,69.0,Philadelphia Phillies,False
+2024-05-01,Cincinnati Reds @ San Diego Padres,San Diego Padres,57.9,San Diego Padres,True
+2024-05-01,New York Yankees @ Baltimore Orioles,Baltimore Orioles,51.6,New York Yankees,False
+2024-05-01,Colorado Rockies @ Miami Marlins,Miami Marlins,67.0,Miami Marlins,True
+2024-05-01,Chicago Cubs @ New York Mets,New York Mets,54.3,Chicago Cubs,False
+2024-05-01,San Francisco Giants @ Boston Red Sox,Boston Red Sox,54.7,Boston Red Sox,True
+2024-05-01,Washington Nationals @ Texas Rangers,Washington Nationals,54.1,Washington Nationals,True
+2024-05-01,Cleveland Guardians @ Houston Astros,Cleveland Guardians,61.5,Cleveland Guardians,True
+2024-05-01,Los Angeles Dodgers @ Arizona Diamondbacks,Arizona Diamondbacks,68.5,Los Angeles Dodgers,False
+2024-05-02,Colorado Rockies @ Miami Marlins,Miami Marlins,55.0,Miami Marlins,True
+2024-05-02,New York Yankees @ Baltimore Orioles,New York Yankees,51.8,Baltimore Orioles,False
+2024-05-02,Chicago Cubs @ New York Mets,New York Mets,72.6,New York Mets,True
+2024-05-02,San Francisco Giants @ Boston Red Sox,San Francisco Giants,50.8,San Francisco Giants,True
+2024-05-02,Washington Nationals @ Texas Rangers,Washington Nationals,54.6,Texas Rangers,False
+2024-05-02,Cleveland Guardians @ Houston Astros,Houston Astros,55.8,Houston Astros,True
+2024-05-03,Milwaukee Brewers @ Chicago Cubs,Chicago Cubs,61.0,Milwaukee Brewers,False
+2024-05-03,Baltimore Orioles @ Cincinnati Reds,Cincinnati Reds,51.1,Baltimore Orioles,False
+2024-05-03,Colorado Rockies @ Pittsburgh Pirates,Colorado Rockies,52.4,Colorado Rockies,True
+2024-05-03,San Francisco Giants @ Philadelphia Phillies,Philadelphia Phillies,53.4,Philadelphia Phillies,True
+2024-05-03,Toronto Blue Jays @ Washington Nationals,Washington Nationals,67.7,Washington Nationals,True
+2024-05-03,New York Mets @ Tampa Bay Rays,Tampa Bay Rays,55.7,Tampa Bay Rays,True
+2024-05-03,Detroit Tigers @ New York Yankees,New York Yankees,52.0,New York Yankees,True
+2024-05-03,Los Angeles Angels @ Cleveland Guardians,Cleveland Guardians,63.6,Los Angeles Angels,False
+2024-05-03,Texas Rangers @ Kansas City Royals,Kansas City Royals,64.4,Kansas City Royals,True
+2024-05-03,Seattle Mariners @ Houston Astros,Houston Astros,56.6,Houston Astros,True
+2024-05-03,Boston Red Sox @ Minnesota Twins,Minnesota Twins,56.6,Minnesota Twins,True
+2024-05-03,Chicago White Sox @ St. Louis Cardinals,Chicago White Sox,61.9,St. Louis Cardinals,False
+2024-05-03,San Diego Padres @ Arizona Diamondbacks,San Diego Padres,51.5,San Diego Padres,True
+2024-05-03,Miami Marlins @ Oakland Athletics,Miami Marlins,50.6,Oakland Athletics,False
+2024-05-03,Atlanta Braves @ Los Angeles Dodgers,Los Angeles Dodgers,57.6,Los Angeles Dodgers,True
+2024-05-04,Detroit Tigers @ New York Yankees,New York Yankees,53.6,New York Yankees,True
+2024-05-04,Boston Red Sox @ Minnesota Twins,Boston Red Sox,52.4,Minnesota Twins,False
+2024-05-04,Chicago White Sox @ St. Louis Cardinals,St. Louis Cardinals,54.5,Chicago White Sox,False
+2024-05-04,Milwaukee Brewers @ Chicago Cubs,Chicago Cubs,65.3,Chicago Cubs,True
+2024-05-04,Colorado Rockies @ Pittsburgh Pirates,Colorado Rockies,54.9,Pittsburgh Pirates,False
+2024-05-04,Toronto Blue Jays @ Washington Nationals,Washington Nationals,67.5,Toronto Blue Jays,False
+2024-05-04,Miami Marlins @ Oakland Athletics,Miami Marlins,54.1,Oakland Athletics,False
+2024-05-04,San Francisco Giants @ Philadelphia Phillies,Philadelphia Phillies,56.2,Philadelphia Phillies,True
+2024-05-04,Los Angeles Angels @ Cleveland Guardians,Cleveland Guardians,59.8,Cleveland Guardians,True
+2024-05-04,Baltimore Orioles @ Cincinnati Reds,Cincinnati Reds,57.8,Baltimore Orioles,False
+2024-05-04,Texas Rangers @ Kansas City Royals,Kansas City Royals,58.1,Texas Rangers,False
+2024-05-04,Seattle Mariners @ Houston Astros,Houston Astros,53.2,Seattle Mariners,False
+2024-05-04,New York Mets @ Tampa Bay Rays,Tampa Bay Rays,52.3,Tampa Bay Rays,True
+2024-05-04,San Diego Padres @ Arizona Diamondbacks,Arizona Diamondbacks,58.8,San Diego Padres,False
+2024-05-04,Atlanta Braves @ Los Angeles Dodgers,Atlanta Braves,56.3,Los Angeles Dodgers,False
+2024-05-05,Colorado Rockies @ Pittsburgh Pirates,Pittsburgh Pirates,53.7,Pittsburgh Pirates,True
+2024-05-05,Toronto Blue Jays @ Washington Nationals,Washington Nationals,59.8,Washington Nationals,True
+2024-05-05,Los Angeles Angels @ Cleveland Guardians,Cleveland Guardians,63.9,Cleveland Guardians,True
+2024-05-05,New York Mets @ Tampa Bay Rays,New York Mets,52.7,Tampa Bay Rays,False
+2024-05-05,Seattle Mariners @ Houston Astros,Houston Astros,62.1,Seattle Mariners,False
+2024-05-05,Texas Rangers @ Kansas City Royals,Kansas City Royals,63.7,Texas Rangers,False
+2024-05-05,Boston Red Sox @ Minnesota Twins,Boston Red Sox,52.5,Boston Red Sox,True
+2024-05-05,Chicago White Sox @ St. Louis Cardinals,St. Louis Cardinals,61.2,Chicago White Sox,False
+2024-05-05,Milwaukee Brewers @ Chicago Cubs,Chicago Cubs,64.8,Chicago Cubs,True
+2024-05-05,Miami Marlins @ Oakland Athletics,Miami Marlins,52.1,Miami Marlins,True
+2024-05-05,Baltimore Orioles @ Cincinnati Reds,Cincinnati Reds,51.6,Baltimore Orioles,False
+2024-05-05,San Diego Padres @ Arizona Diamondbacks,Arizona Diamondbacks,57.6,Arizona Diamondbacks,True
+2024-05-05,Atlanta Braves @ Los Angeles Dodgers,Los Angeles Dodgers,60.3,Los Angeles Dodgers,True
+2024-05-05,San Francisco Giants @ Philadelphia Phillies,Philadelphia Phillies,53.1,Philadelphia Phillies,True
+2024-05-06,San Francisco Giants @ Philadelphia Phillies,San Francisco Giants,50.6,Philadelphia Phillies,False
+2024-05-06,Detroit Tigers @ Cleveland Guardians,Cleveland Guardians,64.7,Cleveland Guardians,True
+2024-05-06,Los Angeles Angels @ Pittsburgh Pirates,Pittsburgh Pirates,50.1,Pittsburgh Pirates,True
+2024-05-06,Chicago White Sox @ Tampa Bay Rays,Chicago White Sox,52.9,Tampa Bay Rays,False
+2024-05-06,Milwaukee Brewers @ Kansas City Royals,Kansas City Royals,58.2,Kansas City Royals,True
+2024-05-06,San Diego Padres @ Chicago Cubs,San Diego Padres,51.2,San Diego Padres,True
+2024-05-06,Seattle Mariners @ Minnesota Twins,Minnesota Twins,60.1,Minnesota Twins,True
+2024-05-06,New York Mets @ St. Louis Cardinals,St. Louis Cardinals,66.5,New York Mets,False
+2024-05-06,Texas Rangers @ Oakland Athletics,Oakland Athletics,56.4,Texas Rangers,False
+2024-05-06,Miami Marlins @ Los Angeles Dodgers,Miami Marlins,53.6,Los Angeles Dodgers,False
+2024-05-07,Texas Rangers @ Oakland Athletics,Texas Rangers,53.5,Texas Rangers,True
+2024-05-07,Detroit Tigers @ Cleveland Guardians,Cleveland Guardians,63.4,Detroit Tigers,False
+2024-05-07,Arizona Diamondbacks @ Cincinnati Reds,Cincinnati Reds,52.2,Arizona Diamondbacks,False
+2024-05-07,Los Angeles Angels @ Pittsburgh Pirates,Pittsburgh Pirates,58.9,Los Angeles Angels,False
+2024-05-07,Toronto Blue Jays @ Philadelphia Phillies,Toronto Blue Jays,52.5,Philadelphia Phillies,False
+2024-05-07,Baltimore Orioles @ Washington Nationals,Washington Nationals,68.1,Washington Nationals,True
+2024-05-07,Chicago White Sox @ Tampa Bay Rays,Chicago White Sox,63.8,Tampa Bay Rays,False
+2024-05-07,Houston Astros @ New York Yankees,New York Yankees,56.3,New York Yankees,True
+2024-05-07,Boston Red Sox @ Atlanta Braves,Boston Red Sox,52.8,Atlanta Braves,False
+2024-05-07,San Diego Padres @ Chicago Cubs,Chicago Cubs,53.9,Chicago Cubs,True
+2024-05-07,Seattle Mariners @ Minnesota Twins,Seattle Mariners,50.4,Seattle Mariners,True
+2024-05-07,Milwaukee Brewers @ Kansas City Royals,Kansas City Royals,59.8,Milwaukee Brewers,False
+2024-05-07,New York Mets @ St. Louis Cardinals,St. Louis Cardinals,58.7,New York Mets,False
+2024-05-07,San Francisco Giants @ Colorado Rockies,Colorado Rockies,55.4,San Francisco Giants,False
+2024-05-07,Miami Marlins @ Los Angeles Dodgers,Miami Marlins,55.9,Los Angeles Dodgers,False
+2024-05-08,Los Angeles Angels @ Pittsburgh Pirates,Pittsburgh Pirates,57.6,Los Angeles Angels,False
+2024-05-08,Toronto Blue Jays @ Philadelphia Phillies,Toronto Blue Jays,53.9,Toronto Blue Jays,True
+2024-05-08,Detroit Tigers @ Cleveland Guardians,Cleveland Guardians,58.9,Cleveland Guardians,True
+2024-05-08,Milwaukee Brewers @ Kansas City Royals,Kansas City Royals,61.4,Kansas City Royals,True
+2024-05-08,San Diego Padres @ Chicago Cubs,Chicago Cubs,50.9,San Diego Padres,False
+2024-05-08,Miami Marlins @ Los Angeles Dodgers,Miami Marlins,55.4,Los Angeles Dodgers,False
+2024-05-08,Texas Rangers @ Oakland Athletics,Oakland Athletics,62.1,Oakland Athletics,True
+2024-05-08,Texas Rangers @ Oakland Athletics,Oakland Athletics,67.8,Texas Rangers,False
+2024-05-08,Arizona Diamondbacks @ Cincinnati Reds,Arizona Diamondbacks,53.7,Arizona Diamondbacks,True
+2024-05-08,Baltimore Orioles @ Washington Nationals,Washington Nationals,67.6,Baltimore Orioles,False
+2024-05-08,Chicago White Sox @ Tampa Bay Rays,Chicago White Sox,62.1,Chicago White Sox,True
+2024-05-08,Houston Astros @ New York Yankees,Houston Astros,52.7,New York Yankees,False
+2024-05-08,Boston Red Sox @ Atlanta Braves,Boston Red Sox,57.1,Atlanta Braves,False
+2024-05-08,Seattle Mariners @ Minnesota Twins,Minnesota Twins,56.6,Minnesota Twins,True
+2024-05-08,San Francisco Giants @ Colorado Rockies,Colorado Rockies,51.2,San Francisco Giants,False
+2024-05-09,Arizona Diamondbacks @ Cincinnati Reds,Arizona Diamondbacks,55.0,Arizona Diamondbacks,True
+2024-05-09,Seattle Mariners @ Minnesota Twins,Minnesota Twins,55.9,Minnesota Twins,True
+2024-05-09,San Francisco Giants @ Colorado Rockies,Colorado Rockies,58.2,Colorado Rockies,True
+2024-05-09,Houston Astros @ New York Yankees,New York Yankees,55.1,Houston Astros,False
+2024-05-09,Cleveland Guardians @ Chicago White Sox,Chicago White Sox,62.0,Chicago White Sox,True
+2024-05-09,St. Louis Cardinals @ Milwaukee Brewers,Milwaukee Brewers,51.1,Milwaukee Brewers,True
+2024-05-09,Kansas City Royals @ Los Angeles Angels,Los Angeles Angels,61.4,Kansas City Royals,False
+2024-05-10,Houston Astros @ Detroit Tigers,Detroit Tigers,57.9,Houston Astros,False
+2024-05-10,Chicago Cubs @ Pittsburgh Pirates,Chicago Cubs,59.3,Chicago Cubs,True
+2024-05-10,New York Yankees @ Tampa Bay Rays,Tampa Bay Rays,51.1,New York Yankees,False
+2024-05-10,Arizona Diamondbacks @ Baltimore Orioles,Baltimore Orioles,57.5,Baltimore Orioles,True
+2024-05-10,Minnesota Twins @ Toronto Blue Jays,Toronto Blue Jays,62.2,Minnesota Twins,False
+2024-05-10,Washington Nationals @ Boston Red Sox,Washington Nationals,54.5,Washington Nationals,True
+2024-05-10,Atlanta Braves @ New York Mets,New York Mets,75.5,Atlanta Braves,False
+2024-05-10,Philadelphia Phillies @ Miami Marlins,Miami Marlins,67.7,Philadelphia Phillies,False
+2024-05-10,Cleveland Guardians @ Chicago White Sox,Chicago White Sox,53.2,Chicago White Sox,True
+2024-05-10,St. Louis Cardinals @ Milwaukee Brewers,St. Louis Cardinals,51.5,Milwaukee Brewers,False
+2024-05-10,Texas Rangers @ Colorado Rockies,Colorado Rockies,62.1,Colorado Rockies,True
+2024-05-10,Kansas City Royals @ Los Angeles Angels,Los Angeles Angels,53.7,Kansas City Royals,False
+2024-05-10,Los Angeles Dodgers @ San Diego Padres,San Diego Padres,75.6,San Diego Padres,True
+2024-05-10,Oakland Athletics @ Seattle Mariners,Seattle Mariners,54.2,Seattle Mariners,True
+2024-05-10,Cincinnati Reds @ San Francisco Giants,San Francisco Giants,61.8,Cincinnati Reds,False
+2024-05-11,Minnesota Twins @ Toronto Blue Jays,Toronto Blue Jays,59.3,Toronto Blue Jays,True
+2024-05-11,Arizona Diamondbacks @ Baltimore Orioles,Baltimore Orioles,51.9,Baltimore Orioles,True
+2024-05-11,Chicago Cubs @ Pittsburgh Pirates,Chicago Cubs,52.1,Pittsburgh Pirates,False
+2024-05-11,Washington Nationals @ Boston Red Sox,Washington Nationals,51.3,Boston Red Sox,False
+2024-05-11,Atlanta Braves @ New York Mets,New York Mets,55.9,Atlanta Braves,False
+2024-05-11,Philadelphia Phillies @ Miami Marlins,Miami Marlins,57.1,Philadelphia Phillies,False
+2024-05-11,New York Yankees @ Tampa Bay Rays,Tampa Bay Rays,56.1,Tampa Bay Rays,True
+2024-05-11,Houston Astros @ Detroit Tigers,Houston Astros,53.8,Detroit Tigers,False
+2024-05-11,Cleveland Guardians @ Chicago White Sox,Chicago White Sox,63.4,Chicago White Sox,True
+2024-05-11,Cincinnati Reds @ San Francisco Giants,San Francisco Giants,60.8,San Francisco Giants,True
+2024-05-11,St. Louis Cardinals @ Milwaukee Brewers,St. Louis Cardinals,59.9,Milwaukee Brewers,False
+2024-05-11,Texas Rangers @ Colorado Rockies,Colorado Rockies,64.1,Colorado Rockies,True
+2024-05-11,Los Angeles Dodgers @ San Diego Padres,San Diego Padres,62.2,Los Angeles Dodgers,False
+2024-05-11,Kansas City Royals @ Los Angeles Angels,Los Angeles Angels,57.6,Los Angeles Angels,True
+2024-05-11,Oakland Athletics @ Seattle Mariners,Oakland Athletics,53.0,Oakland Athletics,True
+2024-05-12,Arizona Diamondbacks @ Baltimore Orioles,Baltimore Orioles,50.5,Arizona Diamondbacks,False
+2024-05-12,Washington Nationals @ Boston Red Sox,Boston Red Sox,52.6,Boston Red Sox,True
+2024-05-12,Chicago Cubs @ Pittsburgh Pirates,Pittsburgh Pirates,50.9,Chicago Cubs,False
+2024-05-12,Minnesota Twins @ Toronto Blue Jays,Toronto Blue Jays,64.9,Minnesota Twins,False
+2024-05-12,Houston Astros @ Detroit Tigers,Detroit Tigers,55.9,Houston Astros,False
+2024-05-12,Philadelphia Phillies @ Miami Marlins,Miami Marlins,57.9,Miami Marlins,True
+2024-05-12,New York Yankees @ Tampa Bay Rays,Tampa Bay Rays,53.5,New York Yankees,False
+2024-05-12,Cleveland Guardians @ Chicago White Sox,Chicago White Sox,67.0,Cleveland Guardians,False
+2024-05-12,St. Louis Cardinals @ Milwaukee Brewers,St. Louis Cardinals,53.2,St. Louis Cardinals,True
+2024-05-12,Texas Rangers @ Colorado Rockies,Colorado Rockies,57.2,Colorado Rockies,True
+2024-05-12,Cincinnati Reds @ San Francisco Giants,San Francisco Giants,52.4,San Francisco Giants,True
+2024-05-12,Kansas City Royals @ Los Angeles Angels,Los Angeles Angels,61.4,Kansas City Royals,False
+2024-05-12,Los Angeles Dodgers @ San Diego Padres,San Diego Padres,60.5,San Diego Padres,True
+2024-05-12,Oakland Athletics @ Seattle Mariners,Seattle Mariners,53.1,Seattle Mariners,True
+2024-05-12,Atlanta Braves @ New York Mets,New York Mets,65.7,New York Mets,True
+2024-05-13,Toronto Blue Jays @ Baltimore Orioles,Baltimore Orioles,55.0,Toronto Blue Jays,False
+2024-05-13,Miami Marlins @ Detroit Tigers,Detroit Tigers,63.5,Detroit Tigers,True
+2024-05-13,Tampa Bay Rays @ Boston Red Sox,Boston Red Sox,64.4,Tampa Bay Rays,False
+2024-05-13,Philadelphia Phillies @ New York Mets,New York Mets,61.6,Philadelphia Phillies,False
+2024-05-13,Chicago Cubs @ Atlanta Braves,Chicago Cubs,55.6,Atlanta Braves,False
+2024-05-13,Pittsburgh Pirates @ Milwaukee Brewers,Milwaukee Brewers,57.4,Pittsburgh Pirates,False
+2024-05-13,Cleveland Guardians @ Texas Rangers,Cleveland Guardians,52.2,Cleveland Guardians,True
+2024-05-13,Oakland Athletics @ Houston Astros,Houston Astros,61.6,Houston Astros,True
+2024-05-13,St. Louis Cardinals @ Los Angeles Angels,Los Angeles Angels,60.7,St. Louis Cardinals,False
+2024-05-13,Cincinnati Reds @ Arizona Diamondbacks,Arizona Diamondbacks,53.0,Arizona Diamondbacks,True
+2024-05-13,Colorado Rockies @ San Diego Padres,San Diego Padres,55.0,Colorado Rockies,False
+2024-05-13,Kansas City Royals @ Seattle Mariners,Seattle Mariners,50.9,Seattle Mariners,True
+2024-05-13,Los Angeles Dodgers @ San Francisco Giants,San Francisco Giants,69.8,Los Angeles Dodgers,False
+2024-05-14,Philadelphia Phillies @ New York Mets,New York Mets,56.7,Philadelphia Phillies,False
+2024-05-14,Washington Nationals @ Chicago White Sox,Chicago White Sox,60.7,Washington Nationals,False
+2024-05-14,Washington Nationals @ Chicago White Sox,Chicago White Sox,55.8,Chicago White Sox,True
+2024-05-14,Miami Marlins @ Detroit Tigers,Detroit Tigers,50.3,Miami Marlins,False
+2024-05-14,Tampa Bay Rays @ Boston Red Sox,Boston Red Sox,59.9,Boston Red Sox,True
+2024-05-14,Chicago Cubs @ Atlanta Braves,Chicago Cubs,59.8,Atlanta Braves,False
+2024-05-14,New York Yankees @ Minnesota Twins,New York Yankees,52.4,New York Yankees,True
+2024-05-14,Pittsburgh Pirates @ Milwaukee Brewers,Milwaukee Brewers,54.5,Milwaukee Brewers,True
+2024-05-14,Cleveland Guardians @ Texas Rangers,Cleveland Guardians,52.6,Cleveland Guardians,True
+2024-05-14,Oakland Athletics @ Houston Astros,Houston Astros,54.0,Houston Astros,True
+2024-05-14,St. Louis Cardinals @ Los Angeles Angels,Los Angeles Angels,54.1,St. Louis Cardinals,False
+2024-05-14,Cincinnati Reds @ Arizona Diamondbacks,Arizona Diamondbacks,65.7,Cincinnati Reds,False
+2024-05-14,Colorado Rockies @ San Diego Padres,Colorado Rockies,50.4,Colorado Rockies,True
+2024-05-14,Kansas City Royals @ Seattle Mariners,Seattle Mariners,52.5,Kansas City Royals,False
+2024-05-14,Los Angeles Dodgers @ San Francisco Giants,San Francisco Giants,65.0,Los Angeles Dodgers,False
+2024-05-15,Toronto Blue Jays @ Baltimore Orioles,Baltimore Orioles,52.1,Baltimore Orioles,True
+2024-05-15,Miami Marlins @ Detroit Tigers,Detroit Tigers,57.9,Miami Marlins,False
+2024-05-15,Pittsburgh Pirates @ Milwaukee Brewers,Pittsburgh Pirates,50.4,Milwaukee Brewers,False
+2024-05-15,Washington Nationals @ Chicago White Sox,Washington Nationals,52.4,Chicago White Sox,False
+2024-05-15,Cincinnati Reds @ Arizona Diamondbacks,Arizona Diamondbacks,55.3,Arizona Diamondbacks,True
+2024-05-15,Colorado Rockies @ San Diego Padres,Colorado Rockies,51.1,Colorado Rockies,True
+2024-05-15,Kansas City Royals @ Seattle Mariners,Seattle Mariners,51.3,Seattle Mariners,True
+2024-05-15,New York Mets @ Philadelphia Phillies,New York Mets,52.9,Philadelphia Phillies,False
+2024-05-15,Tampa Bay Rays @ Boston Red Sox,Boston Red Sox,55.7,Tampa Bay Rays,False
+2024-05-15,Chicago Cubs @ Atlanta Braves,Chicago Cubs,58.1,Chicago Cubs,True
+2024-05-15,New York Yankees @ Minnesota Twins,New York Yankees,50.6,New York Yankees,True
+2024-05-15,Cleveland Guardians @ Texas Rangers,Cleveland Guardians,55.4,Texas Rangers,False
+2024-05-15,Oakland Athletics @ Houston Astros,Oakland Athletics,50.7,Houston Astros,False
+2024-05-15,St. Louis Cardinals @ Los Angeles Angels,Los Angeles Angels,50.4,Los Angeles Angels,True
+2024-05-15,Los Angeles Dodgers @ San Francisco Giants,San Francisco Giants,67.9,San Francisco Giants,True

@@ -6,7 +6,7 @@
 # Example ECS container `command` overrides:
 #   ["auto_log_predictions"]
 #   ["record_outcomes", "--retry-pending"]
-#   ["prediction_logger"]   (manual/one-off use — it's primarily a library)
+#   ["prediction_logger"]   (manual/one-off use)
 #   ["streamlit_app"]       (Weekend 6 — standing web service, not a batch job)
 
 set -e
@@ -25,15 +25,7 @@ case "$SCRIPT" in
     exec python prediction_logger.py "$@"
     ;;
   streamlit_app)
-    # Generates .streamlit/secrets.toml from a live Secrets Manager fetch
-    # before launch — st.connection() (used by prediction_logger._get_conn()
-    # under Streamlit) reads credentials from that file, not from env vars.
-    # See generate_streamlit_secrets.py for details.
     python generate_streamlit_secrets.py
-
-    # --server.address=0.0.0.0 is required inside a container — Streamlit
-    # defaults to localhost, which the ALB health check / target group
-    # can't reach from outside the container's network namespace.
     exec streamlit run app.py \
       --server.port=8501 \
       --server.address=0.0.0.0 \

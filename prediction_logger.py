@@ -1,7 +1,7 @@
 """
 prediction_logger.py
 --------------------
-Persists every Monte Carlo prediction the MLB engine generates to Supabase
+Persists every Monte Carlo prediction the MLB engine generates to RDS PostgreSQL
 Postgres so we can later compare predictions to actual outcomes, measure
 calibration, and apply correction models (isotonic regression in Phase 4).
 
@@ -578,7 +578,7 @@ def log_prediction(
 #  READ-SIDE PUBLIC API
 # ===========================================================================
 # Functions used by the read-only Streamlit Cloud viewer (app.py). The
-# viewer never simulates — it queries Supabase for the cron-logged
+# viewer never simulates — it queries RDS for the cron-logged
 # predictions and renders them. These functions are the inverse of
 # log_prediction(): they reconstruct the dicts the renderer expects from
 # the rows on disk.

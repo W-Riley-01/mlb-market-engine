@@ -4,7 +4,7 @@ auto_log_predictions.py
 Headless wrapper around engine_runner.run_slate() that runs in GitHub
 Actions on a schedule. No Streamlit, no UI — just fetches today's slate,
 runs sims for every pre-first-pitch game with posted lineups, and writes
-predictions to Supabase.
+predictions to RDS PostgreSQL.
 
 Cron strategy: every run re-simulates and re-logs every pre-first-pitch
 game on the slate (skip_already_logged=False). The upsert pattern in
@@ -116,7 +116,7 @@ def _build_resolver() -> MatchupResolver:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Auto-log MLB predictions to Supabase.")
+    parser = argparse.ArgumentParser(description="Auto-log MLB predictions to RDS PostgreSQL.")
     parser.add_argument("--iterations", type=int, default=5000,
                         help="Monte Carlo iterations per game (default: 5000)")
     parser.add_argument("--skip-existing", action="store_true",
@@ -149,7 +149,7 @@ def main(argv: list[str] | None = None) -> int:
     log.info("SUMMARY")
     log.info("  Total games on slate:       %d", summary.total_games)
     log.info("  Simulated this run:         %d", summary.simulated)
-    log.info("  Logged to Supabase:         %d", summary.logged)
+    log.info("  Logged to RDS:         %d", summary.logged)
     log.info("  Skipped (no lineups yet):   %d", summary.skipped_no_lineups)
     log.info("  Skipped (already logged):   %d", summary.skipped_already_logged)
     log.info("  Sim/log failures:           %d", summary.log_failures + len(summary.failed_game_ids))

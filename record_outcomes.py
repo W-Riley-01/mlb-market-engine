@@ -28,8 +28,13 @@ Usage
 
 Environment
 -----------
-    DATABASE_URL  Required. SQLAlchemy connection string for Supabase.
-                  Same value as the Streamlit secret, but loaded from env.
+    RDS_SECRET_ARN  Optional. Overrides the default Secrets Manager ARN
+                    holding the RDS master credentials. Not sensitive
+                    itself — it's an identifier, not a credential.
+    DATABASE_URL    Optional override. If set, used directly instead of
+                    fetching from Secrets Manager — useful for local
+                    testing against a different database. Not required
+                    in normal operation.
 """
 
 from __future__ import annotations
@@ -45,6 +50,30 @@ from typing import Any
 import requests
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
+
+import json
+import boto3
+
+# ---------------------------------------------------------------------------
+#  RDS / Secrets Manager configuration
+# ---------------------------------------------------------------------------
+# Same pattern as prediction_logger.py — the RDS master password is
+# generated and stored by AWS itself (manage_master_user_password in
+# rds.tf), never set or seen by us in plaintext.
+AWS_REGION = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
+RDS_SECRET_ARN = os.environ.get(
+    "RDS_SECRET_ARN",
+    "arn:aws:secretsmanager:us-east-1:687050094462:secret:rds!db-16e1cf61-de84-4850-9d01-7315eaa97bcf-65Fnln",
+)
+# The RDS-managed secret reliably contains username/password. host/port/
+# dbname are NOT guaranteed to be present in the secret's JSON payload —
+# observed in practice to be absent — so we specify them explicitly here,
+# matching the values Terraform actually created (rds.tf: db_name =
+# "mlb_engine", default Postgres port). .get() with these as fallbacks
+# still prefers the secret's own values if a future rotation adds them.
+RDS_ENDPOINT = os.environ.get("RDS_ENDPOINT", "mlb-engine-db.cyzm64iqm3q4.us-east-1.rds.amazonaws.com")
+RDS_PORT = os.environ.get("RDS_PORT", "5432")
+RDS_DB_NAME = os.environ.get("RDS_DB_NAME", "mlb_engine")
 
 # ---------------------------------------------------------------------------
 #  Configuration
@@ -371,11 +400,32 @@ def _find_batter_stats(team_box: dict, prediction: dict) -> dict | None:
 # ---------------------------------------------------------------------------
 #  Database I/O
 # ---------------------------------------------------------------------------
+def _fetch_db_url_from_secrets_manager() -> str:
+    """
+    Build a full SQLAlchemy connection string from the RDS-managed
+    master credentials in Secrets Manager. Identical logic to
+    prediction_logger.py's version — kept as a local copy here since
+    this script is deliberately standalone (see module docstring: no
+    imports from app.py or Streamlit-dependent modules, since Streamlit
+    isn't installed in the GitHub Actions runner for this workflow).
+    """
+    client = boto3.client("secretsmanager", region_name=AWS_REGION)
+    secret = client.get_secret_value(SecretId=RDS_SECRET_ARN)
+    creds = json.loads(secret["SecretString"])
+
+    return (
+        f"postgresql+psycopg2://{creds['username']}:{creds['password']}"
+        f"@{creds.get('host', RDS_ENDPOINT)}:{creds.get('port', RDS_PORT)}/{creds.get('dbname', RDS_DB_NAME)}"
+    )
+
+
 def _engine() -> Engine:
+    # DATABASE_URL remains a valid override (e.g. local testing against a
+    # different database) but is no longer required — the default path
+    # fetches live RDS credentials from Secrets Manager.
     url = os.environ.get("DATABASE_URL")
     if not url:
-        log.error("DATABASE_URL environment variable is not set.")
-        sys.exit(2)
+        url = _fetch_db_url_from_secrets_manager()
     return create_engine(url, pool_pre_ping=True)
 
 

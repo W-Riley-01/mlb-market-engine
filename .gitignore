@@ -98,3 +98,5 @@ Thumbs.db
 !archive/**
 
 gitleaks-report.json
+
+turnover-*.md

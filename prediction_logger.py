@@ -61,10 +61,7 @@ import boto3
 # "DBInstances[0].MasterUserSecret"` for the current ARN and update the
 # fallback below (and ecs.tf / iam_ecs.tf) accordingly.
 AWS_REGION = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
-RDS_SECRET_ARN = os.environ.get(
-    "RDS_SECRET_ARN",
-    "arn:aws:secretsmanager:us-east-1:687050094462:secret:rds!db-e3e1711b-71a6-4339-9ebb-79ace00465a4-hT3Uzj",
-)
+RDS_SECRET_ARN = os.environ["RDS_SECRET_ARN"]
 RDS_ENDPOINT = os.environ.get(
     "RDS_ENDPOINT", "mlb-engine-db.cyzm64iqm3q4.us-east-1.rds.amazonaws.com"
 )

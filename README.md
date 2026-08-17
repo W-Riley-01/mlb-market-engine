@@ -18,8 +18,8 @@ model accuracy over time.
   props (hits, total bases, home runs, RBIs, stolen bases)
 - Incorporates real weather data (temperature, wind, ballpark-relative
   carry effects) as a simulation input, not an afterthought
-- Runs unattended on a schedule — five prediction passes and two outcome
-  resolution passes per day — with no manual intervention
+- Runs unattended on a schedule with five prediction passes and two outcome
+  resolution passes per day and with no manual intervention
 - Tracks every prediction against its actual outcome, tagged by model
   version, to support ongoing calibration analysis (Brier scores,
   reliability diagrams, version-over-version comparison)

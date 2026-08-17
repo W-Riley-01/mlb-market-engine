@@ -96,3 +96,5 @@ Thumbs.db
 # CSVs - this is a deliberate exception to the blanket *.csv rule above,
 # scoped only to files we've moved here specifically to keep as history.
 !archive/**
+
+gitleaks-report.json

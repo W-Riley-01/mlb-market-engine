@@ -100,3 +100,5 @@ Thumbs.db
 gitleaks-report.json
 
 turnover-*.md
+
+pg_dump/

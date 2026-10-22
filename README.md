@@ -1,12 +1,25 @@
 # MLB Market Engine
 
-A Monte Carlo simulation engine for MLB game and player-prop predictions,
-fully self-hosted on AWS. Predictions are generated on a schedule, logged
-to a database, and automatically checked against real outcomes to measure
-model accuracy over time.
+A Monte Carlo simulation engine for MLB game and player-prop predictions.
+Until it was retired on 2026-10-16, it ran fully self-hosted on AWS:
+predictions were generated on a schedule, logged to a database, and
+automatically checked against real outcomes to measure model accuracy over
+time.
 
-**Live app:** [app.diamondmetrics.dev](https://app.diamondmetrics.dev)
+**Live app:** retired on 2026-10-16 to stop ongoing cost; the code and Terraform are kept as the reference.
 **Infrastructure repo:** [`mlb-engine-aws`](https://github.com/W-Riley-01/mlb-engine-aws)
+
+## Status
+
+The AWS stack was retired on 2026-10-16 to stop ongoing cost. The code here
+and the Terraform in the separate infrastructure repo remain as the reference
+architecture. The prediction data was restored to a local PostgreSQL
+database. Scripts that fetch database credentials from AWS Secrets Manager
+(`prediction_logger.py`, `record_outcomes.py`) won't work until they are
+pointed at a local connection string.
+
+The last deployed model was v3. The accumulated prediction/outcome data
+remains available locally for calibration analysis.
 
 ## What it does
 
@@ -18,18 +31,19 @@ model accuracy over time.
   props (hits, total bases, home runs, RBIs, stolen bases)
 - Incorporates real weather data (temperature, wind, ballpark-relative
   carry effects) as a simulation input, not an afterthought
-- Runs unattended on a schedule with five prediction passes and two outcome
-  resolution passes per day and with no manual intervention
+- While deployed, ran unattended on a schedule with five prediction passes and
+  two outcome resolution passes per day and with no manual interventionte README)
 - Tracks every prediction against its actual outcome, tagged by model
   version, to support ongoing calibration analysis (Brier scores,
   reliability diagrams, version-over-version comparison)
 
 ## Architecture
 
-Streamlit frontend → RDS PostgreSQL → scheduled ECS Fargate batch jobs →
-Application Load Balancer. Full infrastructure details, including the
-architecture diagram, live in the companion
-[`mlb-engine-aws`](https://github.com/W-Riley-01/mlb-engine-aws) repo.
+As deployed until its retirement on 2026-10-16: Streamlit frontend → RDS
+PostgreSQL → scheduled ECS Fargate batch jobs → Application Load Balancer.
+Full infrastructure details, including the architecture diagram, live in the
+companion [`mlb-engine-aws`](https://github.com/W-Riley-01/mlb-engine-aws)
+repo.
 
 ## Data model
 
@@ -54,11 +68,6 @@ Scheduler, Secrets Manager) · Terraform · GitHub Actions
 
 [MLB Stats API](https://statsapi.mlb.com) for schedules, rosters, and
 outcomes; [Open-Meteo](https://open-meteo.com) for weather.
-
-## Status
-
-Live and running in production. Model currently on v3; ongoing work is
-calibration analysis against accumulated prediction/outcome data.
 
 ## License
 

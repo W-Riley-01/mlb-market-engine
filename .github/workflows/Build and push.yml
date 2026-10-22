@@ -1,3 +1,4 @@
+# DISABLED: AWS runtime destroyed 2026-10-16; the ECR repo and Fargate service no longer exist. Kept as a reference.
 # =============================================================================
 #  Build and push mlb-engine-jobs image
 # =============================================================================
@@ -25,21 +26,24 @@
 name: Build and push mlb-engine-jobs image
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "auto_log_predictions.py"
-      - "record_outcomes.py"
-      - "prediction_logger.py"
-      - "bootstrap_data.py"
-      - "resolver.py"
-      - "engine_runner.py"
-      - "app.py"
-      - "daily_scraper.py"
-      - "generate_streamlit_secrets.py"
-      - "Dockerfile"
-      - "entrypoint.sh"
-      - "requirements.txt"
+  # DISABLED — AWS runtime destroyed 2026-10-16 (ECR repo and
+  # mlb-engine-app service no longer exist). Kept commented rather than
+  # deleted as a reference.
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - "auto_log_predictions.py"
+  #     - "record_outcomes.py"
+  #     - "prediction_logger.py"
+  #     - "bootstrap_data.py"
+  #     - "resolver.py"
+  #     - "engine_runner.py"
+  #     - "app.py"
+  #     - "daily_scraper.py"
+  #     - "generate_streamlit_secrets.py"
+  #     - "Dockerfile"
+  #     - "entrypoint.sh"
+  #     - "requirements.txt"
   workflow_dispatch: {}
 
 env:

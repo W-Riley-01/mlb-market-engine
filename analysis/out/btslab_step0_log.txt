@@ -1,0 +1,182 @@
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+
+### 1. Per season, 2022-2025 (schedule + box-score cache + pitch_matrix + odds file)
+        eligible_games (final, R, not suspended)  with_cached_box  true_starter_rows  rows_AB>=1  rows_AB=0 (passes)  games_with_box_weather_text  games_with_closing_ML_and_total  odds_match_rate  pitch_rows_in_eligible_games  eligible_games_with_pitches
+season                                                                                                                                                                                                                                                        
+2022                                        2429             2429              43722       43659                  63                         2429                             2422           0.9971                        707781                         2428
+2023                                        2423             2423              43614       43563                  51                         2423                             2420           0.9988                        715696                         2423
+2024                                        2426             2426              43668       43612                  56                         2426                             2425           0.9996                        708415                         2426
+2025                                        2426             2426              43668       43607                  61                         2426                             2426           1.0000                        708777                         2426
+
+### 1b. pitch_matrix.parquet by game_year (all game types; the file has no game-type column)
+           pitch_rows  games      first       last
+game_year                                         
+2019           745395   2476 2019-03-20 2019-10-30
+2020           279636    951 2020-07-23 2020-10-27
+2021           744029   2547 2021-03-15 2021-11-02
+2022           748806   2572 2022-03-17 2022-11-05
+2023           754635   2557 2023-03-15 2023-11-01
+2024           742826   2543 2024-03-15 2024-10-30
+2025           752683   2575 2025-03-15 2025-11-01
+
+### 1c. data/game_weather_log.parquet rows by year
+         rows  dates
+season              
+2019     7778    287
+2020    10248    366
+2021    10220    365
+2022    10220    365
+2023    10220    365
+2024    10248    366
+2025     7659    305
+
+### 1d. odds_match values by season
+odds_match  ambiguous  none  score_disambiguated  unique
+season                                                  
+2022                0     7                  132    2290
+2023                2     1                   67    2353
+2024                0     1                   56    2369
+2025                0     0                   59    2367
+
+### 1e. probable starter (schedule cache) vs actual starter (box), team-games
+       has_prob       prob_eq_actual      
+            sum  size            sum  size
+season                                    
+2022       4857  4858           4844  4858
+2023       4845  4846           4841  4846
+2024       4850  4852           4850  4852
+2025       4848  4852           4845  4852
+
+### 2. History. pitch_matrix earliest game_date 2019-03-20; DB earliest game_date 2026-04-28. 2022 opening day 2022-04-07.
+first day of 2022 with median_prior_pa_all >= 100: day 1
+first day of 2022 with median_prior_pa_365 >= 100: day 1
+
+### 2b. 2022 true starters, prior PA strictly before D (selected days)
+     rows  median_prior_pa_all  median_prior_pa_365  share_ge100_all  share_ge100_365
+day                                                                                  
+1     126               1005.5                448.0            0.952            0.937
+2     216               1081.0                475.5            0.949            0.926
+3     270               1005.5                445.5            0.952            0.937
+5     198               1067.0                482.5            0.980            0.955
+7     216                978.5                438.0            0.931            0.903
+10    270                960.5                442.5            0.944            0.911
+14    288                953.5                423.0            0.934            0.899
+21    270                957.0                438.5            0.922            0.881
+30    162               1101.0                456.0            0.957            0.951
+45    270               1100.0                472.0            0.941            0.907
+60    270                968.0                434.5            0.948            0.922
+
+### 3. 2026
+ games        min        max  with_temp  with_both_starters
+  1534 2026-04-28 2026-10-16       1222                1544
+ games_with_outcome  rows
+               1534  1544
+ rows  ab_ge1  ab0  ab_null
+27792   27640  112       40
+      status  count
+       final  27752
+did_not_play     22
+     pending     18
+pitch_matrix 2026 rows: 0; odds file 2026 games: 218; game_weather_log 2026 rows: 0; schedule-cache 2026 files: 0; box-cache files: 9704, of which 2022-2025 eligible games: 9704
+
+### 4. Venues
+schedule venue name vs box info 'Venue' text agree: 9704 of 9704
+
+### 4a. Athletics (team id 133) 2025 home games by recorded venue
+                             games
+venue_id venue                    
+2529     Sutter Health Park     81
+
+### 4b. Venues where any game's box weather says 'Roof Closed' or 'Dome', 2022-2025
+roof                            dome  open_or_other  roof_closed
+venue_id venue                                                  
+12       Tropicana Field         242              0            1
+14       Rogers Centre             0            197          127
+15       Chase Field               1             74          249
+32       American Family Field     0            178          146
+680      T-Mobile Park             0            269           55
+2392     Daikin Park               1              1           79
+         Minute Maid Park          0              3          240
+2397     Tokyo Dome                2              0            0
+4169     loanDepot park           29             36          259
+5150     Gocheok Sky Dome          2              0            0
+5325     Globe Life Field          0             43          281
+
+### 4c. Venues with fewer than 30 games in 2022-2025 (neutral or temporary sites)
+                                    games
+venue_id venue                           
+2397     Tokyo Dome                     2
+2735     Journey Bank Ballpark          2
+         Muncy Bank Ballpark            2
+3949     Rickwood Field                 1
+5150     Gocheok Sky Dome               2
+5340     Estadio Alfredo Harp Helu      4
+5381     London Stadium                 4
+5445     Field of Dreams                1
+weather_is_dome  count
+          False    809
+           None    322
+           True    413
+
+### 5. Odds file: columns ['game id', 'date', 'away team', 'away score', 'away ml open', 'away ml close', 'over open', 'over open odds', 'over close', 'over close odds', 'home team', 'home score', 'home ml open', 'home ml close', 'under open', 'under open odds', 'under close', 'under close odds']
+2022-2025 eligible games without closing ML+total: 11 of 9704
+
+### 5a. by season and odds_match
+                   games
+season odds_match       
+2022   none            7
+2023   ambiguous       2
+       none            1
+2024   none            1
+
+### 5b. by month
+         games
+month         
+2022-06      3
+2022-08      3
+2022-09      1
+2023-06      1
+2023-08      2
+2024-06      1
+
+### 5c. by team (away or home)
+     games
+MIA      5
+TB       3
+SD       2
+LAD      2
+CWS      1
+CLE      1
+PIT      1
+DET      1
+CHC      1
+NYY      1
+OAK      1
+SEA      1
+ATL      1
+CIN      1
+
+### Added check: AUC of de-vigged market home-win probability vs actual home win (box runs), 2022-2025
+
+### market AUC
+    line     set  games     AUC
+0  close  pooled   9693  0.6050
+1  close    2022   2422  0.6199
+2  close    2023   2420  0.6031
+3  close    2024   2425  0.6074
+4  close    2025   2426  0.5864
+5   open  pooled   9693  0.6009
+6   open    2022   2422  0.6204
+7   open    2023   2420  0.6002
+8   open    2024   2425  0.5998
+9   open    2025   2426  0.5804
+
+### 6. Fields
+batter handedness                        pitch_matrix.stand                                      present
+pitcher handedness                       pitch_matrix.p_throws                                   present
+batters faced per start                  box pitching.battersFaced                               present
+batters faced per start                  pitch_matrix (count PA rows of the first pitcher)       present
+per-reliever pitch counts by game date   box pitching.numberOfPitches / pitchesThrown            present
+per-reliever pitch counts by game date   pitch_matrix (rows per pitcher per game_date)           present
+any of these in the DB                   DB columns stand/p_throws/batters_faced/pitches         absent

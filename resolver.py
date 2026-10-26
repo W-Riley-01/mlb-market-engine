@@ -607,7 +607,7 @@ class MatchupResolver:
 
         # Aggregate all bullpen pitchers' data into one pool
         if bullpen_ids:
-            bp_data = self.pqm[self.pqm['pitcher'].isin(bullpen_ids)]
+            bp_data = self.pqm[self.pqm['pitcher'].isin(list(bullpen_ids))]
         else:
             bp_data = pd.DataFrame()
 
@@ -618,6 +618,18 @@ class MatchupResolver:
                 ev      = bp_data['events'].value_counts()
                 raw_k   = ev.get('strikeout', 0) / terminal_pa
                 raw_bb  = (ev.get('walk', 0) + ev.get('intent_walk', 0)) / terminal_pa
+                if isinstance(bullpen_ids, dict):
+                    # {pitcher_id: weight}: average per-arm rates by weight (e.g. recent relief
+                    # pitches) instead of pooling every career pitch. A list keeps the pooled rates.
+                    per = bp_data.groupby('pitcher')['events']
+                    pa  = per.apply(lambda e: self._count_terminal_pa(e.to_frame('events')))
+                    pa  = pa[pa > 0]
+                    w   = pd.Series(bullpen_ids, dtype=float).reindex(pa.index).fillna(0.0)
+                    if w.sum() > 0:
+                        k  = per.apply(lambda e: (e == 'strikeout').sum()).reindex(pa.index)
+                        bb = per.apply(lambda e: e.isin(['walk', 'intent_walk']).sum()).reindex(pa.index)
+                        raw_k  = float((w * k / pa).sum() / w.sum())
+                        raw_bb = float((w * bb / pa).sum() / w.sum())
                 k_rate  = self._blend(raw_k,  self.league_avg['k_rate'],  terminal_pa, self.PITCHER_THRESHOLD)
                 bb_rate = self._blend(raw_bb, self.league_avg['bb_rate'], terminal_pa, self.PITCHER_THRESHOLD)
                 # Bullpen arms generally throw more strikes — slight K boost is realistic

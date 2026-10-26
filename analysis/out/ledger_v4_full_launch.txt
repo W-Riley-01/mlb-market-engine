@@ -1,0 +1,6 @@
+chunk A 2024-03-01..2024-07-31 cmd_pid=20368 out=analysis\out\ledger_v4_full_A_2024-03-01_2024-07-31.csv log=analysis\out\ledger_v4_full_A.log
+chunk B 2024-08-01..2025-05-27 cmd_pid=22356 out=analysis\out\ledger_v4_full_B_2024-08-01_2025-05-27.csv log=analysis\out\ledger_v4_full_B.log
+chunk C 2025-05-28..2025-10-01 cmd_pid=21280 out=analysis\out\ledger_v4_full_C_2025-05-28_2025-10-01.csv log=analysis\out\ledger_v4_full_C.log
+chunk D 2022-03-01..2022-08-07 cmd_pid=12168 out=analysis\out\ledger_v4_full_D_2022-03-01_2022-08-07.csv log=analysis\out\ledger_v4_full_D.log
+chunk E 2022-08-08..2023-05-29 cmd_pid=15624 out=analysis\out\ledger_v4_full_E_2022-08-08_2023-05-29.csv log=analysis\out\ledger_v4_full_E.log
+chunk F 2023-05-30..2023-10-02 cmd_pid=2260 out=analysis\out\ledger_v4_full_F_2023-05-30_2023-10-02.csv log=analysis\out\ledger_v4_full_F.log

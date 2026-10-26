@@ -1,0 +1,30 @@
+1. all six logs end with 'skipped:' and contain no Traceback: OK
+2. ledger rows 9704; duplicate gamePks: 0
+       rows       first        last
+chunk                              
+A      1629  2024-03-20  2024-07-31
+B      1616  2024-08-01  2025-05-27
+C      1607  2025-05-28  2025-09-28
+D      1629  2022-04-07  2022-08-07
+E      1610  2022-08-08  2023-05-29
+F      1613  2023-05-30  2023-10-01
+
+3. games per season: schedule (final, official date, not suspended/resumed) vs ledger
+        schedule_final  of_which_suspended_or_resumed  schedule_eligible  ledger
+season                                                                          
+2022              2430                              1               2429    2429
+2023              2430                              7               2423    2423
+2024              2429                              3               2426    2426
+2025              2430                              4               2426    2426
+eligible schedule games not in ledger: 0; ledger games not in eligible schedule: 0
+
+4. ledger gamePks with a cached box score: 9704 of 9704
+
+5. exclusions
+actual_fallback games (either side): 8 -> analysis set 9696
+odds_match: {'unique': 9379, 'score_disambiguated': 314, 'none': 9, 'ambiguous': 2}
+analysis set: closing ML missing 11, closing total missing 11; name_collision games 0
+batter ids joined to box: 174672 of 174672 (unjoined 0); starter ids joined: 19408 of 19408 (unjoined 0)
+lineup entries whose box battingOrder is not slot x 100 (not a true starter): 0 of 174672
+
+INTEGRITY: PASS

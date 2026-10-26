@@ -1,0 +1,907 @@
+[SYSTEM] Initializing Advanced Resolver Engine (Platoon & Arsenal Active)...
+[SYSTEM] Recent-form snapshots loaded.
+[SYSTEM] Batter arsenal profiles loaded.
+[OddsBook] Loading ./data/MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+[setup] 4s; already done: 0
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 1/300 778498 sim 5.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 2/300 778497 sim 8.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 3/300 778493 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 4/300 778492 sim 6.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 5/300 778491 sim 7.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 6/300 778490 sim 3.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 7/300 778488 sim 5.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 8/300 778495 sim 8.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 9/300 778489 sim 7.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 10/300 778485 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 11/300 778486 sim 6.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 12/300 778494 sim 5.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-01] 13/300 778487 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 14/300 778480 sim 4.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 15/300 778479 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 16/300 778477 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 17/300 778473 sim 7.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 18/300 778474 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 19/300 778478 sim 3.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 20/300 778471 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 21/300 778476 sim 5.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 22/300 778469 sim 6.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 23/300 778475 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 24/300 778481 sim 3.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 25/300 778483 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 26/300 778482 sim 6.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 27/300 778484 sim 6.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-02] 28/300 778472 sim 5.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-03] 29/300 778470 sim 6.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-03] 30/300 778467 sim 5.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-03] 31/300 778462 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-03] 32/300 778466 sim 6.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-03] 33/300 778468 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 34/300 778458 sim 5.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 35/300 778463 sim 5.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 36/300 778460 sim 3.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 37/300 778465 sim 6.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 38/300 778456 sim 4.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 39/300 778461 sim 6.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 40/300 778444 sim 4.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 41/300 778457 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 42/300 778459 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 43/300 778464 sim 3.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 44/300 778455 sim 5.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 45/300 778454 sim 5.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 46/300 778453 sim 4.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-04] 47/300 778447 sim 3.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 48/300 778445 sim 3.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 49/300 778440 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 50/300 778450 sim 5.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 51/300 778452 sim 4.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 52/300 778448 sim 5.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 53/300 778449 sim 5.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 54/300 778441 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 55/300 778438 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 56/300 778446 sim 6.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 57/300 778439 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 58/300 778451 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 59/300 778442 sim 5.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 60/300 778436 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-05] 61/300 778437 sim 4.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 62/300 778429 sim 6.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 63/300 778443 sim 4.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 64/300 778432 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 65/300 778434 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 66/300 778428 sim 5.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 67/300 778435 sim 4.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 68/300 778433 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 69/300 778422 sim 4.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 70/300 778419 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 71/300 778421 sim 3.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 72/300 778430 sim 3.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 73/300 778420 sim 3.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 74/300 778423 sim 3.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 75/300 778427 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-06] 76/300 778425 sim 6.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-07] 77/300 778424 sim 5.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-07] 78/300 778415 sim 3.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-07] 79/300 778418 sim 4.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-07] 80/300 778426 sim 5.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-07] 81/300 778416 sim 3.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-07] 82/300 778411 sim 6.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-07] 83/300 778412 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-07] 84/300 778413 sim 6.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-07] 85/300 778405 sim 5.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-07] 86/300 778410 sim 6.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-07] 87/300 778414 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 88/300 778403 sim 6.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 89/300 778402 sim 3.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 90/300 778407 sim 3.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 91/300 778408 sim 5.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 92/300 778409 sim 3.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 93/300 778404 sim 3.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 94/300 778417 sim 5.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 95/300 778406 sim 6.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 96/300 778401 sim 7.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 97/300 778400 sim 5.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 98/300 778394 sim 6.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 99/300 778396 sim 7.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 100/300 778398 sim 7.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 101/300 778397 sim 4.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-08] 102/300 778395 sim 5.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 103/300 778389 sim 6.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 104/300 778390 sim 4.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 105/300 778387 sim 7.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 106/300 778385 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 107/300 778381 sim 3.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 108/300 778380 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 109/300 778376 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 110/300 778392 sim 4.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 111/300 778383 sim 4.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 112/300 778391 sim 3.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 113/300 778386 sim 6.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 114/300 778399 sim 5.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 115/300 778393 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 116/300 778388 sim 5.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-09] 117/300 778379 sim 4.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-10] 118/300 778382 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-10] 119/300 778378 sim 4.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-10] 120/300 778373 sim 6.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-10] 121/300 778371 sim 4.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-10] 122/300 778377 sim 6.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-10] 123/300 778384 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 124/300 778375 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 125/300 778374 sim 5.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 126/300 778367 sim 4.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 127/300 778370 sim 6.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 128/300 778369 sim 4.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 129/300 778366 sim 3.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 130/300 778368 sim 4.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 131/300 778363 sim 4.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 132/300 778365 sim 6.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 133/300 778361 sim 6.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 134/300 778360 sim 5.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 135/300 778364 sim 6.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 136/300 778358 sim 5.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-11] 137/300 778356 sim 4.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 138/300 778348 sim 4.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 139/300 778347 sim 5.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 140/300 778355 sim 4.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 141/300 778346 sim 4.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 142/300 778362 sim 3.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 143/300 778353 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 144/300 778349 sim 4.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 145/300 778354 sim 6.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 146/300 778359 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 147/300 778357 sim 5.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 148/300 778351 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 149/300 778350 sim 4.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 150/300 778352 sim 2.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 151/300 778345 sim 3.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-12] 152/300 778341 sim 3.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 153/300 778344 sim 5.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 154/300 778339 sim 6.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 155/300 778342 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 156/300 778343 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 157/300 778340 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 158/300 778337 sim 5.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 159/300 778329 sim 5.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 160/300 778335 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 161/300 778338 sim 3.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 162/300 778336 sim 5.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 163/300 778333 sim 4.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 164/300 778330 sim 5.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 165/300 778334 sim 6.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 166/300 778332 sim 6.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-13] 167/300 778331 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-14] 168/300 778321 sim 3.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-14] 169/300 778320 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-14] 170/300 778328 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-14] 171/300 778327 sim 6.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-14] 172/300 778322 sim 3.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-14] 173/300 778324 sim 4.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-14] 174/300 778323 sim 5.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-14] 175/300 778325 sim 6.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-14] 176/300 778315 sim 6.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-14] 177/300 778326 sim 4.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 178/300 778314 sim 5.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 179/300 778316 sim 6.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 180/300 778318 sim 4.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 181/300 778313 sim 5.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 182/300 778317 sim 6.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 183/300 778319 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 184/300 778312 sim 6.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 185/300 778311 sim 5.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 186/300 778307 sim 5.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 187/300 778309 sim 3.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 188/300 778310 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 189/300 778308 sim 5.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 190/300 778306 sim 6.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 191/300 778305 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-15] 192/300 778302 sim 4.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 193/300 778297 sim 6.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 194/300 778299 sim 3.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 195/300 778295 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 196/300 778290 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 197/300 778288 sim 5.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 198/300 778301 sim 4.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 199/300 778293 sim 4.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 200/300 778304 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 201/300 778303 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 202/300 778296 sim 7.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 203/300 778298 sim 4.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 204/300 778300 sim 4.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 205/300 778294 sim 3.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 206/300 778289 sim 5.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-16] 207/300 778287 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-17] 208/300 778291 sim 5.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-17] 209/300 778280 sim 6.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-17] 210/300 778285 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-17] 211/300 778283 sim 4.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-17] 212/300 778279 sim 4.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-17] 213/300 778292 sim 4.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-17] 214/300 778286 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-17] 215/300 778282 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-17] 216/300 778278 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-17] 217/300 778281 sim 3.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 218/300 778268 sim 5.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 219/300 778277 sim 3.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 220/300 778271 sim 3.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 221/300 778274 sim 7.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 222/300 778276 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 223/300 778272 sim 5.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 224/300 778273 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 225/300 778270 sim 6.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 226/300 778275 sim 4.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 227/300 778284 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 228/300 778263 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 229/300 778269 sim 3.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 230/300 778261 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-18] 231/300 778260 sim 6.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 232/300 778252 sim 6.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 233/300 778265 sim 4.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 234/300 778257 sim 5.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 235/300 778258 sim 7.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 236/300 778262 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 237/300 778254 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 238/300 778256 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 239/300 778251 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 240/300 778247 sim 3.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 241/300 778264 sim 3.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 242/300 778255 sim 4.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 243/300 778259 sim 4.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 244/300 778253 sim 4.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 245/300 778267 sim 4.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-19] 246/300 778243 sim 4.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 247/300 778250 sim 5.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 248/300 778242 sim 5.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 249/300 778249 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 250/300 778245 sim 4.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 251/300 778248 sim 4.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 252/300 778241 sim 5.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 253/300 778246 sim 6.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 254/300 778244 sim 5.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 255/300 778240 sim 5.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 256/300 778239 sim 3.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 257/300 778236 sim 6.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 258/300 778234 sim 5.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 259/300 778235 sim 5.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 260/300 778266 sim 3.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 261/300 778232 sim 6.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-20] 262/300 778237 sim 6.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-21] 263/300 778238 sim 4.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-21] 264/300 778227 sim 4.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-21] 265/300 778228 sim 3.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-21] 266/300 778230 sim 3.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-21] 267/300 778225 sim 6.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-21] 268/300 778233 sim 4.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-21] 269/300 778231 sim 5.7s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-21] 270/300 778226 sim 4.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 271/300 778218 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 272/300 778221 sim 6.4s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 273/300 778219 sim 4.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 274/300 778222 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 275/300 778224 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 276/300 778223 sim 5.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 277/300 778229 sim 3.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 278/300 778215 sim 4.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 279/300 778220 sim 4.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 280/300 778216 sim 4.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 281/300 778217 sim 5.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 282/300 778211 sim 4.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 283/300 778212 sim 4.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 284/300 778210 sim 4.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-22] 285/300 778213 sim 5.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 286/300 778214 sim 5.5s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 287/300 778209 sim 3.8s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 288/300 778203 sim 6.3s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 289/300 778208 sim 6.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 290/300 778206 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 291/300 778204 sim 4.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 292/300 778207 sim 3.6s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 293/300 778205 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 294/300 778200 sim 3.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 295/300 778201 sim 4.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 296/300 778202 sim 4.9s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 297/300 778199 sim 5.0s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 298/300 778198 sim 6.2s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-23] 299/300 778197 sim 4.1s
+
+--- RUNNING 1000 MARKET SIMULATIONS (arsenal=DISABLED (no as_of_date passed)) ---
+[2025-04-24] 300/300 778189 sim 3.9s
+skipped: {'suspended_or_resumed': 5}

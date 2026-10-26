@@ -1,0 +1,22 @@
+=== Box field for the starting nine: players[*].battingOrder code == slot*100 ===
+               games  team_games  exactly_nine  slots_1_9  matches_statcast  subs_in_battingOrder_list
+kind                                                                                                  
+double switch      8          16            16         16                16                         38
+doubleheader      10          20            20         20                20                         25
+random             8          16            16         16                16                         18
+verification games: {'double switch': [np.int64(661258), np.int64(661579), np.int64(661808), np.int64(662432), np.int64(662945), np.int64(663313), np.int64(716978), np.int64(717154)], 'doubleheader': [np.int64(662628), np.int64(662697), np.int64(716590), np.int64(717082), np.int64(717096), np.int64(717664), np.int64(746796), np.int64(746799), np.int64(778004), np.int64(778029)], 'random': [np.int64(746627), np.int64(777366), np.int64(718378), np.int64(746947), np.int64(745249), np.int64(717778), np.int64(663211), np.int64(745350)]}
+all 19408 team-games: exactly nine starters in slots 1-9 19408 (100.0000%); identical to Statcast first-nine order 19275 (99.3147%)
+
+=== EXPLORATORY: substitute count per game ===
+games 9696; substitutes per game: mean 2.50, distribution {0: 858, 1: 1942, 2: 2363, 3: 2138, 4: 1318, 5: 708, 6: 269, 7: 82, 8: 16, 9: 2}
+(a) n=9685: r(subs, model_total_mean - line) -0.110; r(subs, actual - line) 0.197
+(c) test 2 + subs: (actual - line) ~ 1 + (model - line) + subs: intercept -0.885 (-1.044 to -0.729); slope(model-line) -0.106 (-0.202 to -0.005); subs 0.543 (0.485 to 0.601)
+(b) n=9659: r(subs, logit model - logit market) 0.012; r(subs, home win - p_market) -0.034
+    home-minus-away substitutes: r with (logit model - logit market) -0.090; r with (home win - p_market) -0.092
+(c) test 1 + subs: y ~ 1 + logit(p_mkt) + logit(p_model) + subs: intercept 0.1547 (0.0742 to 0.2397); b_market 1.2216 (1.0691 to 1.3863); b_model -0.3937 (-0.5906 to -0.2038); subs -0.0446 (-0.0700 to -0.0199)
+(c) test 1 + home-minus-away subs: y ~ 1 + logit(p_mkt) + logit(p_model) + home-minus-away subs: intercept 0.0548 (0.0038 to 0.1052); b_market 1.2980 (1.1413 to 1.4677); b_model -0.5056 (-0.7097 to -0.3138); home-minus-away subs -0.1508 (-0.1817 to -0.1209)
+
+=== Same defect elsewhere? ===
+ledger_v4_pilot.csv: games 300, lineup entries 5400, substitutes 717 (13.3%)
+ledger_v4_pilot_azath_fixed.csv: games 39, lineup entries 702, substitutes 88 (12.5%)
+data/backtest_ledger.csv: rows 8354 (2023-03-30..2025-11-01); rows with a cached box 7264; lineup names matched to a box batting-order code 130379 (unmatched 373); substitutes 18359 (14.1%)

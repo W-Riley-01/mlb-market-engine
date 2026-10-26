@@ -1,0 +1,33 @@
+orientation: home-win AUC on analysis set = 0.5651 (n=9696)
+baseline tables built
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:40: RuntimeWarning: divide by zero encountered in divide
+  return np.where(o > 0, 100 / (o + 100), -o / (-o + 100))
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:40: RuntimeWarning: divide by zero encountered in divide
+  return np.where(o > 0, 100 / (o + 100), -o / (-o + 100))
+test 1 done
+test 2 done
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:362: Pandas4Warning: The 'lsuffix' and 'rsuffix' keywords in DataFrame.join are deprecated and will be removed in a future version. Use the 'suffixes' keyword instead.
+  j = top1["simulator"][["res", "season"]].join(top1[base][["res"]], rsuffix="_b", how="inner")
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:362: Pandas4Warning: The 'lsuffix' and 'rsuffix' keywords in DataFrame.join are deprecated and will be removed in a future version. Use the 'suffixes' keyword instead.
+  j = top1["simulator"][["res", "season"]].join(top1[base][["res"]], rsuffix="_b", how="inner")
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:362: Pandas4Warning: The 'lsuffix' and 'rsuffix' keywords in DataFrame.join are deprecated and will be removed in a future version. Use the 'suffixes' keyword instead.
+  j = top1["simulator"][["res", "season"]].join(top1[base][["res"]], rsuffix="_b", how="inner")
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:362: Pandas4Warning: The 'lsuffix' and 'rsuffix' keywords in DataFrame.join are deprecated and will be removed in a future version. Use the 'suffixes' keyword instead.
+  j = top1["simulator"][["res", "season"]].join(top1[base][["res"]], rsuffix="_b", how="inner")
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:362: Pandas4Warning: The 'lsuffix' and 'rsuffix' keywords in DataFrame.join are deprecated and will be removed in a future version. Use the 'suffixes' keyword instead.
+  j = top1["simulator"][["res", "season"]].join(top1[base][["res"]], rsuffix="_b", how="inner")
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:362: Pandas4Warning: The 'lsuffix' and 'rsuffix' keywords in DataFrame.join are deprecated and will be removed in a future version. Use the 'suffixes' keyword instead.
+  j = top1["simulator"][["res", "season"]].join(top1[base][["res"]], rsuffix="_b", how="inner")
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:362: Pandas4Warning: The 'lsuffix' and 'rsuffix' keywords in DataFrame.join are deprecated and will be removed in a future version. Use the 'suffixes' keyword instead.
+  j = top1["simulator"][["res", "season"]].join(top1[base][["res"]], rsuffix="_b", how="inner")
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:362: Pandas4Warning: The 'lsuffix' and 'rsuffix' keywords in DataFrame.join are deprecated and will be removed in a future version. Use the 'suffixes' keyword instead.
+  j = top1["simulator"][["res", "season"]].join(top1[base][["res"]], rsuffix="_b", how="inner")
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:362: Pandas4Warning: The 'lsuffix' and 'rsuffix' keywords in DataFrame.join are deprecated and will be removed in a future version. Use the 'suffixes' keyword instead.
+  j = top1["simulator"][["res", "season"]].join(top1[base][["res"]], rsuffix="_b", how="inner")
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:362: Pandas4Warning: The 'lsuffix' and 'rsuffix' keywords in DataFrame.join are deprecated and will be removed in a future version. Use the 'suffixes' keyword instead.
+  j = top1["simulator"][["res", "season"]].join(top1[base][["res"]], rsuffix="_b", how="inner")
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\v4_analysis.py:417: Pandas4Warning: The 'lsuffix' and 'rsuffix' keywords in DataFrame.join are deprecated and will be removed in a future version. Use the 'suffixes' keyword instead.
+  f5 = five["simulator"].join(five["B2"], rsuffix="_b", how="inner")
+test 3 done
+test 4 done
+wrote C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\BACKTEST_V4_RESULTS.md

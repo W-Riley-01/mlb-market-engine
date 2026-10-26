@@ -1,0 +1,591 @@
+cells: 1263  tested: 812  insufficient: 451  BH family size (tests): 1624
+
+Insufficient / total cells by segment x target:
+ target          home_win     k5   nrfi over_8.5  p_1h  p_1hr p_1rbi  p_1sb p_2tb
+segment                                                                         
+abs_shift_b          4/8    2/8    4/8      4/8   NaN    1/8    0/8    2/8   0/8
+bat_team             0/0    0/0    0/0      0/0   NaN  20/60   1/60  57/60  0/60
+lead                 NaN    NaN    NaN      NaN   NaN    NaN    NaN    NaN   NaN
+month                0/6    0/6    0/6      1/6   NaN    0/6    0/6    0/6   0/6
+park               60/60  60/60  60/60    60/60   NaN  27/60   2/60  60/60  1/60
+regime               NaN    NaN    NaN      NaN   NaN    NaN    NaN    NaN   NaN
+side                 NaN    NaN    NaN      NaN   NaN    NaN    NaN    NaN   NaN
+slot                 NaN    NaN    NaN      NaN   NaN    NaN    NaN    NaN   NaN
+start                1/8    1/8    1/8      1/8   NaN    0/8    0/8    1/8   0/8
+weather_missing      2/4    1/4    1/4      2/4   NaN    0/4    0/4    0/4   0/4
+wlabel               4/6    1/6    4/6      4/6   NaN    0/6    0/6    1/6   0/6
+
+BH-significant BIAS cells:
+               segment                  level version    target      n  events    bias  bias_lo  bias_hi  q_bias  bias_H1  bias_H2  bias_other_version bias_class
+13        abs_shift_b                0.5-1.5      v2  home_win    142      62  0.1110   0.0268   0.1939  0.0317   0.1836   0.0514              0.0510    finding
+12               lead                   >=2h      v2  home_win    211      94  0.1041   0.0366   0.1711  0.0116   0.1351   0.0750             -0.0300       lead
+95             wlabel       Very HR Friendly      v3  home_win    131      57  0.1332   0.0420   0.2254  0.0182   0.1445   0.1257                 NaN    finding
+316       abs_shift_b                0.5-1.5      v2        k5    284     142  0.0765   0.0173   0.1369  0.0411   0.1104   0.0487              0.1621    finding
+318       abs_shift_b                  <=0.5      v2        k5    612     317  0.0556   0.0186   0.0921  0.0150   0.0746   0.0342              0.1250    finding
+362       abs_shift_b                0.5-1.5      v3        k5    420     192  0.1621   0.1168   0.2106  0.0000   0.1357   0.1847              0.0765    finding
+363       abs_shift_b                1.5-2.5      v3        k5    157      72  0.1517   0.0834   0.2136  0.0001   0.1221   0.1762              0.0485    finding
+364       abs_shift_b                  <=0.5      v3        k5    608     294  0.1250   0.0865   0.1655  0.0000   0.1355   0.1153              0.0556    finding
+314              lead                    <1h      v2        k5    746     375  0.0781   0.0445   0.1134  0.0001   0.1067   0.0509              0.1192    finding
+359              lead                   1-2h      v3        k5    594     280  0.1465   0.1067   0.1849  0.0000   0.1106   0.1785              0.0540    finding
+360              lead                    <1h      v3        k5    292     141  0.1192   0.0631   0.1761  0.0003   0.1070   0.1456              0.0781    finding
+361              lead                   >=2h      v3        k5    428     202  0.1372   0.0899   0.1843  0.0000   0.1699   0.1131              0.0542    finding
+307             month                    Jun      v2        k5    626     320  0.0602   0.0228   0.0960  0.0077   0.0834   0.0537                 NaN    finding
+308             month                    May      v2        k5    667     335  0.0786   0.0431   0.1138  0.0002   0.0786      NaN                 NaN       lead
+352             month                    Aug      v3        k5    513     250  0.1234   0.0822   0.1665  0.0000   0.1304   0.0918                 NaN    finding
+353             month                    Jul      v3        k5    243     119  0.1179   0.0562   0.1799  0.0013   0.1179      NaN                 NaN       lead
+354             month                    Sep      v3        k5    558     254  0.1588   0.1164   0.1994  0.0000      NaN   0.1588                 NaN       lead
+303            regime                     v2      v2        k5   1603     813  0.0653   0.0419   0.0885  0.0000   0.0794   0.0511                 NaN    finding
+304            regime                    v3a      v3        k5    294     146  0.1124   0.0560   0.1683  0.0008   0.1124      NaN                 NaN       lead
+305            regime                    v3b      v3        k5   1020     477  0.1446   0.1133   0.1740  0.0000   0.1366   0.1491                 NaN    finding
+350              side                   away      v2        k5    801     386  0.0855   0.0505   0.1201  0.0000   0.0972   0.0737                 NaN    finding
+351              side                   home      v2        k5    802     427  0.0451   0.0096   0.0811  0.0397   0.0617   0.0285                 NaN    finding
+396              side                   away      v3        k5    658     287  0.1761   0.1395   0.2165  0.0000   0.1455   0.2072                 NaN    finding
+397              side                   home      v3        k5    656     336  0.0986   0.0593   0.1394  0.0000   0.1061   0.0910                 NaN    finding
+309             start                  4-7pm      v2        k5    460     235  0.0622   0.0169   0.1080  0.0230   0.0761   0.0457              0.1235    finding
+310             start                  7-9pm      v2        k5    672     339  0.0659   0.0301   0.1024  0.0026   0.0899   0.0437              0.1273    finding
+312             start                   <4pm      v2        k5    249     123  0.0859   0.0232   0.1475  0.0303   0.0786   0.0923              0.1725    finding
+355             start                  4-7pm      v3        k5    360     179  0.1235   0.0734   0.1707  0.0000   0.0941   0.1487              0.0622    finding
+356             start                  7-9pm      v3        k5    570     274  0.1273   0.0882   0.1678  0.0000   0.1221   0.1339              0.0659    finding
+358             start                   <4pm      v3        k5    332     143  0.1725   0.1179   0.2252  0.0000   0.1791   0.1683              0.0859    finding
+404   weather_missing           present (v2)      v2        k5   1084     557  0.0592   0.0295   0.0884  0.0005   0.0875   0.0307              0.1199    finding
+405   weather_missing           missing (v2)      v2        k5    519     256  0.0780   0.0344   0.1214  0.0024   0.0625   0.0934                 NaN    finding
+406   weather_missing          present (v3a)      v3        k5    201      99  0.1199   0.0472   0.1904  0.0046   0.1199      NaN              0.0592       lead
+398            wlabel            HR Friendly      v3        k5    122      58  0.1486   0.0591   0.2372  0.0064   0.1251   0.1686                 NaN    finding
+401            wlabel         Neutral (Dome)      v3        k5    268     126  0.1356   0.0788   0.1958  0.0000   0.1347   0.1362                 NaN    finding
+402            wlabel       Very HR Friendly      v3        k5    262     121  0.1514   0.1004   0.2012  0.0000   0.1131   0.1766                 NaN    finding
+403            wlabel     Very HR Suppressed      v3        k5    154      65  0.2009   0.1160   0.2833  0.0000   0.1960   0.2019                 NaN    finding
+150             month                    Sep      v3      nrfi    279     127  0.0822   0.0248   0.1424  0.0234      NaN   0.0822                 NaN       lead
+217       abs_shift_b                  <=0.5      v2  over_8.5    306     148 -0.0686  -0.1216  -0.0132  0.0481  -0.0477  -0.0920             -0.0741    finding
+261       abs_shift_b                  <=0.5      v3  over_8.5    304     145 -0.0741  -0.1322  -0.0181  0.0337  -0.0551  -0.0917             -0.0686    finding
+213              lead                    <1h      v2  over_8.5    373     191 -0.0677  -0.1211  -0.0175  0.0356  -0.0815  -0.0546              0.0045       lead
+256              lead                   1-2h      v3  over_8.5    297     148 -0.0809  -0.1362  -0.0246  0.0209  -0.0697  -0.0909             -0.0126    finding
+206             month                    Jun      v2  over_8.5    313     165 -0.0863  -0.1436  -0.0283  0.0127  -0.1201  -0.0769                 NaN    finding
+251             month                    Sep      v3  over_8.5    279     143 -0.1002  -0.1614  -0.0400  0.0049      NaN  -0.1002                 NaN       lead
+202            regime                     v2      v2  over_8.5    802     403 -0.0557  -0.0902  -0.0199  0.0099  -0.0492  -0.0622                 NaN    finding
+204            regime                    v3b      v3  over_8.5    510     252 -0.0700  -0.1150  -0.0283  0.0076  -0.0258  -0.0949                 NaN    finding
+208             start                  4-7pm      v2  over_8.5    230     124 -0.0993  -0.1610  -0.0350  0.0129  -0.1174  -0.0779             -0.0646    finding
+300   weather_missing           missing (v2)      v2  over_8.5    260     139 -0.1102  -0.1687  -0.0487  0.0022  -0.1139  -0.1065                 NaN    finding
+422       abs_shift_b                1.5-2.5      v2      p_1h   1242     754  0.0412   0.0103   0.0717  0.0273   0.0520   0.0287              0.0391    finding
+423       abs_shift_b                  <=0.5      v2      p_1h   5494    3263  0.0556   0.0407   0.0708  0.0000   0.0660   0.0441              0.0419    finding
+500       abs_shift_b                0.5-1.5      v3      p_1h   3770    2284  0.0404   0.0219   0.0582  0.0002   0.0395   0.0411              0.0214    finding
+501       abs_shift_b                1.5-2.5      v3      p_1h   1420     868  0.0391   0.0086   0.0704  0.0442   0.0426   0.0362              0.0412    finding
+502       abs_shift_b                  <=0.5      v3      p_1h   5462    3313  0.0419   0.0268   0.0580  0.0000   0.0383   0.0453              0.0556    finding
+468          bat_team    Cleveland Guardians      v2      p_1h    531     297  0.0903   0.0389   0.1407  0.0025   0.0947   0.0855                 NaN    finding
+470          bat_team         Detroit Tigers      v2      p_1h    440     250  0.0764   0.0264   0.1273  0.0134   0.1061   0.0454                 NaN    finding
+478          bat_team          New York Mets      v2      p_1h    504     290  0.0716   0.0169   0.1258  0.0281   0.1183   0.0281                 NaN    finding
+480          bat_team  Philadelphia Phillies      v2      p_1h    466     270  0.0731   0.0145   0.1289  0.0395   0.0992   0.0405                 NaN    finding
+482          bat_team       San Diego Padres      v2      p_1h    504     264  0.1324   0.0875   0.1768  0.0000   0.1621   0.1027                 NaN    finding
+485          bat_team    St. Louis Cardinals      v2      p_1h    486     291  0.0745   0.0254   0.1236  0.0108   0.0579   0.0889                 NaN    finding
+541          bat_team         Atlanta Braves      v3      p_1h    476     273  0.0851   0.0343   0.1358  0.0048   0.0798   0.0902                 NaN    finding
+542          bat_team      Baltimore Orioles      v3      p_1h    396     228  0.0827   0.0350   0.1325  0.0052   0.0804   0.0853                 NaN    finding
+545          bat_team      Chicago White Sox      v3      p_1h    494     283  0.0795   0.0280   0.1314  0.0127   0.0281   0.1254                 NaN    finding
+546          bat_team        Cincinnati Reds      v3      p_1h    431     245  0.0801   0.0224   0.1415  0.0286   0.1013   0.0608                 NaN    finding
+552          bat_team     Los Angeles Angels      v3      p_1h    216     112  0.1224   0.0436   0.2012  0.0124   0.1208   0.1247                 NaN    finding
+554          bat_team          Miami Marlins      v3      p_1h    396     238  0.0655   0.0244   0.1064  0.0099   0.0724   0.0579                 NaN    finding
+564          bat_team    St. Louis Cardinals      v3      p_1h    448     259  0.0830   0.0327   0.1331  0.0071   0.0617   0.1124                 NaN    finding
+568          bat_team   Washington Nationals      v3      p_1h    386     225  0.0778   0.0256   0.1315  0.0182   0.1038   0.0419                 NaN    finding
+418              lead                   1-2h      v2      p_1h   3916    2380  0.0438   0.0259   0.0630  0.0000   0.0640   0.0200              0.0344    finding
+419              lead                    <1h      v2      p_1h   6710    4057  0.0451   0.0325   0.0595  0.0000   0.0538   0.0369              0.0534    finding
+420              lead                   >=2h      v2      p_1h   3779    2329  0.0331   0.0146   0.0522  0.0036   0.0493   0.0179              0.0426    finding
+497              lead                   1-2h      v3      p_1h   5339    3271  0.0344   0.0187   0.0512  0.0002   0.0280   0.0402              0.0438    finding
+498              lead                    <1h      v3      p_1h   2642    1585  0.0534   0.0294   0.0757  0.0000   0.0527   0.0550              0.0451    finding
+499              lead                   >=2h      v3      p_1h   3837    2317  0.0426   0.0259   0.0599  0.0000   0.0481   0.0385              0.0331    finding
+411             month                    Jul      v2      p_1h   2786    1711  0.0348   0.0131   0.0563  0.0088      NaN   0.0348                 NaN       lead
+412             month                    Jun      v2      p_1h   5620    3491  0.0254   0.0106   0.0401  0.0035   0.0346   0.0229                 NaN    finding
+413             month                    May      v2      p_1h   5999    3564  0.0599   0.0456   0.0757  0.0000   0.0599      NaN                 NaN       lead
+490             month                    Aug      v3      p_1h   4616    2835  0.0327   0.0147   0.0495  0.0010   0.0319   0.0365                 NaN    finding
+491             month                    Jul      v3      p_1h   2191    1304  0.0567   0.0331   0.0791  0.0000   0.0567      NaN                 NaN       lead
+492             month                    Sep      v3      p_1h   5011    3034  0.0426   0.0274   0.0586  0.0000      NaN   0.0426                 NaN       lead
+426              park              Athletics      v2      p_1h    446     329 -0.0972  -0.1368  -0.0537  0.0001  -0.0674  -0.1209              0.0063       lead
+431              park      Chicago White Sox      v2      p_1h    484     282  0.0547   0.0153   0.0944  0.0270   0.0443   0.0630              0.0412    finding
+432              park        Cincinnati Reds      v2      p_1h    486     272  0.0812   0.0288   0.1386  0.0159   0.0441   0.1067              0.0567    finding
+435              park         Detroit Tigers      v2      p_1h    504     296  0.0640   0.0112   0.1125  0.0395   0.0831   0.0420              0.0712    finding
+436              park         Houston Astros      v2      p_1h    519     297  0.0689   0.0198   0.1223  0.0302   0.0430   0.1006              0.0591    finding
+439              park    Los Angeles Dodgers      v2      p_1h    375     209  0.1044   0.0422   0.1651  0.0051   0.1183   0.0893              0.0597    finding
+440              park          Miami Marlins      v2      p_1h    537     312  0.0731   0.0327   0.1146  0.0035   0.1125   0.0214              0.0689    finding
+441              park      Milwaukee Brewers      v2      p_1h    486     284  0.0792   0.0319   0.1278  0.0064   0.0623   0.1004              0.0418    finding
+447              park       San Diego Padres      v2      p_1h    540     295  0.1196   0.0712   0.1663  0.0000   0.1622   0.0709              0.0725    finding
+449              park       Seattle Mariners      v2      p_1h    466     253  0.1027   0.0431   0.1638  0.0042   0.0987   0.1090              0.0677    finding
+450              park    St. Louis Cardinals      v2      p_1h    575     348  0.0512   0.0129   0.0909  0.0337  -0.0007   0.1028              0.0596       lead
+453              park      Toronto Blue Jays      v2      p_1h    468     274  0.0645   0.0201   0.1098  0.0241   0.0674   0.0616              0.0337    finding
+507              park      Baltimore Orioles      v3      p_1h    378     213  0.0650   0.0121   0.1184  0.0497   0.0813   0.0528              0.0414    finding
+514              park         Detroit Tigers      v3      p_1h    540     312  0.0712   0.0236   0.1181  0.0108   0.0666   0.0765              0.0640    finding
+515              park         Houston Astros      v3      p_1h    486     289  0.0591   0.0143   0.1059  0.0409   0.0007   0.1219              0.0689    finding
+517              park     Los Angeles Angels      v3      p_1h    161      83  0.1091   0.0309   0.1838  0.0210   0.1302   0.0357              0.0321    finding
+519              park          Miami Marlins      v3      p_1h    395     231  0.0689   0.0223   0.1148  0.0145   0.0866   0.0476              0.0731    finding
+522              park          New York Mets      v3      p_1h    486     290  0.0590   0.0192   0.0971  0.0164   0.0656   0.0479              0.0225    finding
+529              park    St. Louis Cardinals      v3      p_1h    431     252  0.0596   0.0197   0.0984  0.0100   0.0437   0.0755              0.0512    finding
+531              park          Texas Rangers      v3      p_1h    467     263  0.0733   0.0168   0.1281  0.0342   0.0818   0.0661              0.0544    finding
+408            regime                     v2      v2      p_1h  14405    8766  0.0416   0.0320   0.0516  0.0000   0.0556   0.0275                 NaN    finding
+409            regime                    v3a      v3      p_1h   2655    1597  0.0493   0.0277   0.0704  0.0001   0.0493      NaN                 NaN       lead
+410            regime                    v3b      v3      p_1h   9163    5576  0.0390   0.0272   0.0511  0.0000   0.0343   0.0417                 NaN    finding
+455              side                   away      v2      p_1h   7203    4444  0.0397   0.0259   0.0524  0.0000   0.0436   0.0358                 NaN    finding
+456              side                   home      v2      p_1h   7202    4322  0.0435   0.0305   0.0567  0.0000   0.0677   0.0193                 NaN    finding
+534              side                   away      v3      p_1h   5906    3590  0.0484   0.0332   0.0641  0.0000   0.0486   0.0481                 NaN    finding
+535              side                   home      v3      p_1h   5912    3583  0.0343   0.0203   0.0495  0.0000   0.0334   0.0353                 NaN    finding
+457              slot                    1-3      v2      p_1h   4800    3154  0.0384   0.0244   0.0527  0.0000   0.0570   0.0197                 NaN    finding
+458              slot                    4-6      v2      p_1h   4803    2962  0.0400   0.0256   0.0538  0.0000   0.0464   0.0335                 NaN    finding
+459              slot                    7-9      v2      p_1h   4802    2650  0.0465   0.0325   0.0609  0.0000   0.0635   0.0293                 NaN    finding
+536              slot                    1-3      v3      p_1h   3940    2581  0.0375   0.0224   0.0531  0.0000   0.0446   0.0302                 NaN    finding
+537              slot                    4-6      v3      p_1h   3941    2432  0.0375   0.0224   0.0540  0.0000   0.0437   0.0311                 NaN    finding
+538              slot                    7-9      v3      p_1h   3937    2160  0.0490   0.0329   0.0652  0.0000   0.0346   0.0637                 NaN    finding
+414             start                  4-7pm      v2      p_1h   4131    2540  0.0367   0.0198   0.0536  0.0002   0.0491   0.0218              0.0379    finding
+415             start                  7-9pm      v2      p_1h   6044    3630  0.0496   0.0356   0.0642  0.0000   0.0586   0.0412              0.0342    finding
+416             start                   9pm+      v2      p_1h   1986    1212  0.0400   0.0094   0.0700  0.0286   0.0657   0.0128              0.0542    finding
+417             start                   <4pm      v2      p_1h   2244    1384  0.0307   0.0082   0.0533  0.0279   0.0513   0.0128              0.0554    finding
+493             start                  4-7pm      v3      p_1h   3235    1969  0.0379   0.0174   0.0583  0.0017   0.0427   0.0339              0.0367    finding
+494             start                  7-9pm      v3      p_1h   5139    3166  0.0342   0.0188   0.0487  0.0001   0.0352   0.0328              0.0496    finding
+496             start                   <4pm      v3      p_1h   2981    1764  0.0554   0.0351   0.0762  0.0000   0.0434   0.0631              0.0307    finding
+575   weather_missing           present (v2)      v2      p_1h   9732    5894  0.0443   0.0334   0.0557  0.0000   0.0601   0.0284              0.0507    finding
+576   weather_missing           missing (v2)      v2      p_1h   4673    2872  0.0360   0.0205   0.0530  0.0002   0.0463   0.0258              0.0463    finding
+577   weather_missing          present (v3a)      v3      p_1h   1811    1085  0.0507   0.0244   0.0783  0.0013   0.0507      NaN              0.0443       lead
+570            wlabel          HR Suppressed      v3      p_1h    827     486  0.0598   0.0129   0.1042  0.0286   0.0305   0.0770                 NaN    finding
+572            wlabel         Neutral (Dome)      v3      p_1h   2408    1431  0.0540   0.0326   0.0759  0.0000   0.0381   0.0640                 NaN    finding
+574            wlabel     Very HR Suppressed      v3      p_1h   1384     827  0.0499   0.0190   0.0809  0.0059   0.0747   0.0449                 NaN    finding
+764       abs_shift_b                1.5-2.5      v2     p_1hr   1242     137  0.0496   0.0305   0.0686  0.0000   0.0390   0.0619              0.0344    finding
+765       abs_shift_b                  <=0.5      v2     p_1hr   5494     656  0.0124   0.0034   0.0212  0.0257   0.0249  -0.0016              0.0157       lead
+842       abs_shift_b                0.5-1.5      v3     p_1hr   3770     415  0.0275   0.0169   0.0374  0.0000   0.0230   0.0314              0.0141    finding
+843       abs_shift_b                1.5-2.5      v3     p_1hr   1420     160  0.0344   0.0164   0.0528  0.0016   0.0619   0.0114              0.0496    finding
+844       abs_shift_b                  <=0.5      v3     p_1hr   5462     625  0.0157   0.0080   0.0243  0.0013   0.0203   0.0115              0.0124    finding
+818          bat_team      Milwaukee Brewers      v2     p_1hr    503      53  0.0358   0.0067   0.0639  0.0428   0.0538   0.0179                 NaN    finding
+760              lead                   1-2h      v2     p_1hr   3916     458  0.0207   0.0098   0.0313  0.0013   0.0354   0.0034              0.0181    finding
+761              lead                    <1h      v2     p_1hr   6710     811  0.0169   0.0085   0.0258  0.0010   0.0289   0.0054              0.0240    finding
+839              lead                   1-2h      v3     p_1hr   5339     617  0.0181   0.0090   0.0272  0.0005   0.0212   0.0153              0.0207    finding
+840              lead                    <1h      v3     p_1hr   2642     295  0.0240   0.0119   0.0369  0.0016   0.0304   0.0101              0.0169    finding
+841              lead                   >=2h      v3     p_1hr   3837     418  0.0288   0.0194   0.0386  0.0000   0.0344   0.0247              0.0101    finding
+755             month                    May      v2     p_1hr   5999     660  0.0311   0.0228   0.0396  0.0000   0.0311      NaN                 NaN       lead
+832             month                    Aug      v3     p_1hr   4616     524  0.0246   0.0137   0.0347  0.0000   0.0246   0.0248                 NaN    finding
+833             month                    Jul      v3     p_1hr   2191     232  0.0328   0.0194   0.0462  0.0000   0.0328      NaN                 NaN       lead
+834             month                    Sep      v3     p_1hr   5011     574  0.0170   0.0087   0.0255  0.0006      NaN   0.0170                 NaN       lead
+768              park              Athletics      v2     p_1hr    446      88 -0.0484  -0.0877  -0.0133  0.0402   0.0134  -0.0978                 NaN       lead
+780              park     Los Angeles Angels      v2     p_1hr    538      61  0.0479   0.0185   0.0776  0.0092   0.0509   0.0440                 NaN    finding
+789              park       San Diego Padres      v2     p_1hr    540      60  0.0312   0.0075   0.0533  0.0254   0.0386   0.0227                 NaN    finding
+856              park         Detroit Tigers      v3     p_1hr    540      56  0.0328   0.0112   0.0550  0.0145   0.0441   0.0199              0.0283    finding
+750            regime                     v2      v2     p_1hr  14405    1775  0.0161   0.0103   0.0221  0.0000   0.0266   0.0056                 NaN    finding
+751            regime                    v3a      v3     p_1hr   2655     294  0.0273   0.0141   0.0401  0.0004   0.0273      NaN                 NaN       lead
+752            regime                    v3b      v3     p_1hr   9163    1036  0.0216   0.0149   0.0279  0.0000   0.0279   0.0181                 NaN    finding
+797              side                   away      v2     p_1hr   7203     888  0.0181   0.0098   0.0267  0.0002   0.0317   0.0044                 NaN    finding
+798              side                   home      v2     p_1hr   7202     887  0.0142   0.0063   0.0219  0.0029   0.0215   0.0068                 NaN    finding
+876              side                   away      v3     p_1hr   5906     677  0.0240   0.0153   0.0324  0.0000   0.0278   0.0201                 NaN    finding
+877              side                   home      v3     p_1hr   5912     653  0.0218   0.0132   0.0302  0.0000   0.0274   0.0161                 NaN    finding
+799              slot                    1-3      v2     p_1hr   4800     723  0.0155   0.0048   0.0261  0.0177   0.0282   0.0027                 NaN    finding
+800              slot                    4-6      v2     p_1hr   4803     629  0.0149   0.0056   0.0244  0.0099   0.0247   0.0051                 NaN    finding
+801              slot                    7-9      v2     p_1hr   4802     423  0.0180   0.0100   0.0261  0.0001   0.0270   0.0089                 NaN    finding
+878              slot                    1-3      v3     p_1hr   3940     550  0.0234   0.0121   0.0336  0.0002   0.0387   0.0079                 NaN    finding
+879              slot                    4-6      v3     p_1hr   3941     436  0.0260   0.0167   0.0362  0.0000   0.0300   0.0220                 NaN    finding
+880              slot                    7-9      v3     p_1hr   3937     344  0.0192   0.0100   0.0283  0.0003   0.0142   0.0244                 NaN    finding
+756             start                  4-7pm      v2     p_1hr   4131     489  0.0175   0.0066   0.0279  0.0075   0.0264   0.0068              0.0192    finding
+757             start                  7-9pm      v2     p_1hr   6044     721  0.0191   0.0101   0.0280  0.0002   0.0280   0.0108              0.0210    finding
+835             start                  4-7pm      v3     p_1hr   3235     359  0.0192   0.0080   0.0298  0.0033   0.0236   0.0155              0.0175    finding
+836             start                  7-9pm      v3     p_1hr   5139     606  0.0210   0.0116   0.0308  0.0001   0.0271   0.0134              0.0191    finding
+838             start                   <4pm      v3     p_1hr   2981     310  0.0291   0.0183   0.0402  0.0000   0.0348   0.0254              0.0129    finding
+917   weather_missing           present (v2)      v2     p_1hr   9732    1206  0.0174   0.0102   0.0244  0.0000   0.0246   0.0102              0.0250    finding
+918   weather_missing           missing (v2)      v2     p_1hr   4673     569  0.0135   0.0026   0.0246  0.0429   0.0309  -0.0040              0.0322       lead
+919   weather_missing          present (v3a)      v3     p_1hr   1811     208  0.0250   0.0100   0.0406  0.0075   0.0250      NaN              0.0174       lead
+920   weather_missing          missing (v3a)      v3     p_1hr    844      86  0.0322   0.0067   0.0561  0.0324   0.0322      NaN              0.0135       lead
+914            wlabel         Neutral (Dome)      v3     p_1hr   2408     263  0.0208   0.0090   0.0331  0.0038   0.0305   0.0147                 NaN    finding
+915            wlabel       Very HR Friendly      v3     p_1hr   2350     277  0.0473   0.0335   0.0605  0.0000   0.0544   0.0426                 NaN    finding
+934       abs_shift_b                0.5-1.5      v2    p_1rbi   2546     812 -0.0337  -0.0543  -0.0123  0.0064  -0.0205  -0.0445             -0.0061    finding
+1015      abs_shift_b                  <=0.5      v3    p_1rbi   5462    1620 -0.0183  -0.0315  -0.0055  0.0254  -0.0101  -0.0259             -0.0093    finding
+989          bat_team      Milwaukee Brewers      v2    p_1rbi    503     172 -0.0607  -0.1049  -0.0182  0.0232  -0.0570  -0.0644                 NaN    finding
+994          bat_team     Pittsburgh Pirates      v2    p_1rbi    396     143 -0.0783  -0.1394  -0.0156  0.0470  -0.0892  -0.0653                 NaN    finding
+999          bat_team         Tampa Bay Rays      v2    p_1rbi    484     157 -0.0565  -0.0994  -0.0094  0.0411  -0.0323  -0.0771                 NaN    finding
+1002         bat_team   Washington Nationals      v2    p_1rbi    495     173 -0.0616  -0.1137  -0.0152  0.0461  -0.0349  -0.0915                 NaN    finding
+1074         bat_team       San Diego Padres      v3    p_1rbi    324     118 -0.0815  -0.1388  -0.0205  0.0243  -0.0217  -0.1651                 NaN    finding
+933              lead                   >=2h      v2    p_1rbi   3779    1168 -0.0257  -0.0414  -0.0097  0.0064  -0.0169  -0.0340             -0.0146    finding
+925             month                    Jun      v2    p_1rbi   5620    1727 -0.0278  -0.0406  -0.0143  0.0003  -0.0320  -0.0267                 NaN    finding
+1005            month                    Sep      v3    p_1rbi   5011    1511 -0.0226  -0.0375  -0.0074  0.0145      NaN  -0.0226                 NaN       lead
+939              park              Athletics      v2    p_1rbi    446     175 -0.1127  -0.1653  -0.0638  0.0001  -0.0679  -0.1485             -0.0294    finding
+947              park       Colorado Rockies      v2    p_1rbi    449     156 -0.0673  -0.1123  -0.0259  0.0113  -0.0800  -0.0573             -0.0946    finding
+967              park   Washington Nationals      v2    p_1rbi    540     186 -0.0685  -0.1111  -0.0287  0.0048  -0.0635  -0.0735             -0.0412    finding
+1026             park       Colorado Rockies      v3    p_1rbi    413     152 -0.0946  -0.1499  -0.0411  0.0032  -0.0785  -0.1094             -0.0673    finding
+1029             park     Kansas City Royals      v3    p_1rbi    412     141 -0.0700  -0.1202  -0.0220  0.0213  -0.0666  -0.0722             -0.0464    finding
+921            regime                     v2      v2    p_1rbi  14405    4319 -0.0173  -0.0258  -0.0085  0.0006  -0.0117  -0.0229                 NaN    finding
+923            regime                    v3b      v3    p_1rbi   9163    2700 -0.0159  -0.0269  -0.0049  0.0215  -0.0104  -0.0191                 NaN    finding
+969              side                   home      v2    p_1rbi   7202    2150 -0.0203  -0.0329  -0.0079  0.0071  -0.0113  -0.0292                 NaN    finding
+1048             side                   home      v3    p_1rbi   5912    1742 -0.0214  -0.0362  -0.0079  0.0129  -0.0132  -0.0298                 NaN    finding
+970              slot                    1-3      v2    p_1rbi   4800    1565 -0.0224  -0.0360  -0.0083  0.0068  -0.0120  -0.0330                 NaN    finding
+927             start                  4-7pm      v2    p_1rbi   4131    1258 -0.0227  -0.0394  -0.0065  0.0303  -0.0259  -0.0190             -0.0177    finding
+930             start                   <4pm      v2    p_1rbi   2244     689 -0.0279  -0.0492  -0.0063  0.0310  -0.0159  -0.0382             -0.0026    finding
+1088  weather_missing           present (v2)      v2    p_1rbi   9732    2908 -0.0168  -0.0275  -0.0069  0.0071  -0.0129  -0.0208              0.0006       lead
+1086           wlabel       Very HR Friendly      v3    p_1rbi   2350     738 -0.0360  -0.0581  -0.0143  0.0070  -0.0167  -0.0487                 NaN    finding
+1105      abs_shift_b                0.5-1.5      v2     p_1sb   2546     170 -0.0315  -0.0424  -0.0218  0.0000  -0.0316  -0.0315             -0.0127    finding
+1106      abs_shift_b                1.5-2.5      v2     p_1sb   1242      75 -0.0256  -0.0385  -0.0132  0.0009  -0.0132  -0.0398             -0.0201    finding
+1107      abs_shift_b                  <=0.5      v2     p_1sb   5494     346 -0.0278  -0.0352  -0.0206  0.0000  -0.0309  -0.0243             -0.0209    finding
+1184      abs_shift_b                0.5-1.5      v3     p_1sb   3770     205 -0.0127  -0.0205  -0.0053  0.0070  -0.0089  -0.0159             -0.0315    finding
+1185      abs_shift_b                1.5-2.5      v3     p_1sb   1420      88 -0.0201  -0.0352  -0.0062  0.0254  -0.0186  -0.0214             -0.0256    finding
+1186      abs_shift_b                  <=0.5      v3     p_1sb   5462     342 -0.0209  -0.0275  -0.0149  0.0000  -0.0264  -0.0157             -0.0278    finding
+1152         bat_team    Cleveland Guardians      v2     p_1sb    531      51 -0.0610  -0.0889  -0.0343  0.0001  -0.0797  -0.0402                 NaN    finding
+1166         bat_team       San Diego Padres      v2     p_1sb    504      56 -0.0756  -0.1056  -0.0476  0.0000  -0.0596  -0.0917                 NaN    finding
+1173         bat_team   Washington Nationals      v2     p_1sb    495      54 -0.0739  -0.1043  -0.0459  0.0000  -0.0528  -0.0975                 NaN    finding
+1102             lead                   1-2h      v2     p_1sb   3916     248 -0.0282  -0.0371  -0.0192  0.0000  -0.0300  -0.0261             -0.0199    finding
+1103             lead                    <1h      v2     p_1sb   6710     451 -0.0321  -0.0389  -0.0250  0.0000  -0.0363  -0.0280             -0.0204    finding
+1104             lead                   >=2h      v2     p_1sb   3779     230 -0.0259  -0.0334  -0.0188  0.0000  -0.0196  -0.0318             -0.0165    finding
+1181             lead                   1-2h      v3     p_1sb   5339     329 -0.0199  -0.0265  -0.0132  0.0000  -0.0178  -0.0218             -0.0282    finding
+1182             lead                    <1h      v3     p_1sb   2642     165 -0.0204  -0.0305  -0.0109  0.0005  -0.0252  -0.0100             -0.0321    finding
+1183             lead                   >=2h      v3     p_1sb   3837     223 -0.0165  -0.0242  -0.0087  0.0003  -0.0185  -0.0150             -0.0259    finding
+1095            month                    Jul      v2     p_1sb   2786     187 -0.0320  -0.0435  -0.0215  0.0000      NaN  -0.0320                 NaN       lead
+1096            month                    Jun      v2     p_1sb   5620     360 -0.0290  -0.0363  -0.0222  0.0000  -0.0384  -0.0263                 NaN    finding
+1097            month                    May      v2     p_1sb   5999     382 -0.0286  -0.0352  -0.0216  0.0000  -0.0286      NaN                 NaN       lead
+1174            month                    Aug      v3     p_1sb   4616     265 -0.0157  -0.0232  -0.0085  0.0002  -0.0172  -0.0091                 NaN    finding
+1175            month                    Jul      v3     p_1sb   2191     148 -0.0255  -0.0355  -0.0154  0.0000  -0.0255      NaN                 NaN       lead
+1176            month                    Sep      v3     p_1sb   5011     304 -0.0190  -0.0256  -0.0126  0.0000      NaN  -0.0190                 NaN       lead
+1092           regime                     v2      v2     p_1sb  14405     929 -0.0294  -0.0342  -0.0250  0.0000  -0.0302  -0.0285                 NaN    finding
+1093           regime                    v3a      v3     p_1sb   2655     176 -0.0243  -0.0338  -0.0150  0.0000  -0.0243      NaN                 NaN       lead
+1094           regime                    v3b      v3     p_1sb   9163     541 -0.0173  -0.0224  -0.0124  0.0000  -0.0170  -0.0175                 NaN    finding
+1139             side                   away      v2     p_1sb   7203     458 -0.0276  -0.0343  -0.0215  0.0000  -0.0288  -0.0265                 NaN    finding
+1140             side                   home      v2     p_1sb   7202     471 -0.0312  -0.0374  -0.0250  0.0000  -0.0317  -0.0306                 NaN    finding
+1218             side                   away      v3     p_1sb   5906     339 -0.0146  -0.0209  -0.0086  0.0000  -0.0179  -0.0112                 NaN    finding
+1219             side                   home      v3     p_1sb   5912     378 -0.0232  -0.0299  -0.0165  0.0000  -0.0225  -0.0239                 NaN    finding
+1141             slot                    1-3      v2     p_1sb   4800     346 -0.0319  -0.0396  -0.0242  0.0000  -0.0355  -0.0283                 NaN    finding
+1142             slot                    4-6      v2     p_1sb   4803     261 -0.0203  -0.0272  -0.0138  0.0000  -0.0216  -0.0190                 NaN    finding
+1143             slot                    7-9      v2     p_1sb   4802     322 -0.0359  -0.0434  -0.0290  0.0000  -0.0336  -0.0383                 NaN    finding
+1220             slot                    1-3      v3     p_1sb   3940     264 -0.0197  -0.0278  -0.0119  0.0000  -0.0194  -0.0200                 NaN    finding
+1221             slot                    4-6      v3     p_1sb   3941     222 -0.0154  -0.0223  -0.0084  0.0001  -0.0189  -0.0119                 NaN    finding
+1222             slot                    7-9      v3     p_1sb   3937     231 -0.0215  -0.0284  -0.0143  0.0000  -0.0223  -0.0207                 NaN    finding
+1098            start                  4-7pm      v2     p_1sb   4131     287 -0.0344  -0.0441  -0.0249  0.0000  -0.0339  -0.0350             -0.0140    finding
+1099            start                  7-9pm      v2     p_1sb   6044     370 -0.0261  -0.0329  -0.0192  0.0000  -0.0304  -0.0220             -0.0203    finding
+1100            start                   9pm+      v2     p_1sb   1986     109 -0.0199  -0.0290  -0.0112  0.0001  -0.0127  -0.0275                 NaN    finding
+1101            start                   <4pm      v2     p_1sb   2244     163 -0.0376  -0.0488  -0.0265  0.0000  -0.0391  -0.0363             -0.0186    finding
+1177            start                  4-7pm      v3     p_1sb   3235     180 -0.0140  -0.0224  -0.0055  0.0058  -0.0113  -0.0162             -0.0344    finding
+1178            start                  7-9pm      v3     p_1sb   5139     319 -0.0203  -0.0265  -0.0143  0.0000  -0.0194  -0.0214             -0.0261    finding
+1180            start                   <4pm      v3     p_1sb   2981     180 -0.0186  -0.0281  -0.0091  0.0012  -0.0274  -0.0128             -0.0376    finding
+1259  weather_missing           present (v2)      v2     p_1sb   9732     615 -0.0281  -0.0334  -0.0228  0.0000  -0.0289  -0.0272             -0.0222    finding
+1260  weather_missing           missing (v2)      v2     p_1sb   4673     314 -0.0322  -0.0404  -0.0241  0.0000  -0.0330  -0.0314             -0.0288    finding
+1261  weather_missing          present (v3a)      v3     p_1sb   1811     116 -0.0222  -0.0343  -0.0108  0.0017  -0.0222      NaN             -0.0281       lead
+1262  weather_missing          missing (v3a)      v3     p_1sb    844      60 -0.0288  -0.0430  -0.0146  0.0007  -0.0288      NaN             -0.0322       lead
+1256           wlabel         Neutral (Dome)      v3     p_1sb   2408     148 -0.0198  -0.0292  -0.0104  0.0002  -0.0268  -0.0153                 NaN    finding
+1257           wlabel       Very HR Friendly      v3     p_1sb   2350     147 -0.0209  -0.0330  -0.0101  0.0022  -0.0187  -0.0224                 NaN    finding
+592       abs_shift_b                0.5-1.5      v2     p_2tb   2546     957  0.0364   0.0159   0.0582  0.0050   0.0679   0.0106              0.0501    finding
+593       abs_shift_b                1.5-2.5      v2     p_2tb   1242     436  0.0702   0.0406   0.0992  0.0000   0.0624   0.0794              0.0840    finding
+594       abs_shift_b                  <=0.5      v2     p_2tb   5494    1917  0.0464   0.0319   0.0606  0.0000   0.0549   0.0368              0.0421    finding
+595       abs_shift_b                   >2.5      v2     p_2tb    450     162  0.0665   0.0166   0.1176  0.0324   0.0706   0.0642              0.0477    finding
+671       abs_shift_b                0.5-1.5      v3     p_2tb   3770    1313  0.0501   0.0317   0.0686  0.0000   0.0589   0.0426              0.0364    finding
+672       abs_shift_b                1.5-2.5      v3     p_2tb   1420     465  0.0840   0.0572   0.1123  0.0000   0.1201   0.0539              0.0702    finding
+673       abs_shift_b                  <=0.5      v3     p_2tb   5462    1923  0.0421   0.0273   0.0558  0.0000   0.0405   0.0436              0.0464    finding
+633          bat_team         Atlanta Braves      v2     p_2tb    513     164  0.0777   0.0266   0.1259  0.0093   0.0583   0.0977                 NaN    finding
+634          bat_team      Baltimore Orioles      v2     p_2tb    423     144  0.0619   0.0146   0.1063  0.0290   0.0583   0.0654                 NaN    finding
+639          bat_team    Cleveland Guardians      v2     p_2tb    531     176  0.0666   0.0269   0.1066  0.0050   0.0730   0.0595                 NaN    finding
+649          bat_team          New York Mets      v2     p_2tb    504     161  0.0821   0.0342   0.1286  0.0047   0.0758   0.0880                 NaN    finding
+653          bat_team       San Diego Padres      v2     p_2tb    504     155  0.0997   0.0539   0.1431  0.0001   0.1179   0.0816                 NaN    finding
+655          bat_team       Seattle Mariners      v2     p_2tb    502     153  0.0877   0.0367   0.1384  0.0033   0.0606   0.1190                 NaN    finding
+712          bat_team         Atlanta Braves      v3     p_2tb    476     163  0.0707   0.0221   0.1204  0.0201   0.0780   0.0637                 NaN    finding
+717          bat_team        Cincinnati Reds      v3     p_2tb    431     135  0.0881   0.0366   0.1423  0.0076   0.1345   0.0457                 NaN    finding
+719          bat_team       Colorado Rockies      v3     p_2tb    412     134  0.0964   0.0461   0.1434  0.0009   0.0818   0.1096                 NaN    finding
+725          bat_team          Miami Marlins      v3     p_2tb    396     137  0.0711   0.0190   0.1186  0.0257   0.0784   0.0630                 NaN    finding
+728          bat_team          New York Mets      v3     p_2tb    423     139  0.0719   0.0163   0.1283  0.0431   0.1199   0.0172                 NaN    finding
+733          bat_team   San Francisco Giants      v3     p_2tb    340     110  0.0920   0.0380   0.1518  0.0086   0.1089   0.0732                 NaN    finding
+735          bat_team    St. Louis Cardinals      v3     p_2tb    448     137  0.1153   0.0760   0.1536  0.0000   0.1342   0.0892                 NaN    finding
+589              lead                   1-2h      v2     p_2tb   3916    1427  0.0379   0.0195   0.0555  0.0003   0.0564   0.0161              0.0516    finding
+590              lead                    <1h      v2     p_2tb   6710    2345  0.0522   0.0392   0.0658  0.0000   0.0595   0.0453              0.0454    finding
+591              lead                   >=2h      v2     p_2tb   3779    1399  0.0345   0.0165   0.0530  0.0015   0.0491   0.0209              0.0516    finding
+668              lead                   1-2h      v3     p_2tb   5339    1841  0.0516   0.0369   0.0674  0.0000   0.0574   0.0465              0.0379    finding
+669              lead                    <1h      v3     p_2tb   2642     941  0.0454   0.0232   0.0674  0.0004   0.0546   0.0254              0.0522    finding
+670              lead                   >=2h      v3     p_2tb   3837    1334  0.0516   0.0339   0.0679  0.0000   0.0575   0.0473              0.0345    finding
+582             month                    Jul      v2     p_2tb   2786    1016  0.0380   0.0160   0.0597  0.0042      NaN   0.0380                 NaN       lead
+583             month                    Jun      v2     p_2tb   5620    2092  0.0278   0.0137   0.0421  0.0008   0.0298   0.0272                 NaN    finding
+584             month                    May      v2     p_2tb   5999    2063  0.0612   0.0474   0.0755  0.0000   0.0612      NaN                 NaN       lead
+661             month                    Aug      v3     p_2tb   4616    1585  0.0572   0.0408   0.0746  0.0000   0.0597   0.0459                 NaN    finding
+662             month                    Jul      v3     p_2tb   2191     771  0.0512   0.0293   0.0737  0.0001   0.0512      NaN                 NaN       lead
+663             month                    Sep      v3     p_2tb   5011    1760  0.0435   0.0278   0.0594  0.0000      NaN   0.0435                 NaN       lead
+597              park              Athletics      v2     p_2tb    446     219 -0.0904  -0.1411  -0.0402  0.0021  -0.0326  -0.1365              0.0031       lead
+598              park         Atlanta Braves      v2     p_2tb    468     161  0.0744   0.0228   0.1233  0.0138   0.1139   0.0349              0.0796    finding
+600              park         Boston Red Sox      v2     p_2tb    540     183  0.0660   0.0166   0.1107  0.0224   0.0978   0.0343              0.0046    finding
+606              park         Detroit Tigers      v2     p_2tb    504     177  0.0570   0.0152   0.0971  0.0257   0.0901   0.0188              0.0499    finding
+607              park         Houston Astros      v2     p_2tb    519     170  0.0639   0.0163   0.1104  0.0297   0.0388   0.0948              0.0385    finding
+610              park    Los Angeles Dodgers      v2     p_2tb    375     131  0.0855   0.0285   0.1404  0.0135   0.0784   0.0933              0.1108    finding
+611              park          Miami Marlins      v2     p_2tb    537     172  0.0747   0.0263   0.1192  0.0077   0.1065   0.0329              0.0498    finding
+612              park      Milwaukee Brewers      v2     p_2tb    486     165  0.0678   0.0143   0.1141  0.0259   0.0762   0.0572              0.0519    finding
+615              park       New York Yankees      v2     p_2tb    485     165  0.0662   0.0107   0.1194  0.0452   0.0848   0.0462              0.0713    finding
+618              park       San Diego Padres      v2     p_2tb    540     163  0.1086   0.0676   0.1514  0.0000   0.1400   0.0727              0.0872    finding
+619              park   San Francisco Giants      v2     p_2tb    359     125  0.0671   0.0164   0.1197  0.0395   0.0171   0.1005              0.0641    finding
+620              park       Seattle Mariners      v2     p_2tb    466     133  0.1076   0.0627   0.1510  0.0000   0.0896   0.1364              0.0845    finding
+621              park    St. Louis Cardinals      v2     p_2tb    575     201  0.0530   0.0170   0.0897  0.0147   0.0157   0.0902              0.0462    finding
+624              park      Toronto Blue Jays      v2     p_2tb    468     159  0.0542   0.0111   0.0972  0.0442   0.0620   0.0465              0.0435    finding
+677              park         Atlanta Braves      v3     p_2tb    502     182  0.0796   0.0324   0.1273  0.0044   0.0848   0.0736              0.0744    finding
+678              park      Baltimore Orioles      v3     p_2tb    378     118  0.0639   0.0169   0.1100  0.0266   0.0890   0.0451              0.0491    finding
+682              park        Cincinnati Reds      v3     p_2tb    450     145  0.0839   0.0337   0.1364  0.0072   0.1286   0.0427              0.0621    finding
+685              park         Detroit Tigers      v3     p_2tb    540     189  0.0499   0.0076   0.0876  0.0442   0.0385   0.0630              0.0570    finding
+689              park    Los Angeles Dodgers      v3     p_2tb    212      67  0.1108   0.0405   0.1831  0.0112   0.1280   0.0577              0.0855    finding
+691              park      Milwaukee Brewers      v3     p_2tb    414     146  0.0519   0.0081   0.0906  0.0469   0.0531   0.0507              0.0678    finding
+692              park        Minnesota Twins      v3     p_2tb    450     155  0.0702   0.0232   0.1162  0.0127   0.0942   0.0514              0.0244    finding
+693              park          New York Mets      v3     p_2tb    486     155  0.0973   0.0453   0.1502  0.0017   0.1354   0.0326              0.0349    finding
+694              park       New York Yankees      v3     p_2tb    431     141  0.0713   0.0197   0.1219  0.0282   0.0714   0.0713              0.0662    finding
+695              park  Philadelphia Phillies      v3     p_2tb    449     152  0.0769   0.0244   0.1293  0.0145   0.0746   0.0790              0.0506    finding
+697              park       San Diego Padres      v3     p_2tb    268      87  0.0872   0.0231   0.1452  0.0224   0.0991   0.0633              0.1086    finding
+699              park       Seattle Mariners      v3     p_2tb    178      53  0.0845   0.0154   0.1520  0.0473   0.0658   0.1275              0.1076    finding
+702              park          Texas Rangers      v3     p_2tb    467     146  0.0713   0.0168   0.1203  0.0230   0.0557   0.0847              0.0354    finding
+579            regime                     v2      v2     p_2tb  14405    5171  0.0437   0.0347   0.0527  0.0000   0.0559   0.0314                 NaN    finding
+580            regime                    v3a      v3     p_2tb   2655     934  0.0503   0.0279   0.0720  0.0000   0.0503      NaN                 NaN       lead
+581            regime                    v3b      v3     p_2tb   9163    3182  0.0502   0.0391   0.0620  0.0000   0.0615   0.0438                 NaN    finding
+626              side                   away      v2     p_2tb   7203    2647  0.0425   0.0283   0.0562  0.0000   0.0556   0.0292                 NaN    finding
+627              side                   home      v2     p_2tb   7202    2524  0.0449   0.0321   0.0578  0.0000   0.0562   0.0336                 NaN    finding
+705              side                   away      v3     p_2tb   5906    2044  0.0615   0.0472   0.0756  0.0000   0.0627   0.0603                 NaN    finding
+706              side                   home      v3     p_2tb   5912    2072  0.0390   0.0258   0.0527  0.0000   0.0504   0.0274                 NaN    finding
+628              slot                    1-3      v2     p_2tb   4800    1969  0.0454   0.0302   0.0593  0.0000   0.0570   0.0337                 NaN    finding
+629              slot                    4-6      v2     p_2tb   4803    1750  0.0452   0.0306   0.0599  0.0000   0.0521   0.0384                 NaN    finding
+630              slot                    7-9      v2     p_2tb   4802    1452  0.0404   0.0266   0.0541  0.0000   0.0587   0.0220                 NaN    finding
+707              slot                    1-3      v3     p_2tb   3940    1568  0.0530   0.0373   0.0692  0.0000   0.0672   0.0386                 NaN    finding
+708              slot                    4-6      v3     p_2tb   3941    1408  0.0451   0.0285   0.0612  0.0000   0.0532   0.0369                 NaN    finding
+709              slot                    7-9      v3     p_2tb   3937    1140  0.0526   0.0381   0.0676  0.0000   0.0493   0.0560                 NaN    finding
+585             start                  4-7pm      v2     p_2tb   4131    1493  0.0405   0.0243   0.0570  0.0000   0.0529   0.0259              0.0370    finding
+586             start                  7-9pm      v2     p_2tb   6044    2103  0.0538   0.0393   0.0675  0.0000   0.0637   0.0445              0.0502    finding
+587             start                   9pm+      v2     p_2tb   1986     735  0.0388   0.0096   0.0669  0.0271   0.0530   0.0237              0.0640    finding
+664             start                  4-7pm      v3     p_2tb   3235    1156  0.0370   0.0162   0.0568  0.0022   0.0582   0.0189              0.0405    finding
+665             start                  7-9pm      v3     p_2tb   5139    1808  0.0502   0.0359   0.0647  0.0000   0.0525   0.0472              0.0538    finding
+666             start                   9pm+      v3     p_2tb    463     159  0.0640   0.0207   0.1016  0.0091   0.0624   0.0843              0.0388    finding
+667             start                   <4pm      v3     p_2tb   2981     993  0.0626   0.0427   0.0827  0.0000   0.0623   0.0628              0.0266    finding
+746   weather_missing           present (v2)      v2     p_2tb   9732    3472  0.0477   0.0368   0.0589  0.0000   0.0595   0.0359              0.0515    finding
+747   weather_missing           missing (v2)      v2     p_2tb   4673    1699  0.0352   0.0179   0.0518  0.0004   0.0485   0.0219              0.0478    finding
+748   weather_missing          present (v3a)      v3     p_2tb   1811     637  0.0515   0.0267   0.0769  0.0005   0.0515      NaN              0.0477       lead
+740            wlabel            HR Friendly      v3     p_2tb   1098     388  0.0541   0.0191   0.0899  0.0145   0.0478   0.0594                 NaN    finding
+743            wlabel         Neutral (Dome)      v3     p_2tb   2408     820  0.0533   0.0328   0.0728  0.0000   0.0511   0.0548                 NaN    finding
+744            wlabel       Very HR Friendly      v3     p_2tb   2350     848  0.0639   0.0391   0.0862  0.0000   0.0929   0.0448                 NaN    finding
+745            wlabel     Very HR Suppressed      v3     p_2tb   1384     435  0.0480   0.0189   0.0777  0.0061   0.1221   0.0330                 NaN    finding
+
+BH-significant SKILL cells:
+               segment                  level version    target      n  events     bss  bss_lo  bss_hi   q_bss  bss_H1  bss_H2  bss_other_version bss_class
+57        abs_shift_b                0.5-1.5      v3  home_win    210     105 -0.0772 -0.1350 -0.0359  0.0119 -0.0718 -0.0864            -0.0831   finding
+12               lead                   >=2h      v2  home_win    211      94 -0.0985 -0.1880 -0.0394  0.0334 -0.0937 -0.1119            -0.0714   finding
+54               lead                   1-2h      v3  home_win    297     149 -0.0815 -0.1336 -0.0463  0.0013 -0.0720 -0.0905            -0.0444   finding
+56               lead                   >=2h      v3  home_win    214     124 -0.0714 -0.1258 -0.0314  0.0128 -0.0582 -0.0812            -0.0985   finding
+4               month                    Jun      v2  home_win    313     160 -0.0517 -0.0946 -0.0219  0.0228 -0.0763 -0.0495                NaN   finding
+47              month                    Aug      v3  home_win    257     141 -0.0668 -0.1138 -0.0306  0.0063 -0.0640 -0.0792                NaN   finding
+49              month                    Sep      v3  home_win    279     151 -0.0731 -0.1141 -0.0416  0.0006     NaN -0.0731                NaN      lead
+0              regime                     v2      v2  home_win    802     411 -0.0417 -0.0673 -0.0193  0.0041 -0.0413 -0.0425                NaN   finding
+2              regime                    v3b      v3  home_win    510     278 -0.0710 -0.0994 -0.0468  0.0000 -0.0661 -0.0739                NaN   finding
+9               start                   <4pm      v2  home_win    125      66 -0.0723 -0.1389 -0.0285  0.0303 -0.0702 -0.0856            -0.0400   finding
+50              start                  4-7pm      v3  home_win    180      95 -0.0796 -0.1374 -0.0383  0.0076 -0.1112 -0.0527            -0.0217   finding
+51              start                  7-9pm      v3  home_win    286     149 -0.0617 -0.1023 -0.0311  0.0044 -0.0375 -0.1025            -0.0304   finding
+97    weather_missing           present (v2)      v2  home_win    542     280 -0.0358 -0.0677 -0.0105  0.0411 -0.0325 -0.0415                NaN   finding
+95             wlabel       Very HR Friendly      v3  home_win    131      57 -0.1973 -0.3587 -0.1119  0.0073 -0.1788 -0.2100                NaN   finding
+316       abs_shift_b                0.5-1.5      v2        k5    284     142 -0.1058 -0.1868 -0.0335  0.0267 -0.0932 -0.1307            -0.1719   finding
+318       abs_shift_b                  <=0.5      v2        k5    612     317 -0.0807 -0.1394 -0.0293  0.0170 -0.1070 -0.0532            -0.1419   finding
+362       abs_shift_b                0.5-1.5      v3        k5    420     192 -0.1719 -0.2634 -0.0986  0.0004 -0.1073 -0.2320            -0.1058   finding
+363       abs_shift_b                1.5-2.5      v3        k5    157      72 -0.1884 -0.3299 -0.0753  0.0178 -0.1272 -0.2486             0.0530      lead
+364       abs_shift_b                  <=0.5      v3        k5    608     294 -0.1419 -0.2112 -0.0788  0.0002 -0.1238 -0.1602            -0.0807   finding
+313              lead                   1-2h      v2        k5    435     220 -0.1248 -0.1967 -0.0617  0.0016 -0.0949 -0.1599            -0.1458   finding
+314              lead                    <1h      v2        k5    746     375 -0.0629 -0.1153 -0.0161  0.0442 -0.1138 -0.0181            -0.1218   finding
+359              lead                   1-2h      v3        k5    594     280 -0.1458 -0.2155 -0.0822  0.0002 -0.0816 -0.2085            -0.1248   finding
+360              lead                    <1h      v3        k5    292     141 -0.1218 -0.2212 -0.0420  0.0264 -0.0456 -0.2987            -0.0629   finding
+361              lead                   >=2h      v3        k5    428     202 -0.1692 -0.2553 -0.0993  0.0002 -0.2060 -0.1466            -0.0660   finding
+306             month                    Jul      v2        k5    310     158 -0.0969 -0.1788 -0.0252  0.0409     NaN -0.0969                NaN      lead
+308             month                    May      v2        k5    667     335 -0.0952 -0.1509 -0.0448  0.0025 -0.0952     NaN                NaN      lead
+352             month                    Aug      v3        k5    513     250 -0.1297 -0.2022 -0.0671  0.0013 -0.1139 -0.2063                NaN   finding
+354             month                    Sep      v3        k5    558     254 -0.1967 -0.2774 -0.1270  0.0000     NaN -0.1967                NaN      lead
+303            regime                     v2      v2        k5   1603     813 -0.0803 -0.1150 -0.0492  0.0000 -0.1046 -0.0567                NaN   finding
+305            regime                    v3b      v3        k5   1020     477 -0.1659 -0.2164 -0.1178  0.0000 -0.1138 -0.1955                NaN   finding
+350              side                   away      v2        k5    801     386 -0.0864 -0.1390 -0.0402  0.0033 -0.1071 -0.0666                NaN   finding
+351              side                   home      v2        k5    802     427 -0.0798 -0.1276 -0.0368  0.0030 -0.1084 -0.0515                NaN   finding
+396              side                   away      v3        k5    658     287 -0.1710 -0.2541 -0.1033  0.0001 -0.1162 -0.2361                NaN   finding
+397              side                   home      v3        k5    656     336 -0.1385 -0.1970 -0.0876  0.0000 -0.0914 -0.1871                NaN   finding
+310             start                  7-9pm      v2        k5    672     339 -0.0719 -0.1285 -0.0215  0.0306 -0.0856 -0.0614            -0.1138   finding
+312             start                   <4pm      v2        k5    249     123 -0.1546 -0.2526 -0.0695  0.0042 -0.1319 -0.1768            -0.2035   finding
+355             start                  4-7pm      v3        k5    360     179 -0.1567 -0.2406 -0.0863  0.0005 -0.0819 -0.2239            -0.0458   finding
+356             start                  7-9pm      v3        k5    570     274 -0.1138 -0.1829 -0.0535  0.0035 -0.0877 -0.1469            -0.0719   finding
+358             start                   <4pm      v3        k5    332     143 -0.2035 -0.3182 -0.1141  0.0007 -0.1519 -0.2367            -0.1546   finding
+404   weather_missing           present (v2)      v2        k5   1084     557 -0.0713 -0.1089 -0.0337  0.0016 -0.0998 -0.0485            -0.1023   finding
+405   weather_missing           missing (v2)      v2        k5    519     256 -0.1005 -0.1655 -0.0429  0.0055 -0.1180 -0.0900                NaN   finding
+401            wlabel         Neutral (Dome)      v3        k5    268     126 -0.1694 -0.2801 -0.0751  0.0075 -0.0132 -0.2684                NaN   finding
+402            wlabel       Very HR Friendly      v3        k5    262     121 -0.1574 -0.2591 -0.0704  0.0061 -0.0981 -0.2142                NaN   finding
+403            wlabel     Very HR Suppressed      v3        k5    154      65 -0.3322 -0.5519 -0.1968  0.0016 -0.2443 -0.3501                NaN   finding
+212              lead                   1-2h      v2  over_8.5    218      99 -0.1044 -0.1660 -0.0553  0.0013 -0.0550 -0.1672            -0.0200   finding
+214              lead                   >=2h      v2  over_8.5    211     113 -0.0911 -0.1786 -0.0324  0.0467 -0.1904  0.0017            -0.0530      lead
+206             month                    Jun      v2  over_8.5    313     165 -0.0874 -0.1566 -0.0336  0.0224 -0.1276 -0.0780                NaN   finding
+202            regime                     v2      v2  over_8.5    802     403 -0.0649 -0.0985 -0.0351  0.0006 -0.0575 -0.0725                NaN   finding
+209             start                  7-9pm      v2  over_8.5    336     165 -0.0749 -0.1282 -0.0301  0.0090 -0.0429 -0.1047            -0.0212   finding
+299   weather_missing           present (v2)      v2  over_8.5    542     264 -0.0547 -0.0967 -0.0175  0.0267 -0.0478 -0.0631                NaN   finding
+300   weather_missing           missing (v2)      v2  over_8.5    260     139 -0.0929 -0.1689 -0.0437  0.0169 -0.0964 -0.0927                NaN   finding
+422       abs_shift_b                1.5-2.5      v2      p_1h   1242     754 -0.0357 -0.0553 -0.0187  0.0011 -0.0449 -0.0253            -0.0083   finding
+423       abs_shift_b                  <=0.5      v2      p_1h   5494    3263 -0.0193 -0.0293 -0.0106  0.0004 -0.0255 -0.0130            -0.0129   finding
+500       abs_shift_b                0.5-1.5      v3      p_1h   3770    2284 -0.0165 -0.0273 -0.0064  0.0092 -0.0117 -0.0206            -0.0073   finding
+502       abs_shift_b                  <=0.5      v3      p_1h   5462    3313 -0.0129 -0.0227 -0.0035  0.0271 -0.0144 -0.0115            -0.0193   finding
+468          bat_team    Cleveland Guardians      v2      p_1h    531     297 -0.0551 -0.1019 -0.0206  0.0317 -0.0619 -0.0476                NaN   finding
+482          bat_team       San Diego Padres      v2      p_1h    504     264 -0.0683 -0.1248 -0.0233  0.0257 -0.1034 -0.0396                NaN   finding
+540          bat_team              Athletics      v3      p_1h    286     164 -0.0555 -0.1141 -0.0209  0.0490 -0.0507 -0.0732                NaN   finding
+559          bat_team  Philadelphia Phillies      v3      p_1h    422     254 -0.0462 -0.0894 -0.0179  0.0342 -0.0496 -0.0708                NaN   finding
+419              lead                    <1h      v2      p_1h   6710    4057 -0.0208 -0.0287 -0.0128  0.0000 -0.0210 -0.0207            -0.0220   finding
+420              lead                   >=2h      v2      p_1h   3779    2329 -0.0151 -0.0265 -0.0051  0.0213 -0.0236 -0.0081            -0.0181   finding
+498              lead                    <1h      v3      p_1h   2642    1585 -0.0220 -0.0382 -0.0074  0.0220 -0.0224 -0.0212            -0.0208   finding
+499              lead                   >=2h      v3      p_1h   3837    2317 -0.0181 -0.0296 -0.0078  0.0061 -0.0231 -0.0147            -0.0151   finding
+411             month                    Jul      v2      p_1h   2786    1711 -0.0167 -0.0293 -0.0054  0.0220     NaN -0.0167                NaN      lead
+412             month                    Jun      v2      p_1h   5620    3491 -0.0132 -0.0212 -0.0059  0.0038 -0.0205 -0.0113                NaN   finding
+413             month                    May      v2      p_1h   5999    3564 -0.0213 -0.0319 -0.0120  0.0003 -0.0213     NaN                NaN      lead
+490             month                    Aug      v3      p_1h   4616    2835 -0.0143 -0.0244 -0.0057  0.0121 -0.0151 -0.0111                NaN   finding
+492             month                    Sep      v3      p_1h   5011    3034 -0.0141 -0.0237 -0.0049  0.0155     NaN -0.0141                NaN      lead
+436              park         Houston Astros      v2      p_1h    519     297 -0.0435 -0.0862 -0.0162  0.0473 -0.0461 -0.0443            -0.0144   finding
+437              park     Kansas City Royals      v2      p_1h    540     346 -0.0372 -0.0625 -0.0205  0.0035 -0.0498 -0.0573            -0.0227   finding
+518              park    Los Angeles Dodgers      v3      p_1h    212     124 -0.0775 -0.1438 -0.0246  0.0372 -0.0698 -0.1333            -0.0556   finding
+531              park          Texas Rangers      v3      p_1h    467     263 -0.0457 -0.0861 -0.0171  0.0328 -0.0406 -0.0513            -0.0013   finding
+408            regime                     v2      v2      p_1h  14405    8766 -0.0166 -0.0220 -0.0116  0.0000 -0.0209 -0.0133                NaN   finding
+410            regime                    v3b      v3      p_1h   9163    5576 -0.0143 -0.0212 -0.0077  0.0004 -0.0155 -0.0137                NaN   finding
+455              side                   away      v2      p_1h   7203    4444 -0.0168 -0.0247 -0.0090  0.0002 -0.0155 -0.0181                NaN   finding
+456              side                   home      v2      p_1h   7202    4322 -0.0171 -0.0253 -0.0094  0.0002 -0.0289 -0.0085                NaN   finding
+534              side                   away      v3      p_1h   5906    3590 -0.0169 -0.0262 -0.0086  0.0015 -0.0163 -0.0175                NaN   finding
+535              side                   home      v3      p_1h   5912    3583 -0.0120 -0.0208 -0.0032  0.0263 -0.0142 -0.0098                NaN   finding
+457              slot                    1-3      v2      p_1h   4800    3154 -0.0235 -0.0316 -0.0161  0.0000 -0.0260 -0.0229                NaN   finding
+458              slot                    4-6      v2      p_1h   4803    2962 -0.0217 -0.0299 -0.0137  0.0000 -0.0271 -0.0163                NaN   finding
+459              slot                    7-9      v2      p_1h   4802    2650 -0.0288 -0.0382 -0.0208  0.0000 -0.0342 -0.0250                NaN   finding
+536              slot                    1-3      v3      p_1h   3940    2581 -0.0203 -0.0295 -0.0116  0.0001 -0.0214 -0.0195                NaN   finding
+537              slot                    4-6      v3      p_1h   3941    2432 -0.0204 -0.0294 -0.0120  0.0001 -0.0201 -0.0210                NaN   finding
+538              slot                    7-9      v3      p_1h   3937    2160 -0.0273 -0.0378 -0.0172  0.0000 -0.0211 -0.0349                NaN   finding
+414             start                  4-7pm      v2      p_1h   4131    2540 -0.0129 -0.0229 -0.0033  0.0317 -0.0154 -0.0106            -0.0048   finding
+415             start                  7-9pm      v2      p_1h   6044    3630 -0.0198 -0.0286 -0.0123  0.0000 -0.0228 -0.0174            -0.0126   finding
+417             start                   <4pm      v2      p_1h   2244    1384 -0.0175 -0.0323 -0.0048  0.0411 -0.0227 -0.0153            -0.0233   finding
+494             start                  7-9pm      v3      p_1h   5139    3166 -0.0126 -0.0216 -0.0047  0.0159 -0.0114 -0.0141            -0.0198   finding
+495             start                   9pm+      v3      p_1h    463     274 -0.0552 -0.0990 -0.0199  0.0216 -0.0547 -0.1830            -0.0154   finding
+496             start                   <4pm      v3      p_1h   2981    1764 -0.0233 -0.0389 -0.0106  0.0056 -0.0204 -0.0256            -0.0175   finding
+575   weather_missing           present (v2)      v2      p_1h   9732    5894 -0.0164 -0.0231 -0.0100  0.0000 -0.0230 -0.0110            -0.0109   finding
+576   weather_missing           missing (v2)      v2      p_1h   4673    2872 -0.0174 -0.0271 -0.0085  0.0013 -0.0173 -0.0180            -0.0245   finding
+569            wlabel            HR Friendly      v3      p_1h   1098     677 -0.0265 -0.0465 -0.0079  0.0293 -0.0369 -0.0179                NaN   finding
+572            wlabel         Neutral (Dome)      v3      p_1h   2408    1431 -0.0192 -0.0344 -0.0050  0.0350 -0.0096 -0.0260                NaN   finding
+765       abs_shift_b                  <=0.5      v2     p_1hr   5494     656 -0.0135 -0.0242 -0.0033  0.0349 -0.0207 -0.0092            -0.0165   finding
+766       abs_shift_b                   >2.5      v2     p_1hr    450      70 -0.0378 -0.0739 -0.0131  0.0469 -0.0113 -0.0526                NaN   finding
+842       abs_shift_b                0.5-1.5      v3     p_1hr   3770     415 -0.0357 -0.0558 -0.0187  0.0011 -0.0344 -0.0390            -0.0112   finding
+844       abs_shift_b                  <=0.5      v3     p_1hr   5462     625 -0.0165 -0.0272 -0.0073  0.0063 -0.0263 -0.0089            -0.0135   finding
+896          bat_team          Miami Marlins      v3     p_1hr    396      52 -0.0468 -0.0855 -0.0168  0.0331 -0.0652 -0.0289                NaN   finding
+908          bat_team          Texas Rangers      v3     p_1hr    414      50 -0.0476 -0.0854 -0.0156  0.0220 -0.0784 -0.0215                NaN   finding
+760              lead                   1-2h      v2     p_1hr   3916     458 -0.0229 -0.0369 -0.0109  0.0039 -0.0332 -0.0170            -0.0234   finding
+761              lead                    <1h      v2     p_1hr   6710     811 -0.0154 -0.0268 -0.0051  0.0228 -0.0193 -0.0149            -0.0154   finding
+762              lead                   >=2h      v2     p_1hr   3779     506 -0.0171 -0.0315 -0.0041  0.0431 -0.0215 -0.0128            -0.0427   finding
+839              lead                   1-2h      v3     p_1hr   5339     617 -0.0234 -0.0362 -0.0115  0.0016 -0.0289 -0.0187            -0.0229   finding
+841              lead                   >=2h      v3     p_1hr   3837     418 -0.0427 -0.0620 -0.0270  0.0000 -0.0693 -0.0234            -0.0171   finding
+755             month                    May      v2     p_1hr   5999     660 -0.0292 -0.0448 -0.0159  0.0004 -0.0292     NaN                NaN      lead
+832             month                    Aug      v3     p_1hr   4616     524 -0.0434 -0.0604 -0.0290  0.0000 -0.0446 -0.0384                NaN   finding
+780              park     Los Angeles Angels      v2     p_1hr    538      61 -0.0956 -0.1729 -0.0424  0.0181 -0.1103 -0.0756                NaN   finding
+786              park       New York Yankees      v2     p_1hr    485      62 -0.0576 -0.1098 -0.0250  0.0236 -0.0165 -0.0995            -0.0329   finding
+851              park           Chicago Cubs      v3     p_1hr    431      64  0.0314  0.0033  0.0514  0.0293  0.0287  0.0327            -0.0089      lead
+750            regime                     v2      v2     p_1hr  14405    1775 -0.0174 -0.0250 -0.0106  0.0000 -0.0222 -0.0149                NaN   finding
+751            regime                    v3a      v3     p_1hr   2655     294 -0.0294 -0.0520 -0.0105  0.0213 -0.0294     NaN                NaN      lead
+752            regime                    v3b      v3     p_1hr   9163    1036 -0.0271 -0.0379 -0.0173  0.0000 -0.0466 -0.0165                NaN   finding
+797              side                   away      v2     p_1hr   7203     888 -0.0202 -0.0313 -0.0106  0.0009 -0.0284 -0.0165                NaN   finding
+798              side                   home      v2     p_1hr   7202     887 -0.0146 -0.0254 -0.0047  0.0188 -0.0165 -0.0134                NaN   finding
+876              side                   away      v3     p_1hr   5906     677 -0.0231 -0.0368 -0.0113  0.0021 -0.0339 -0.0121                NaN   finding
+877              side                   home      v3     p_1hr   5912     653 -0.0324 -0.0459 -0.0208  0.0000 -0.0446 -0.0210                NaN   finding
+799              slot                    1-3      v2     p_1hr   4800     723 -0.0303 -0.0426 -0.0186  0.0000 -0.0359 -0.0279                NaN   finding
+800              slot                    4-6      v2     p_1hr   4803     629 -0.0160 -0.0277 -0.0045  0.0234 -0.0201 -0.0130                NaN   finding
+801              slot                    7-9      v2     p_1hr   4802     423 -0.0249 -0.0372 -0.0141  0.0002 -0.0288 -0.0234                NaN   finding
+878              slot                    1-3      v3     p_1hr   3940     550 -0.0357 -0.0498 -0.0230  0.0000 -0.0510 -0.0254                NaN   finding
+879              slot                    4-6      v3     p_1hr   3941     436 -0.0363 -0.0523 -0.0216  0.0000 -0.0453 -0.0272                NaN   finding
+880              slot                    7-9      v3     p_1hr   3937     344 -0.0223 -0.0359 -0.0109  0.0022 -0.0223 -0.0235                NaN   finding
+757             start                  7-9pm      v2     p_1hr   6044     721 -0.0227 -0.0338 -0.0130  0.0002 -0.0167 -0.0291            -0.0289   finding
+758             start                   9pm+      v2     p_1hr   1986     284 -0.0241 -0.0447 -0.0055  0.0489 -0.0297 -0.0184            -0.0446   finding
+835             start                  4-7pm      v3     p_1hr   3235     359 -0.0243 -0.0418 -0.0088  0.0156 -0.0385 -0.0126            -0.0141   finding
+836             start                  7-9pm      v3     p_1hr   5139     606 -0.0289 -0.0433 -0.0162  0.0002 -0.0364 -0.0205            -0.0227   finding
+838             start                   <4pm      v3     p_1hr   2981     310 -0.0274 -0.0506 -0.0109  0.0230 -0.0455 -0.0163            -0.0069   finding
+917   weather_missing           present (v2)      v2     p_1hr   9732    1206 -0.0157 -0.0254 -0.0071  0.0042 -0.0183 -0.0144            -0.0219   finding
+918   weather_missing           missing (v2)      v2     p_1hr   4673     569 -0.0210 -0.0329 -0.0105  0.0020 -0.0312 -0.0158            -0.0487   finding
+912            wlabel          HR Suppressed      v3     p_1hr    827      89 -0.0282 -0.0495 -0.0098  0.0220 -0.0415 -0.0227                NaN   finding
+914            wlabel         Neutral (Dome)      v3     p_1hr   2408     263 -0.0208 -0.0394 -0.0051  0.0471 -0.0431 -0.0112                NaN   finding
+915            wlabel       Very HR Friendly      v3     p_1hr   2350     277 -0.0604 -0.0915 -0.0352  0.0003 -0.0939 -0.0400                NaN   finding
+986          bat_team     Los Angeles Angels      v2    p_1rbi    455     130 -0.0409 -0.0744 -0.0175  0.0180 -0.0531 -0.0374                NaN   finding
+1066         bat_team    Los Angeles Dodgers      v3    p_1rbi    285      84 -0.0380 -0.0704 -0.0161  0.0226 -0.0367 -0.0426                NaN   finding
+931              lead                   1-2h      v2    p_1rbi   3916    1158 -0.0098 -0.0181 -0.0023  0.0437 -0.0101 -0.0104            -0.0058   finding
+933              lead                   >=2h      v2    p_1rbi   3779    1168 -0.0143 -0.0237 -0.0052  0.0114 -0.0125 -0.0162            -0.0089   finding
+1003            month                    Aug      v3    p_1rbi   4616    1324 -0.0114 -0.0189 -0.0044  0.0097 -0.0135 -0.0018                NaN   finding
+952              park    Los Angeles Dodgers      v2    p_1rbi    375     114 -0.0413 -0.0714 -0.0155  0.0125 -0.0436 -0.0408            -0.0524   finding
+1037             park  Philadelphia Phillies      v3    p_1rbi    449     133 -0.0262 -0.0523 -0.0098  0.0431 -0.0306 -0.0289            -0.0278   finding
+921            regime                     v2      v2    p_1rbi  14405    4319 -0.0075 -0.0121 -0.0033  0.0053 -0.0071 -0.0080                NaN   finding
+923            regime                    v3b      v3    p_1rbi   9163    2700 -0.0067 -0.0121 -0.0016  0.0411 -0.0120 -0.0039                NaN   finding
+1048             side                   home      v3    p_1rbi   5912    1742 -0.0080 -0.0150 -0.0019  0.0437 -0.0107 -0.0061                NaN   finding
+970              slot                    1-3      v2    p_1rbi   4800    1565 -0.0215 -0.0292 -0.0141  0.0000 -0.0235 -0.0200                NaN   finding
+1049             slot                    1-3      v3    p_1rbi   3940    1233 -0.0171 -0.0243 -0.0100  0.0000 -0.0166 -0.0209                NaN   finding
+929             start                   9pm+      v2    p_1rbi   1986     609 -0.0220 -0.0357 -0.0097  0.0053 -0.0129 -0.0316            -0.0259   finding
+1006            start                  4-7pm      v3    p_1rbi   3235     951 -0.0113 -0.0203 -0.0034  0.0310 -0.0216 -0.0029            -0.0013   finding
+1089  weather_missing           missing (v2)      v2    p_1rbi   4673    1411 -0.0161 -0.0243 -0.0088  0.0005 -0.0176 -0.0149            -0.0148   finding
+1105      abs_shift_b                0.5-1.5      v2     p_1sb   2546     170 -0.0138 -0.0230 -0.0063  0.0054 -0.0133 -0.0142            -0.0040   finding
+1106      abs_shift_b                1.5-2.5      v2     p_1sb   1242      75 -0.0130 -0.0241 -0.0040  0.0406 -0.0062 -0.0237            -0.0041   finding
+1107      abs_shift_b                  <=0.5      v2     p_1sb   5494     346 -0.0146 -0.0205 -0.0097  0.0000 -0.0164 -0.0128            -0.0059   finding
+1186      abs_shift_b                  <=0.5      v3     p_1sb   5462     342 -0.0059 -0.0105 -0.0022  0.0201 -0.0094 -0.0032            -0.0146   finding
+1152         bat_team    Cleveland Guardians      v2     p_1sb    531      51 -0.0465 -0.0758 -0.0213  0.0052 -0.0647 -0.0292                NaN   finding
+1166         bat_team       San Diego Padres      v2     p_1sb    504      56 -0.0524 -0.0862 -0.0253  0.0051 -0.0361 -0.0699                NaN   finding
+1173         bat_team   Washington Nationals      v2     p_1sb    495      54 -0.0548 -0.0897 -0.0266  0.0042 -0.0326 -0.0817                NaN   finding
+1102             lead                   1-2h      v2     p_1sb   3916     248 -0.0118 -0.0188 -0.0058  0.0033 -0.0134 -0.0099            -0.0074   finding
+1103             lead                    <1h      v2     p_1sb   6710     451 -0.0165 -0.0223 -0.0112  0.0000 -0.0193 -0.0141            -0.0063   finding
+1104             lead                   >=2h      v2     p_1sb   3779     230 -0.0125 -0.0188 -0.0072  0.0002 -0.0084 -0.0168            -0.0015   finding
+1181             lead                   1-2h      v3     p_1sb   5339     329 -0.0074 -0.0119 -0.0036  0.0027 -0.0063 -0.0085            -0.0118   finding
+1095            month                    Jul      v2     p_1sb   2786     187 -0.0159 -0.0254 -0.0081  0.0017     NaN -0.0159                NaN      lead
+1096            month                    Jun      v2     p_1sb   5620     360 -0.0149 -0.0209 -0.0098  0.0000 -0.0238 -0.0126                NaN   finding
+1097            month                    May      v2     p_1sb   5999     382 -0.0126 -0.0179 -0.0076  0.0000 -0.0126     NaN                NaN      lead
+1175            month                    Jul      v3     p_1sb   2191     148 -0.0090 -0.0165 -0.0025  0.0425 -0.0090     NaN                NaN      lead
+1176            month                    Sep      v3     p_1sb   5011     304 -0.0052 -0.0096 -0.0015  0.0409     NaN -0.0052                NaN      lead
+1092           regime                     v2      v2     p_1sb  14405     929 -0.0141 -0.0178 -0.0109  0.0000 -0.0145 -0.0138                NaN   finding
+1093           regime                    v3a      v3     p_1sb   2655     176 -0.0089 -0.0161 -0.0029  0.0309 -0.0089     NaN                NaN      lead
+1094           regime                    v3b      v3     p_1sb   9163     541 -0.0043 -0.0076 -0.0015  0.0224 -0.0044 -0.0043                NaN   finding
+1139             side                   away      v2     p_1sb   7203     458 -0.0134 -0.0186 -0.0089  0.0000 -0.0143 -0.0127                NaN   finding
+1140             side                   home      v2     p_1sb   7202     471 -0.0149 -0.0201 -0.0100  0.0000 -0.0148 -0.0150                NaN   finding
+1219             side                   home      v3     p_1sb   5912     378 -0.0074 -0.0122 -0.0033  0.0075 -0.0069 -0.0079                NaN   finding
+1141             slot                    1-3      v2     p_1sb   4800     346 -0.0150 -0.0213 -0.0095  0.0000 -0.0172 -0.0129                NaN   finding
+1142             slot                    4-6      v2     p_1sb   4803     261 -0.0087 -0.0137 -0.0048  0.0007 -0.0100 -0.0074                NaN   finding
+1143             slot                    7-9      v2     p_1sb   4802     322 -0.0205 -0.0272 -0.0147  0.0000 -0.0187 -0.0223                NaN   finding
+1221             slot                    4-6      v3     p_1sb   3941     222 -0.0049 -0.0089 -0.0015  0.0377 -0.0069 -0.0031                NaN   finding
+1222             slot                    7-9      v3     p_1sb   3937     231 -0.0086 -0.0138 -0.0041  0.0033 -0.0099 -0.0074                NaN   finding
+1098            start                  4-7pm      v2     p_1sb   4131     287 -0.0184 -0.0267 -0.0113  0.0000 -0.0177 -0.0193            -0.0034   finding
+1099            start                  7-9pm      v2     p_1sb   6044     370 -0.0114 -0.0170 -0.0067  0.0001 -0.0136 -0.0098            -0.0055   finding
+1100            start                   9pm+      v2     p_1sb   1986     109 -0.0089 -0.0158 -0.0033  0.0281 -0.0048 -0.0140                NaN   finding
+1101            start                   <4pm      v2     p_1sb   2244     163 -0.0198 -0.0300 -0.0109  0.0005 -0.0226 -0.0174            -0.0063   finding
+1178            start                  7-9pm      v3     p_1sb   5139     319 -0.0055 -0.0097 -0.0017  0.0278 -0.0049 -0.0061            -0.0114   finding
+1259  weather_missing           present (v2)      v2     p_1sb   9732     615 -0.0138 -0.0182 -0.0101  0.0000 -0.0142 -0.0135            -0.0077   finding
+1260  weather_missing           missing (v2)      v2     p_1sb   4673     314 -0.0149 -0.0220 -0.0086  0.0001 -0.0152 -0.0147            -0.0117   finding
+671       abs_shift_b                0.5-1.5      v3     p_2tb   3770    1313 -0.0221 -0.0368 -0.0101  0.0050 -0.0256 -0.0192            -0.0159   finding
+651          bat_team  Philadelphia Phillies      v2     p_2tb    466     166 -0.0459 -0.0860 -0.0171  0.0328 -0.0684 -0.0224                NaN   finding
+722          bat_team     Kansas City Royals      v3     p_2tb    441     173  0.0346  0.0032  0.0588  0.0442  0.0198  0.0474                NaN   finding
+735          bat_team    St. Louis Cardinals      v3     p_2tb    448     137 -0.0934 -0.1584 -0.0446  0.0073 -0.0922 -0.0952                NaN   finding
+590              lead                    <1h      v2     p_2tb   6710    2345 -0.0173 -0.0281 -0.0082  0.0035 -0.0220 -0.0132            -0.0092   finding
+591              lead                   >=2h      v2     p_2tb   3779    1399 -0.0218 -0.0353 -0.0102  0.0045 -0.0331 -0.0125            -0.0254   finding
+670              lead                   >=2h      v3     p_2tb   3837    1334 -0.0254 -0.0391 -0.0123  0.0016 -0.0346 -0.0187            -0.0218   finding
+583             month                    Jun      v2     p_2tb   5620    2092 -0.0107 -0.0201 -0.0029  0.0429 -0.0058 -0.0120                NaN   finding
+584             month                    May      v2     p_2tb   5999    2063 -0.0242 -0.0379 -0.0123  0.0009 -0.0242     NaN                NaN      lead
+661             month                    Aug      v3     p_2tb   4616    1585 -0.0226 -0.0369 -0.0103  0.0042 -0.0216 -0.0281                NaN   finding
+616              park  Philadelphia Phillies      v2     p_2tb    449     170 -0.0494 -0.0895 -0.0171  0.0273 -0.0723 -0.0226            -0.0418   finding
+618              park       San Diego Padres      v2     p_2tb    540     163 -0.0700 -0.1362 -0.0261  0.0442 -0.1213 -0.0265            -0.0482   finding
+685              park         Detroit Tigers      v3     p_2tb    540     189 -0.0410 -0.0775 -0.0125  0.0442 -0.0362 -0.0479            -0.0252   finding
+579            regime                     v2      v2     p_2tb  14405    5171 -0.0153 -0.0220 -0.0088  0.0000 -0.0206 -0.0112                NaN   finding
+581            regime                    v3b      v3     p_2tb   9163    3182 -0.0153 -0.0243 -0.0067  0.0035 -0.0230 -0.0113                NaN   finding
+626              side                   away      v2     p_2tb   7203    2647 -0.0191 -0.0293 -0.0103  0.0005 -0.0224 -0.0174                NaN   finding
+627              side                   home      v2     p_2tb   7202    2524 -0.0121 -0.0217 -0.0029  0.0425 -0.0192 -0.0058                NaN   finding
+705              side                   away      v3     p_2tb   5906    2044 -0.0215 -0.0336 -0.0107  0.0016 -0.0241 -0.0189                NaN   finding
+628              slot                    1-3      v2     p_2tb   4800    1969 -0.0325 -0.0428 -0.0230  0.0000 -0.0359 -0.0299                NaN   finding
+629              slot                    4-6      v2     p_2tb   4803    1750 -0.0213 -0.0316 -0.0125  0.0001 -0.0286 -0.0144                NaN   finding
+630              slot                    7-9      v2     p_2tb   4802    1452 -0.0172 -0.0278 -0.0080  0.0050 -0.0276 -0.0103                NaN   finding
+707              slot                    1-3      v3     p_2tb   3940    1568 -0.0298 -0.0421 -0.0190  0.0000 -0.0314 -0.0291                NaN   finding
+708              slot                    4-6      v3     p_2tb   3941    1408 -0.0182 -0.0297 -0.0088  0.0036 -0.0180 -0.0186                NaN   finding
+709              slot                    7-9      v3     p_2tb   3937    1140 -0.0260 -0.0389 -0.0150  0.0002 -0.0314 -0.0206                NaN   finding
+586             start                  7-9pm      v2     p_2tb   6044    2103 -0.0186 -0.0296 -0.0086  0.0029 -0.0193 -0.0190            -0.0121   finding
+587             start                   9pm+      v2     p_2tb   1986     735 -0.0329 -0.0549 -0.0154  0.0056 -0.0415 -0.0245            -0.0377   finding
+666             start                   9pm+      v3     p_2tb    463     159 -0.0377 -0.0724 -0.0119  0.0481 -0.0403 -0.0057            -0.0329   finding
+667             start                   <4pm      v3     p_2tb   2981     993 -0.0239 -0.0425 -0.0079  0.0274 -0.0206 -0.0260            -0.0090   finding
+746   weather_missing           present (v2)      v2     p_2tb   9732    3472 -0.0145 -0.0229 -0.0067  0.0029 -0.0209 -0.0095            -0.0148   finding
+747   weather_missing           missing (v2)      v2     p_2tb   4673    1699 -0.0171 -0.0288 -0.0070  0.0112 -0.0202 -0.0148            -0.0214   finding
+744            wlabel       Very HR Friendly      v3     p_2tb   2350     848 -0.0278 -0.0483 -0.0100  0.0159 -0.0460 -0.0214                NaN   finding
+
+Permutation tests (max |z| across qualifying entities):
+       entity    target version  qualifying  perm_p  max_abs_z     tau  pooled_bias
+0       park  home_win      v2           0     NaN        NaN     NaN          NaN
+1       park  home_win      v3           0     NaN        NaN     NaN          NaN
+2       park      nrfi      v2           0     NaN        NaN     NaN          NaN
+3       park      nrfi      v3           0     NaN        NaN     NaN          NaN
+4       park  over_8.5      v2           0     NaN        NaN     NaN          NaN
+5       park  over_8.5      v3           0     NaN        NaN     NaN          NaN
+6       park        k5      v2           0     NaN        NaN     NaN          NaN
+7       park        k5      v3           0     NaN        NaN     NaN          NaN
+8       park      p_1h      v2          30  0.0589     4.8957  0.0364       0.0400
+9       park      p_1h      v3          30  0.9401     3.0397  0.0155       0.0421
+10      park     p_2tb      v2          30  0.1688     4.8425  0.0320       0.0432
+11      park     p_2tb      v3          29  0.8781     3.7121  0.0175       0.0481
+12      park     p_1hr      v2          23  0.4356     3.0043  0.0122       0.0109
+13      park     p_1hr      v3          10  0.3087     2.8562  0.0076       0.0127
+14      park    p_1rbi      v2          30  0.0200     4.2337  0.0227      -0.0158
+15      park    p_1rbi      v3          28  0.1189     3.4429  0.0061      -0.0117
+16      park     p_1sb      v2           0     NaN        NaN     NaN          NaN
+17      park     p_1sb      v3           0     NaN        NaN     NaN          NaN
+0   bat_team      p_1h      v2          30  0.0020     5.8144  0.0243       0.0407
+1   bat_team      p_1h      v3          30  0.6563     3.3186  0.0185       0.0408
+2   bat_team     p_2tb      v2          30  0.2228     4.5376  0.0108       0.0452
+3   bat_team     p_2tb      v3          30  0.0340     5.6682  0.0137       0.0512
+4   bat_team     p_1hr      v2          27  0.9221     2.4257  0.0000       0.0133
+5   bat_team     p_1hr      v3          13  0.9401     1.6026  0.0000       0.0083
+6   bat_team    p_1rbi      v2          30  0.3966     2.7746  0.0166      -0.0157
+7   bat_team    p_1rbi      v3          29  0.3766     2.6652  0.0121      -0.0106
+8   bat_team     p_1sb      v2           3  0.8641     5.0812  0.0000      -0.0700
+9   bat_team     p_1sb      v3           0     NaN        NaN     NaN          NaN

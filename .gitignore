@@ -102,3 +102,6 @@ gitleaks-report.json
 turnover-*.md
 
 pg_dump/
+
+analysis/cache/
+.claude/

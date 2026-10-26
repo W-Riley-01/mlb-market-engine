@@ -1,0 +1,24 @@
+Q1 n=9659
+  market AUC 0.6050, LL 0.67378; model raw AUC 0.5649, LL 0.68708
+  full-sample y ~ 1 + logit(p_mkt) + logit(p_model): a=0.0422 b_mkt=1.2245 b_model=-0.3914
+  model alone y ~ 1 + logit(p_model): a=-0.0245 slope=0.6921
+  SD logit(p_model) 0.333, SD logit(p_mkt) 0.397, r(logits) 0.753
+  ROI bets 590: bet side agrees with model's side vs market in 8, opposes in 582
+Q2 n=9685: mean(model_total_mean - line) 0.129 (SD 0.986); r(model - line, line) -0.772
+  (actual - line) ~ line: intercept 1.320 slope -0.102 (-0.193 to -0.012); mean line 8.42, mean model_total_mean 8.55, SD model_total_mean 0.676, SD line 1.012
+  r(model_total_mean, line) 0.373
+Q3 pool 172502, dates 730
+  simulator: dates 730, decided 704, passes 26, hits 512, rate 0.727 (Wilson 0.693-0.759); picks: mean slot 1.72, mean game PA 4.33, mean trailing non-AB share of PA 0.096, mean trailing PA 533, distinct players 138
+  B1: dates 730, decided 729, passes 1, hits 529, rate 0.726 (Wilson 0.692-0.757); picks: mean slot 2.38, mean game PA 4.41, mean trailing non-AB share of PA 0.103, mean trailing PA 609, distinct players 50
+  B2: dates 730, decided 729, passes 1, hits 546, rate 0.749 (Wilson 0.716-0.779); picks: mean slot 1.62, mean game PA 4.61, mean trailing non-AB share of PA 0.081, mean trailing PA 636, distinct players 87
+  pool mean trailing non-AB share 0.102
+  simulator passes (26): PA total 2, BB 1 (IBB 0), HBP 1, SF 0, SH 0, CI 0; picks with 0 PA 24
+  simulator pass picks: 26 distinct players; most frequent: {570257: 1, 596057: 1, 676946: 1}; their mean trailing non-AB share 0.075
+Q4 starts 19372: actual BF/start 21.95 (SD 4.67), actual IP/start 5.19; model-implied BF/start 22.87 for every starter (pitches/PA mean 3.84, pull when count > 85)
+  predicted K: median-based mean 5.265, distribution mean 5.368; actual mean 4.801; baseline mean 4.891; r(pred, baseline) 0.606; r(dist mean, baseline) 0.628
+  actual K per BF 0.2187; implied model K per BF (dist mean / 22.87) 0.2347
+Q5 batter-games 167578, HR games 18741
+  simulator p_1hr: AUC 0.6128 (0.6083 to 0.6171)
+  HR baseline: AUC 0.6103 (0.6060 to 0.6144)
+  difference simulator - baseline 0.0025 (-0.0004 to 0.0053), paired game bootstrap 2,000, seed 20261023
+  mean predicted: simulator 0.1386, baseline 0.1199, realized 0.1118; log loss simulator 0.34621, baseline 0.34290

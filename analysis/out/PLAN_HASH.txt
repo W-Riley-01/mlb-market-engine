@@ -1,0 +1,21 @@
+﻿file: analysis/BACKTEST_V4_ANALYSIS_PLAN.md
+sha256: 08df1f9c192d29db685c12dc10b9a9cef715c93571d50d3f7cb590bfc65ccecc
+frozen: 2026-10-22 19:37:54 -05:00
+ledger_v4_full_*.csv not opened before this time.
+
+amended (Amendments before results a-f):
+sha256: 4a57fcaab100b14b714dd4bdb04b96f16316a527d8758845080b2d909b27152a
+frozen: 2026-10-22 19:44:48 -05:00
+ledger_v4_full_*.csv not opened before this time.
+
+addendum analysis/BACKTEST_V4_ADDENDUM_2026-10-23.md (post hoc, after results; plan unchanged):
+addendum sha256: bf66bfe3d9876d26dbbc4fd65cf8cce21c7c793c004c79c8543858bf00f8f0e1
+written: 2026-10-23 10:55:44 -05:00
+
+R2 plan analysis/BACKTEST_V4_ANALYSIS_PLAN_R2.md (frozen before any ledger_v4r2_*.csv existed):
+r2 sha256: ae9a969ca2319bbe689245588d16e1bba49dd5e01019206383be87906da841cf
+frozen: 2026-10-23 11:09:56 -05:00
+
+R2 plan amended (Amendments before results 2026-10-23 - R2: test 4 governed by R2; expectation (e) restated):
+r2 amended sha256: ec6b21042fcb34bee58c51e0acb62b641d684514a5088c2076ea44a7afe4a86c
+frozen: 2026-10-23 11:52:10 -05:00

@@ -1,0 +1,10 @@
+cells re-tested: 803  (no complement: 9)
+old bias findings: 283 | surviving as relative findings: 4 | relative leads: 1 | new relative findings: 2
+         segment             level version  target     n  cell_bias  rest_bias    diff      lo      hi       q  diff_H1  diff_H2  diff_other_version    class old_bias_class
+204     bat_team  San Diego Padres      v2    p_1h   504     0.1324     0.0383  0.0941  0.0484  0.1379  0.0085   0.1103   0.0779                 NaN  finding        finding
+148         park         Athletics      v2    p_1h   446    -0.0972     0.0460 -0.1432 -0.1876 -0.0959  0.0000  -0.1265  -0.1537             -0.0357  finding           lead
+485  abs_shift_b           1.5-2.5      v2   p_1hr  1242     0.0496     0.0130  0.0367  0.0163  0.0569  0.0418   0.0137   0.0612              0.0131  finding        finding
+588       wlabel  Very HR Friendly      v3   p_1hr  2350     0.0473     0.0168  0.0305  0.0154  0.0450  0.0156   0.0317   0.0324                 NaN  finding        finding
+612         park         Athletics      v2  p_1rbi   446    -0.1127    -0.0142 -0.0985 -0.1524 -0.0473  0.0399  -0.0578  -0.1301             -0.0178  finding        finding
+319         park         Athletics      v2   p_2tb   446    -0.0904     0.0480 -0.1383 -0.1916 -0.0867  0.0001  -0.0910  -0.1739             -0.0480  finding           lead
+476        month               May      v2   p_1hr  5999     0.0311     0.0054  0.0257  0.0146  0.0372  0.0021   0.0266      NaN                 NaN     lead           lead

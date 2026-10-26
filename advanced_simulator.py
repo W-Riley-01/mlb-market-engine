@@ -384,12 +384,14 @@ def run_advanced_monte_carlo(resolver, away_lineup, home_lineup, away_starter, h
         player_props[batter['name']] = {'1+ Hits': 0, '2+ TB': 0, '1+ HR': 0, '1+ RBI': 0, '1+ SB': 0}
 
     for _ in range(iterations):
+        # The game class takes cards by PITCHING side (away pitcher's card is used when home bats);
+        # the cards above are named by BATTING side, so each is passed to the opposite slot.
         game = AdvancedSimulatedGame(
             away_lineup, home_lineup,
-            away_starter_card, home_starter_card,
-            away_bullpen_card, home_bullpen_card,
-            away_starter_card_1st=away_starter_card_1st,
-            home_starter_card_1st=home_starter_card_1st,
+            home_starter_card, away_starter_card,
+            home_bullpen_card, away_bullpen_card,
+            away_starter_card_1st=home_starter_card_1st,
+            home_starter_card_1st=away_starter_card_1st,
         )
         res = game.play_game()
 

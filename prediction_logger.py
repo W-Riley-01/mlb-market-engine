@@ -79,7 +79,9 @@ RDS_DB_NAME = os.environ.get("RDS_DB_NAME", "mlb_engine")
 #   These changes shift totals predictions up ~0.3-0.5 runs/game on average
 #   and rebalance player-prop probabilities; pre-cutover (v1) and post-cutover
 #   (v2) calibration data must NOT be pooled.
-MODEL_VERSION = "v3"
+# v4: fixes crossed home/away card wiring in advanced_simulator (v1-v3 batted each lineup
+# against its own starter and credited Ks to the wrong starter); v1-v3 data must not be pooled with v4.
+MODEL_VERSION = "v4"
 
 # K thresholds we report on. Must match what's rendered in app.py so the
 # logged probability == the displayed probability (no drift between UI & DB).

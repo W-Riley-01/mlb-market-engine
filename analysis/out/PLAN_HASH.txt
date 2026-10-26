@@ -19,3 +19,8 @@ frozen: 2026-10-23 11:09:56 -05:00
 R2 plan amended (Amendments before results 2026-10-23 - R2: test 4 governed by R2; expectation (e) restated):
 r2 amended sha256: ec6b21042fcb34bee58c51e0acb62b641d684514a5088c2076ea44a7afe4a86c
 frozen: 2026-10-23 11:52:10 -05:00
+
+Beat the Streak lab plan analysis/BEAT_THE_STREAK_LAB_PLAN.md (frozen before any query, ledger read, feature build or model fit):
+revised before first commit; earlier unpublished hash 25f6060a…
+btslab sha256: 6fba909a900feed24e78b1f2cbc96e1ad7b8135cf5e83084a8ace3039e2aee68
+frozen: 2026-10-26 14:56:21 -05:00

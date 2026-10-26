@@ -105,3 +105,11 @@ pg_dump/
 
 analysis/cache/
 .claude/
+misc/
+.github/agents/
+.github/hooks/
+.github/skills/
+misc/
+.github/agents/
+.github/hooks/
+.github/skills/

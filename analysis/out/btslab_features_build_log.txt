@@ -1,0 +1,5 @@
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+{'eligible_games': 9704, 'games_with_box': 9704, 'rows_before_neutral': 174672, 'neutral_rows': 324, 'neutral_games': 18}
+wrote C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\cache\btslab_features.parquet rows 174348 cols 64
+exit 0

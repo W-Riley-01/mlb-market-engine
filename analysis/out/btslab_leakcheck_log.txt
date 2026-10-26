@@ -1,0 +1,586 @@
+## a. Structural: <group>_max_date < game date, every row
+        group   rows  with history  violations
+   A_max_date 174348        173875           0
+   L_max_date 174348        174348           0
+   C_max_date 174348        172674           0
+   D_max_date 174348        174348           0
+   E_max_date 174348        173304           0
+   F_max_date 174348        174348           0
+   G_max_date 174348        168950           0
+BASE_max_date 174348        174348           0
+Same-day attributes, by design (plan Section 3 and addendum A1 changes 3 and 6): slot, opp_sp, venue_id, f_temp_f, f_indoor, x_wind_mph, x_mkt_team_runs. They carry no max date.
+
+## b. Future deletion: rebuild with only data dated before D, compare exactly
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-04-09: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-04-10: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-04-23: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-05-08: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-05-14: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-06-06: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-06-07: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-06-11: 11 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-06-26: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-07-02: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-07-09: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-07-15: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-07-24: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-08-06: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-08-18: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-08-26: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-09-04: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-09-11: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-09-30: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2022-10-05: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-04-03: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-04-05: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-04-22: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-05-03: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-05-05: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-05-12: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-05-25: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-06-13: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-06-14: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-06-16: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-07-01: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-07-27: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-08-06: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-08-13: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-08-15: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-08-19: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-08-22: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-08-26: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-09-01: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-09-10: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2023-09-21: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-04-04: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-04-05: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-04-16: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-05-03: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-05-17: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-05-18: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-05-26: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-06-24: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-06-30: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-07-02: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-07-08: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-07-10: 17 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-07-28: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-08-10: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-08-19: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-09-07: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-09-15: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-09-22: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2024-09-28: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-03-29: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-04-02: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-04-06: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-04-08: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-04-18: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-04-27: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-04-28: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-05-14: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-05-15: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-05-19: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-05-29: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-06-01: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-06-06: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-06-17: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-06-19: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-07-02: 17 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-07-10: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-07-22: 5 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-08-09: 6 rows, 64 columns compared
+[OddsBook] Loading C:\Users\W\PyCharmMiscProject\MLB_Analysis\data\MLB_Basic.csv...
+[OddsBook] Loaded 41,214 games from 2009-04-05 to 2026-04-11
+  2025-09-23: 5 rows, 64 columns compared
+seasons {2022: 111, 2023: 111, 2024: 111, 2025: 117}; doubleheader pairs 25 (both games)
+              rows  dates  mismatched cells  columns  cells
+sample                                                     
+doubleheader   150     23                 0       64   9600
+random         300     60                 0       64  19200
+total cells 28800, mismatches 0
+
+## c. Spot check: 20 rows, recomputed by plain filtering
+   row       date  batter                                feature        built        plain  match
+  3472 2022-07-06  642715             starter BF, last 10 starts   218.000000   218.000000   True
+  3472 2022-07-06  642715         starter starts counted (<= 10)    10.000000    10.000000   True
+  3472 2022-07-06  642715                         park: venue PA 17013.000000 17013.000000   True
+  3472 2022-07-06  642715                          park: venue H  3469.000000  3469.000000   True
+  3472 2022-07-06  642715                          park: road PA 17846.000000 17846.000000   True
+  3472 2022-07-06  642715                           park: road H  3785.000000  3785.000000   True
+  3472 2022-07-06  642715 park factor, raw (venue/road H per PA)     0.961387     0.961387   True
+  3472 2022-07-06  642715                           B2 P(1+ hit)     0.643804     0.643804   True
+  3472 2022-07-06  642715                         batter H, 365d   108.000000   108.000000   True
+  3472 2022-07-06  642715                        batter AB, 365d   452.000000   452.000000   True
+  3472 2022-07-06  642715                        batter PA, 365d   504.000000   504.000000   True
+  3472 2022-07-06  642715                       starter BF, 365d   210.000000   210.000000   True
+  3472 2022-07-06  642715                        starter K, 365d    42.000000    42.000000   True
+  3472 2022-07-06  642715                          batter H, 14d    10.000000    10.000000   True
+  3472 2022-07-06  642715                         batter AB, 14d    52.000000    52.000000   True
+  3472 2022-07-06  642715                 opp relief pitches, 3d   260.000000   260.000000   True
+135609 2025-09-08  805249             starter BF, last 10 starts    95.000000    95.000000   True
+135609 2025-09-08  805249         starter starts counted (<= 10)     4.000000     4.000000   True
+135609 2025-09-08  805249                         park: venue PA 23277.000000 23277.000000   True
+135609 2025-09-08  805249                          park: venue H  5218.000000  5218.000000   True
+135609 2025-09-08  805249                          park: road PA 23815.000000 23815.000000   True
+135609 2025-09-08  805249                           park: road H  5392.000000  5392.000000   True
+135609 2025-09-08  805249 park factor, raw (venue/road H per PA)     0.990097     0.990097   True
+135609 2025-09-08  805249                           B2 P(1+ hit)     0.534542     0.534542   True
+135609 2025-09-08  805249                         batter H, 365d    33.000000    33.000000   True
+135609 2025-09-08  805249                        batter AB, 365d   145.000000   145.000000   True
+135609 2025-09-08  805249                        batter PA, 365d   161.000000   161.000000   True
+135609 2025-09-08  805249                       starter BF, 365d    94.000000    94.000000   True
+135609 2025-09-08  805249                        starter K, 365d    27.000000    27.000000   True
+135609 2025-09-08  805249                          batter H, 14d     0.000000     0.000000   True
+135609 2025-09-08  805249                         batter AB, 14d     0.000000     0.000000   True
+135609 2025-09-08  805249                 opp relief pitches, 3d   133.000000   133.000000   True
+110203 2024-04-28  702358             starter BF, last 10 starts   200.000000   200.000000   True
+110203 2024-04-28  702358         starter starts counted (<= 10)    10.000000    10.000000   True
+110203 2024-04-28  702358                         park: venue PA 19312.000000 19312.000000   True
+110203 2024-04-28  702358                          park: venue H  4238.000000  4238.000000   True
+110203 2024-04-28  702358                          park: road PA 18815.000000 18815.000000   True
+110203 2024-04-28  702358                           park: road H  4064.000000  4064.000000   True
+110203 2024-04-28  702358 park factor, raw (venue/road H per PA)     1.015978     1.015978   True
+110203 2024-04-28  702358                           B2 P(1+ hit)     0.675905     0.675905   True
+110203 2024-04-28  702358                         batter H, 365d    16.000000    16.000000   True
+110203 2024-04-28  702358                        batter AB, 365d    61.000000    61.000000   True
+110203 2024-04-28  702358                        batter PA, 365d    69.000000    69.000000   True
+110203 2024-04-28  702358                       starter BF, 365d   301.000000   301.000000   True
+110203 2024-04-28  702358                        starter K, 365d    55.000000    55.000000   True
+110203 2024-04-28  702358                          batter H, 14d     6.000000     6.000000   True
+110203 2024-04-28  702358                         batter AB, 14d    15.000000    15.000000   True
+110203 2024-04-28  702358                 opp relief pitches, 3d   162.000000   162.000000   True
+ 59906 2023-07-26  545341             starter BF, last 10 starts   219.000000   219.000000   True
+ 59906 2023-07-26  545341         starter starts counted (<= 10)    10.000000    10.000000   True
+ 59906 2023-07-26  545341                         park: venue PA 18172.000000 18172.000000   True
+ 59906 2023-07-26  545341                          park: venue H  4171.000000  4171.000000   True
+ 59906 2023-07-26  545341                          park: road PA 18038.000000 18038.000000   True
+ 59906 2023-07-26  545341                           park: road H  4271.000000  4271.000000   True
+ 59906 2023-07-26  545341 park factor, raw (venue/road H per PA)     0.969385     0.969385   True
+ 59906 2023-07-26  545341                           B2 P(1+ hit)     0.727973     0.727973   True
+ 59906 2023-07-26  545341                         batter H, 365d   128.000000   128.000000   True
+ 59906 2023-07-26  545341                        batter AB, 365d   437.000000   437.000000   True
+ 59906 2023-07-26  545341                        batter PA, 365d   468.000000   468.000000   True
+ 59906 2023-07-26  545341                       starter BF, 365d   301.000000   301.000000   True
+ 59906 2023-07-26  545341                        starter K, 365d    53.000000    53.000000   True
+ 59906 2023-07-26  545341                          batter H, 14d    11.000000    11.000000   True
+ 59906 2023-07-26  545341                         batter AB, 14d    23.000000    23.000000   True
+ 59906 2023-07-26  545341                 opp relief pitches, 3d   178.000000   178.000000   True
+168866 2025-04-19  670042             starter BF, last 10 starts   236.000000   236.000000   True
+168866 2025-04-19  670042         starter starts counted (<= 10)    10.000000    10.000000   True
+168866 2025-04-19  670042                         park: venue PA 18974.000000 18974.000000   True
+168866 2025-04-19  670042                          park: venue H  4192.000000  4192.000000   True
+168866 2025-04-19  670042                          park: road PA 19038.000000 19038.000000   True
+168866 2025-04-19  670042                           park: road H  4295.000000  4295.000000   True
+168866 2025-04-19  670042 park factor, raw (venue/road H per PA)     0.979311     0.979311   True
+168866 2025-04-19  670042                           B2 P(1+ hit)     0.630396     0.630396   True
+168866 2025-04-19  670042                         batter H, 365d   102.000000   102.000000   True
+168866 2025-04-19  670042                        batter AB, 365d   425.000000   425.000000   True
+168866 2025-04-19  670042                        batter PA, 365d   484.000000   484.000000   True
+168866 2025-04-19  670042                       starter BF, 365d   783.000000   783.000000   True
+168866 2025-04-19  670042                        starter K, 365d   153.000000   153.000000   True
+168866 2025-04-19  670042                          batter H, 14d     5.000000     5.000000   True
+168866 2025-04-19  670042                         batter AB, 14d    33.000000    33.000000   True
+168866 2025-04-19  670042                 opp relief pitches, 3d   118.000000   118.000000   True
+ 64507 2023-07-03  689172             starter BF, last 10 starts    96.000000    96.000000   True
+ 64507 2023-07-03  689172         starter starts counted (<= 10)     5.000000     5.000000   True
+ 64507 2023-07-03  689172                         park: venue PA 17546.000000 17546.000000   True
+ 64507 2023-07-03  689172                          park: venue H  3867.000000  3867.000000   True
+ 64507 2023-07-03  689172                          park: road PA 17255.000000 17255.000000   True
+ 64507 2023-07-03  689172                           park: road H  3739.000000  3739.000000   True
+ 64507 2023-07-03  689172 park factor, raw (venue/road H per PA)     1.017081     1.017081   True
+ 64507 2023-07-03  689172                           B2 P(1+ hit)     0.570031     0.570031   True
+ 64507 2023-07-03  689172                         batter H, 365d    16.000000    16.000000   True
+ 64507 2023-07-03  689172                        batter AB, 365d    82.000000    82.000000   True
+ 64507 2023-07-03  689172                        batter PA, 365d    88.000000    88.000000   True
+ 64507 2023-07-03  689172                       starter BF, 365d    95.000000    95.000000   True
+ 64507 2023-07-03  689172                        starter K, 365d    31.000000    31.000000   True
+ 64507 2023-07-03  689172                          batter H, 14d     0.000000     0.000000   True
+ 64507 2023-07-03  689172                         batter AB, 14d     0.000000     0.000000   True
+ 64507 2023-07-03  689172                 opp relief pitches, 3d   212.000000   212.000000   True
+ 17226 2022-05-28  649966             starter BF, last 10 starts    22.000000    22.000000   True
+ 17226 2022-05-28  649966         starter starts counted (<= 10)     1.000000     1.000000   True
+ 17226 2022-05-28  649966                         park: venue PA 15417.000000 15417.000000   True
+ 17226 2022-05-28  649966                          park: venue H  3242.000000  3242.000000   True
+ 17226 2022-05-28  649966                          park: road PA 15709.000000 15709.000000   True
+ 17226 2022-05-28  649966                           park: road H  3362.000000  3362.000000   True
+ 17226 2022-05-28  649966 park factor, raw (venue/road H per PA)     0.982571     0.982571   True
+ 17226 2022-05-28  649966                           B2 P(1+ hit)     0.683347     0.683347   True
+ 17226 2022-05-28  649966                         batter H, 365d   115.000000   115.000000   True
+ 17226 2022-05-28  649966                        batter AB, 365d   434.000000   434.000000   True
+ 17226 2022-05-28  649966                        batter PA, 365d   503.000000   503.000000   True
+ 17226 2022-05-28  649966                       starter BF, 365d    22.000000    22.000000   True
+ 17226 2022-05-28  649966                        starter K, 365d     3.000000     3.000000   True
+ 17226 2022-05-28  649966                          batter H, 14d    12.000000    12.000000   True
+ 17226 2022-05-28  649966                         batter AB, 14d    47.000000    47.000000   True
+ 17226 2022-05-28  649966                 opp relief pitches, 3d   120.000000   120.000000   True
+105593 2024-05-14  656941             starter BF, last 10 starts   220.000000   220.000000   True
+105593 2024-05-14  656941         starter starts counted (<= 10)    10.000000    10.000000   True
+105593 2024-05-14  656941                         park: venue PA 19447.000000 19447.000000   True
+105593 2024-05-14  656941                          park: venue H  3991.000000  3991.000000   True
+105593 2024-05-14  656941                          park: road PA 19495.000000 19495.000000   True
+105593 2024-05-14  656941                           park: road H  4393.000000  4393.000000   True
+105593 2024-05-14  656941 park factor, raw (venue/road H per PA)     0.910733     0.910733   True
+105593 2024-05-14  656941                           B2 P(1+ hit)     0.573012     0.573012   True
+105593 2024-05-14  656941                         batter H, 365d   122.000000   122.000000   True
+105593 2024-05-14  656941                        batter AB, 365d   593.000000   593.000000   True
+105593 2024-05-14  656941                        batter PA, 365d   729.000000   729.000000   True
+105593 2024-05-14  656941                       starter BF, 365d   258.000000   258.000000   True
+105593 2024-05-14  656941                        starter K, 365d    67.000000    67.000000   True
+105593 2024-05-14  656941                          batter H, 14d    10.000000    10.000000   True
+105593 2024-05-14  656941                         batter AB, 14d    39.000000    39.000000   True
+105593 2024-05-14  656941                 opp relief pitches, 3d   179.000000   179.000000   True
+171804 2025-04-06  686554             starter BF, last 10 starts   229.000000   229.000000   True
+171804 2025-04-06  686554         starter starts counted (<= 10)    10.000000    10.000000   True
+171804 2025-04-06  686554                         park: venue PA 18539.000000 18539.000000   True
+171804 2025-04-06  686554                          park: venue H  3793.000000  3793.000000   True
+171804 2025-04-06  686554                          park: road PA 18594.000000 18594.000000   True
+171804 2025-04-06  686554                           park: road H  4018.000000  4018.000000   True
+171804 2025-04-06  686554 park factor, raw (venue/road H per PA)     0.946803     0.946803   True
+171804 2025-04-06  686554                           B2 P(1+ hit)     0.574012     0.574012   True
+171804 2025-04-06  686554                         batter H, 365d    18.000000    18.000000   True
+171804 2025-04-06  686554                        batter AB, 365d    93.000000    93.000000   True
+171804 2025-04-06  686554                        batter PA, 365d   101.000000   101.000000   True
+171804 2025-04-06  686554                       starter BF, 365d   433.000000   433.000000   True
+171804 2025-04-06  686554                        starter K, 365d    85.000000    85.000000   True
+171804 2025-04-06  686554                          batter H, 14d     2.000000     2.000000   True
+171804 2025-04-06  686554                         batter AB, 14d    14.000000    14.000000   True
+171804 2025-04-06  686554                 opp relief pitches, 3d   132.000000   132.000000   True
+170954 2025-04-11  669261             starter BF, last 10 starts   242.000000   242.000000   True
+170954 2025-04-11  669261         starter starts counted (<= 10)    10.000000    10.000000   True
+170954 2025-04-11  669261                         park: venue PA 18846.000000 18846.000000   True
+170954 2025-04-11  669261                          park: venue H  4152.000000  4152.000000   True
+170954 2025-04-11  669261                          park: road PA 18723.000000 18723.000000   True
+170954 2025-04-11  669261                           park: road H  3960.000000  3960.000000   True
+170954 2025-04-11  669261 park factor, raw (venue/road H per PA)     1.041642     1.041642   True
+170954 2025-04-11  669261                           B2 P(1+ hit)     0.577507     0.577507   True
+170954 2025-04-11  669261                         batter H, 365d    40.000000    40.000000   True
+170954 2025-04-11  669261                        batter AB, 365d   230.000000   230.000000   True
+170954 2025-04-11  669261                        batter PA, 365d   257.000000   257.000000   True
+170954 2025-04-11  669261                       starter BF, 365d   762.000000   762.000000   True
+170954 2025-04-11  669261                        starter K, 365d   170.000000   170.000000   True
+170954 2025-04-11  669261                          batter H, 14d     3.000000     3.000000   True
+170954 2025-04-11  669261                         batter AB, 14d    25.000000    25.000000   True
+170954 2025-04-11  669261                 opp relief pitches, 3d    70.000000    70.000000   True
+133003 2025-09-19  663993             starter BF, last 10 starts   204.000000   204.000000   True
+133003 2025-09-19  663993         starter starts counted (<= 10)    10.000000    10.000000   True
+133003 2025-09-19  663993                         park: venue PA  5783.000000  5783.000000   True
+133003 2025-09-19  663993                          park: venue H  1308.000000  1308.000000   True
+133003 2025-09-19  663993                          park: road PA 23690.000000 23690.000000   True
+133003 2025-09-19  663993                           park: road H  5194.000000  5194.000000   True
+133003 2025-09-19  663993 park factor, raw (venue/road H per PA)     1.031615     1.031615   True
+133003 2025-09-19  663993                           B2 P(1+ hit)     0.572689     0.572689   True
+133003 2025-09-19  663993                         batter H, 365d   124.000000   124.000000   True
+133003 2025-09-19  663993                        batter AB, 365d   550.000000   550.000000   True
+133003 2025-09-19  663993                        batter PA, 365d   614.000000   614.000000   True
+133003 2025-09-19  663993                       starter BF, 365d   584.000000   584.000000   True
+133003 2025-09-19  663993                        starter K, 365d   131.000000   131.000000   True
+133003 2025-09-19  663993                          batter H, 14d     7.000000     7.000000   True
+133003 2025-09-19  663993                         batter AB, 14d    35.000000    35.000000   True
+133003 2025-09-19  663993                 opp relief pitches, 3d   159.000000   159.000000   True
+109752 2024-06-21  641598             starter BF, last 10 starts   224.000000   224.000000   True
+109752 2024-06-21  641598         starter starts counted (<= 10)    10.000000    10.000000   True
+109752 2024-06-21  641598                         park: venue PA 21257.000000 21257.000000   True
+109752 2024-06-21  641598                          park: venue H  4682.000000  4682.000000   True
+109752 2024-06-21  641598                          park: road PA 20312.000000 20312.000000   True
+109752 2024-06-21  641598                           park: road H  4389.000000  4389.000000   True
+109752 2024-06-21  641598 park factor, raw (venue/road H per PA)     1.019334     1.019334   True
+109752 2024-06-21  641598                           B2 P(1+ hit)     0.633990     0.633990   True
+109752 2024-06-21  641598                         batter H, 365d   101.000000   101.000000   True
+109752 2024-06-21  641598                        batter AB, 365d   444.000000   444.000000   True
+109752 2024-06-21  641598                        batter PA, 365d   522.000000   522.000000   True
+109752 2024-06-21  641598                       starter BF, 365d   315.000000   315.000000   True
+109752 2024-06-21  641598                        starter K, 365d    55.000000    55.000000   True
+109752 2024-06-21  641598                          batter H, 14d     6.000000     6.000000   True
+109752 2024-06-21  641598                         batter AB, 14d    34.000000    34.000000   True
+109752 2024-06-21  641598                 opp relief pitches, 3d   142.000000   142.000000   True
+ 66373 2023-06-25  467793             starter BF, last 10 starts   162.000000   162.000000   True
+ 66373 2023-06-25  467793         starter starts counted (<= 10)     8.000000     8.000000   True
+ 66373 2023-06-25  467793                         park: venue PA 16847.000000 16847.000000   True
+ 66373 2023-06-25  467793                          park: venue H  3652.000000  3652.000000   True
+ 66373 2023-06-25  467793                          park: road PA 16831.000000 16831.000000   True
+ 66373 2023-06-25  467793                           park: road H  3626.000000  3626.000000   True
+ 66373 2023-06-25  467793 park factor, raw (venue/road H per PA)     1.006214     1.006214   True
+ 66373 2023-06-25  467793                           B2 P(1+ hit)     0.578882     0.578882   True
+ 66373 2023-06-25  467793                         batter H, 365d   109.000000   109.000000   True
+ 66373 2023-06-25  467793                        batter AB, 365d   512.000000   512.000000   True
+ 66373 2023-06-25  467793                        batter PA, 365d   588.000000   588.000000   True
+ 66373 2023-06-25  467793                       starter BF, 365d   162.000000   162.000000   True
+ 66373 2023-06-25  467793                        starter K, 365d    45.000000    45.000000   True
+ 66373 2023-06-25  467793                          batter H, 14d    10.000000    10.000000   True
+ 66373 2023-06-25  467793                         batter AB, 14d    45.000000    45.000000   True
+ 66373 2023-06-25  467793                 opp relief pitches, 3d   193.000000   193.000000   True
+ 81583 2023-04-22  807799             starter BF, last 10 starts   206.000000   206.000000   True
+ 81583 2023-04-22  807799         starter starts counted (<= 10)    10.000000    10.000000   True
+ 81583 2023-04-22  807799                         park: venue PA 14786.000000 14786.000000   True
+ 81583 2023-04-22  807799                          park: venue H  2951.000000  2951.000000   True
+ 81583 2023-04-22  807799                          park: road PA 15253.000000 15253.000000   True
+ 81583 2023-04-22  807799                           park: road H  3147.000000  3147.000000   True
+ 81583 2023-04-22  807799 park factor, raw (venue/road H per PA)     0.967335     0.967335   True
+ 81583 2023-04-22  807799                           B2 P(1+ hit)     0.589301     0.589301   True
+ 81583 2023-04-22  807799                         batter H, 365d    11.000000    11.000000   True
+ 81583 2023-04-22  807799                        batter AB, 365d    57.000000    57.000000   True
+ 81583 2023-04-22  807799                        batter PA, 365d    67.000000    67.000000   True
+ 81583 2023-04-22  807799                       starter BF, 365d   229.000000   229.000000   True
+ 81583 2023-04-22  807799                        starter K, 365d    42.000000    42.000000   True
+ 81583 2023-04-22  807799                          batter H, 14d     4.000000     4.000000   True
+ 81583 2023-04-22  807799                         batter AB, 14d    29.000000    29.000000   True
+ 81583 2023-04-22  807799                 opp relief pitches, 3d    82.000000    82.000000   True
+137185 2025-09-02  682657             starter BF, last 10 starts   258.000000   258.000000   True
+137185 2025-09-02  682657         starter starts counted (<= 10)    10.000000    10.000000   True
+137185 2025-09-02  682657                         park: venue PA 23989.000000 23989.000000   True
+137185 2025-09-02  682657                          park: venue H  5627.000000  5627.000000   True
+137185 2025-09-02  682657                          park: road PA 23457.000000 23457.000000   True
+137185 2025-09-02  682657                           park: road H  5165.000000  5165.000000   True
+137185 2025-09-02  682657 park factor, raw (venue/road H per PA)     1.065288     1.065288   True
+137185 2025-09-02  682657                           B2 P(1+ hit)     0.639571     0.639571   True
+137185 2025-09-02  682657                         batter H, 365d    95.000000    95.000000   True
+137185 2025-09-02  682657                        batter AB, 365d   423.000000   423.000000   True
+137185 2025-09-02  682657                        batter PA, 365d   454.000000   454.000000   True
+137185 2025-09-02  682657                       starter BF, 365d   749.000000   749.000000   True
+137185 2025-09-02  682657                        starter K, 365d   235.000000   235.000000   True
+137185 2025-09-02  682657                          batter H, 14d     5.000000     5.000000   True
+137185 2025-09-02  682657                         batter AB, 14d    28.000000    28.000000   True
+137185 2025-09-02  682657                 opp relief pitches, 3d   155.000000   155.000000   True
+ 62112 2023-07-16  663550             starter BF, last 10 starts   216.000000   216.000000   True
+ 62112 2023-07-16  663550         starter starts counted (<= 10)    10.000000    10.000000   True
+ 62112 2023-07-16  663550                         park: venue PA 17940.000000 17940.000000   True
+ 62112 2023-07-16  663550                          park: venue H  3932.000000  3932.000000   True
+ 62112 2023-07-16  663550                          park: road PA 17826.000000 17826.000000   True
+ 62112 2023-07-16  663550                           park: road H  3859.000000  3859.000000   True
+ 62112 2023-07-16  663550 park factor, raw (venue/road H per PA)     1.012442     1.012442   True
+ 62112 2023-07-16  663550                           B2 P(1+ hit)     0.552120     0.552120   True
+ 62112 2023-07-16  663550                         batter H, 365d     0.000000     0.000000   True
+ 62112 2023-07-16  663550                        batter AB, 365d     2.000000     2.000000   True
+ 62112 2023-07-16  663550                        batter PA, 365d     2.000000     2.000000   True
+ 62112 2023-07-16  663550                       starter BF, 365d   649.000000   649.000000   True
+ 62112 2023-07-16  663550                        starter K, 365d   164.000000   164.000000   True
+ 62112 2023-07-16  663550                          batter H, 14d     0.000000     0.000000   True
+ 62112 2023-07-16  663550                         batter AB, 14d     2.000000     2.000000   True
+ 62112 2023-07-16  663550                 opp relief pitches, 3d   145.000000   145.000000   True
+ 92836 2024-04-22  670623             starter BF, last 10 starts   225.000000   225.000000   True
+ 92836 2024-04-22  670623         starter starts counted (<= 10)    10.000000    10.000000   True
+ 92836 2024-04-22  670623                         park: venue PA 18911.000000 18911.000000   True
+ 92836 2024-04-22  670623                          park: venue H  3947.000000  3947.000000   True
+ 92836 2024-04-22  670623                          park: road PA 19101.000000 19101.000000   True
+ 92836 2024-04-22  670623                           park: road H  4283.000000  4283.000000   True
+ 92836 2024-04-22  670623 park factor, raw (venue/road H per PA)     0.930809     0.930809   True
+ 92836 2024-04-22  670623                           B2 P(1+ hit)     0.605400     0.605400   True
+ 92836 2024-04-22  670623                         batter H, 365d   129.000000   129.000000   True
+ 92836 2024-04-22  670623                        batter AB, 365d   505.000000   505.000000   True
+ 92836 2024-04-22  670623                        batter PA, 365d   590.000000   590.000000   True
+ 92836 2024-04-22  670623                       starter BF, 365d   402.000000   402.000000   True
+ 92836 2024-04-22  670623                        starter K, 365d   128.000000   128.000000   True
+ 92836 2024-04-22  670623                          batter H, 14d    11.000000    11.000000   True
+ 92836 2024-04-22  670623                         batter AB, 14d    41.000000    41.000000   True
+ 92836 2024-04-22  670623                 opp relief pitches, 3d   125.000000   125.000000   True
+ 62330 2023-07-15  686681             starter BF, last 10 starts    45.000000    45.000000   True
+ 62330 2023-07-15  686681         starter starts counted (<= 10)     5.000000     5.000000   True
+ 62330 2023-07-15  686681                         park: venue PA 17937.000000 17937.000000   True
+ 62330 2023-07-15  686681                          park: venue H  4190.000000  4190.000000   True
+ 62330 2023-07-15  686681                          park: road PA 17684.000000 17684.000000   True
+ 62330 2023-07-15  686681                           park: road H  3854.000000  3854.000000   True
+ 62330 2023-07-15  686681 park factor, raw (venue/road H per PA)     1.071848     1.071848   True
+ 62330 2023-07-15  686681                           B2 P(1+ hit)     0.604815     0.604815   True
+ 62330 2023-07-15  686681                         batter H, 365d    86.000000    86.000000   True
+ 62330 2023-07-15  686681                        batter AB, 365d   373.000000   373.000000   True
+ 62330 2023-07-15  686681                        batter PA, 365d   413.000000   413.000000   True
+ 62330 2023-07-15  686681                       starter BF, 365d   229.000000   229.000000   True
+ 62330 2023-07-15  686681                        starter K, 365d    61.000000    61.000000   True
+ 62330 2023-07-15  686681                          batter H, 14d     4.000000     4.000000   True
+ 62330 2023-07-15  686681                         batter AB, 14d    16.000000    16.000000   True
+ 62330 2023-07-15  686681                 opp relief pitches, 3d     0.000000     0.000000   True
+158381 2025-06-02  678246             starter BF, last 10 starts   219.000000   219.000000   True
+158381 2025-06-02  678246         starter starts counted (<= 10)    10.000000    10.000000   True
+158381 2025-06-02  678246                         park: venue PA 20463.000000 20463.000000   True
+158381 2025-06-02  678246                          park: venue H  4435.000000  4435.000000   True
+158381 2025-06-02  678246                          park: road PA 20502.000000 20502.000000   True
+158381 2025-06-02  678246                           park: road H  4488.000000  4488.000000   True
+158381 2025-06-02  678246 park factor, raw (venue/road H per PA)     0.990074     0.990074   True
+158381 2025-06-02  678246                           B2 P(1+ hit)     0.559772     0.559772   True
+158381 2025-06-02  678246                         batter H, 365d    77.000000    77.000000   True
+158381 2025-06-02  678246                        batter AB, 365d   402.000000   402.000000   True
+158381 2025-06-02  678246                        batter PA, 365d   457.000000   457.000000   True
+158381 2025-06-02  678246                       starter BF, 365d   625.000000   625.000000   True
+158381 2025-06-02  678246                        starter K, 365d   176.000000   176.000000   True
+158381 2025-06-02  678246                          batter H, 14d    10.000000    10.000000   True
+158381 2025-06-02  678246                         batter AB, 14d    49.000000    49.000000   True
+158381 2025-06-02  678246                 opp relief pitches, 3d   155.000000   155.000000   True
+  2018 2022-05-16  621493             starter BF, last 10 starts   181.000000   181.000000   True
+  2018 2022-05-16  621493         starter starts counted (<= 10)    10.000000    10.000000   True
+  2018 2022-05-16  621493                         park: venue PA  9704.000000  9704.000000   True
+  2018 2022-05-16  621493                          park: venue H  2070.000000  2070.000000   True
+  2018 2022-05-16  621493                          park: road PA 15248.000000 15248.000000   True
+  2018 2022-05-16  621493                           park: road H  3304.000000  3304.000000   True
+  2018 2022-05-16  621493 park factor, raw (venue/road H per PA)     0.984447     0.984447   True
+  2018 2022-05-16  621493                           B2 P(1+ hit)     0.723221     0.723221   True
+  2018 2022-05-16  621493                         batter H, 365d    81.000000    81.000000   True
+  2018 2022-05-16  621493                        batter AB, 365d   267.000000   267.000000   True
+  2018 2022-05-16  621493                        batter PA, 365d   312.000000   312.000000   True
+  2018 2022-05-16  621493                       starter BF, 365d   519.000000   519.000000   True
+  2018 2022-05-16  621493                        starter K, 365d   128.000000   128.000000   True
+  2018 2022-05-16  621493                          batter H, 14d    13.000000    13.000000   True
+  2018 2022-05-16  621493                         batter AB, 14d    36.000000    36.000000   True
+  2018 2022-05-16  621493                 opp relief pitches, 3d   195.000000   195.000000   True
+spot-check cells 320, mismatches 0
+
+LEAK CHECK: PASS
+exit 0

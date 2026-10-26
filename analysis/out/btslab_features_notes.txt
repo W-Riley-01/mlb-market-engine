@@ -1,0 +1,100 @@
+Beat the Streak lab, Step 1 - choices where the plan (f10661f) and addendum A1 (6d9cb3c) are silent
+Builder: analysis/btslab_features.py. Table: analysis/cache/btslab_features.parquet (git-ignored).
+
+Table shape
+1. The table stores as-of COUNTS and league rates, not shrunk rates. The plan estimates the prior strength m per
+   training fold (Section 4 common rules) and standardises/fills per fold, so shrinkage, standardisation, missing
+   fills and the D split (which uses C's shrunk BF) are applied at fit time: estimate_m(), shrink(), pa_split()
+   in the builder, with an assert self-check. Every stored count is what a leak would sit in, so the checks run on it.
+2. Outcome columns ab, h are attached from the box score and were only counted (AB>=1 / AB=0).
+
+Dates and seasons
+3. Each history game is dated by the last schedule date on which it appears as Final (its "effective date"), and
+   all its pitches take that date. Suspended or postponed games therefore enter history only once complete. The
+   "strictly before D" rule is applied to that date; doubleheader game 2 never sees game 1.
+4. History = regular-season games (schedule gameType R) 2019-2025 from data/pitch_matrix.parquet. Pool = 2022-2025
+   games that are Final on their official date and never suspended (as in the v4 backtest): 9,704 games; minus
+   the 18 neutral-site games (324 rows) = 174,348 rows.
+5. The 2019-2021 schedules (623 day files) were fetched with backtest_v4.get_json into analysis/cache/api/schedule/;
+   log analysis/out/btslab_schedule_fetch_log.txt. They are history only. Each day file was read as UTF-8 bytes.
+
+Event definitions (as R2 Section 3 unless stated)
+6. PA = pitch row with non-null events (includes truncated_pa, as in R2). H = single/double/triple/home_run.
+   AB = PA minus walk, hit_by_pitch, sac_fly, sac_bunt, sac_fly_double_play, sac_bunt_double_play, catcher_interf.
+   K = strikeout, strikeout_double_play. BB = walk (+ intent_walk, which never occurs: automatic intentional walks
+   have no pitch, so they are absent from pitch data and BB% is slightly low). ISO numerator xb = total bases - H.
+
+A. Batter
+7. Window [D-365, D) for H, AB, PA, K, BB, xb. Platoon = the batter's H and AB in the same window against pitchers
+   of the opposing starter's hand (per-PA p_throws, so switch hitters are handled by PA).
+8. Starter hand = the starter's most recent p_throws strictly before D. No prior pitch -> hand unknown and the
+   platoon counts are missing (0.96% of rows); the hand of the current game is not used.
+
+C. Opposing starter (actual first pitcher, addendum A1 change 3)
+9. H, AB, PA (= batters faced), K, BB, xb allowed in [D-365, D). H/AB allowed uses AB against.
+10. Expected BF: sum and count of BF over the last up-to-10 starts before D, any season back to 2019. BF per
+    start = box battersFaced when the game's box score is cached, else counted PAs in pitch_matrix (addendum
+    change 7). League mean BF per start in [D-365, D) is stored as the shrinkage target.
+
+D. Expected PA
+11. E_PA by slot and side = PA / games of the first 9 distinct batters per team-game in [D-365, D), regular season
+    only (B2's construction restricted to gameType R). The split min(E_PA, max(0, (BF_exp - slot)/9 + 1)) is
+    computed at fit time.
+
+E. Bullpen (opposing team)
+12. Weights = each reliever's relief pitches for that team in [D-30, D), excluding the game's starter (as v4's
+    bullpen_for). Rate = pooled sum(w*H) / sum(w*AB) of those relievers' allowed H and AB in [D-365, D): a
+    pitch-weighted rate in which tiny samples weigh little. Relief pitches = box numberOfPitches when cached,
+    else pitch rows.
+13. Fatigue = relief pitches and distinct relievers in [D-3, D), all relievers (no starter exclusion).
+14. Each team's first game of a season has no relievers in the 30-day window -> missing (0.6% of rows).
+
+F. Park, weather, roof
+15. Park counts: H and PA (both teams) in park-eligible games at the venue, and the home team's road H and PA,
+    from Jan 1 of (season - 3) to D. The factor ((venue H + m*road rate)/(venue PA + m)) / road rate is formed at
+    fit time; with no venue history it is 1.
+16. Park-eligible excludes the 2022-2025 neutral venues (addendum list) plus Monterrey 2019 (2701), Omaha 2019
+    (5365) and Bristol 2025 (6130), found in the fetched schedules, and 2020 games not at the home team's 2019 or
+    2021 usual (modal) venue: 55 relocated games. Using 2021 as well keeps Texas's new Globe Life Field (2020) and
+    excludes Toronto's Sahlen Field (2020). TD Ballpark (Dunedin, Toronto 2021) is a temporary home, not a neutral
+    site, and keeps its own venue factor; it never appears in the pool.
+17. NOT IN PLAN: Tampa Bay played 2025 at George M. Steinbrenner Field (new venue id). It is treated like
+    Sacramento: its own factor, starting at 1 and built only from games there before D. Daikin Park and Rate Field
+    (2025) are renamings with unchanged venue ids.
+18. Temperature = degrees parsed from the box score weather text; "Roof Closed" or "Dome" -> temperature missing
+    (league-mean fill at fit time) and f_indoor = 1. Wind mph parsed from the box score wind text, exploratory
+    column x_wind_mph only.
+
+G. Recent form
+19. Batter H and AB in [D-14, D) and [D-30, D); shrunk toward the batter's own 365-day H/AB at fit time.
+
+Comparators and exploratory columns
+20. base_b1, base_b2 = B1 and B2 computed by v4_analysis.add_baselines exactly as in R2 (its own windows over all
+    pitch_matrix rows with game_date < D, i.e. including spring/postseason as R2 did), with the actual starter.
+    base_b2 is also exploratory H. BASE_max_date = latest pitch_matrix date used by those windows.
+21. NOT BUILT: the R2 simulator P(hit) (exploratory H). It exists only in the ledger_v4r2 files, which Step 1 may
+    not open. It can be joined by (game_pk, player id) in a later step.
+22. x_mkt_team_runs = the batting team's implied runs from the closing total and de-vigged moneyline (plan 4B,
+    exponent 1.83), matched as in the v4 backtest. Exploratory "M1 + market" only (addendum A1 change 4).
+
+Same-day attributes (plan Section 3 exceptions; no max date): slot, opp_sp, venue_id, f_temp_f, f_indoor,
+x_wind_mph, x_mkt_team_runs.
+
+2026-10-26 - Bug fix in group E (bullpen), found by leak check (b); no model had been fit
+- Bug: build() made one bullpen lookup per (opposing team, date, opposing starter), but summed the reliever
+  weights by (team, date) only. On a doubleheader date the team has two starters, so its relievers were added
+  twice: e_bp_relievers_30d doubled and e_bp_hab mixed the two games' starter exclusions. No future data was used;
+  the full build and the truncated rebuild simply aggregated differently.
+- Diagnosis: run 1 of check (b) had 10 mismatched cells in 7 distinct rows. All 7 were rows whose opposing team
+  played two games that date; none of the 293 sampled rows without such a doubleheader mismatched. Evidence:
+  analysis/out/btslab_leakcheck_log_run1_FAILED.txt.
+- Fix: btslab_features.build(), group E - the reliever pairs carry the starter, and the aggregation and its merge
+  are keyed by (team, date, starter), so each game gets its own lookup, counted once. Every other group-by and
+  merge keyed by team and date was reviewed: daily sums of earlier dates (park road counts, relief slices,
+  fatigue) are meant to include both games of an earlier doubleheader, and the rest are keyed by game_pk or
+  pitcher. No other instance was found.
+- Effect: the rebuild changed only e_bp_relievers_30d (5,796 rows) and e_bp_hab (1,692 rows); the 5,796 rows are
+  exactly the rows whose opposing team played a doubleheader that date. All other 62 columns are identical.
+- Recheck (analysis/out/btslab_leakcheck_log.txt): (a) 0 violations; (b) 300 random rows plus 150 rows from 25
+  doubleheader pairs (both games, all seasons), all 64 columns, 28,800 cells, 0 mismatches; (c) 20 rows x 16
+  values by plain filtering, including last-10-start BF, park counts and raw factor, and B2, 0 mismatches.

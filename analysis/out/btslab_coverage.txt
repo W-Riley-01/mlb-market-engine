@@ -1,0 +1,39 @@
+## Rows by season
+        final regular-season games  pool-eligible games  neutral-site games excluded  games in table   rows  rows AB>=1  rows AB=0 (passes)
+season                                                                                                                                     
+2022                          2430                 2429                            2            2427  43686       43623                  63
+2023                          2430                 2423                            5            2418  43524       43473                  51
+2024                          2429                 2426                            8            2418  43524       43468                  56
+2025                          2430                 2426                            3            2423  43614       43553                  61
+
+## Share of rows missing, by feature
+season                                                  all    2022    2023    2024    2025
+A batter PA, 365d (a_pa = 0)                         0.0027  0.0033  0.0025  0.0025  0.0026
+A platoon AB vs starter hand (none or hand unknown)  0.0133  0.0144  0.0140  0.0140  0.0106
+C starter hand unknown                               0.0096  0.0101  0.0103  0.0105  0.0074
+C starter BF, 365d (c_pa = 0)                        0.0134  0.0126  0.0128  0.0151  0.0132
+C no prior start (last-10 BF)                        0.0205  0.0202  0.0225  0.0192  0.0200
+D expected PA by slot                                0.0000  0.0000  0.0000  0.0000  0.0000
+E bullpen H/AB, 30d relievers                        0.0060  0.0062  0.0062  0.0058  0.0058
+F venue PA (prior seasons + this season)             0.0002  0.0000  0.0000  0.0000  0.0008
+F home team road PA                                  0.0000  0.0000  0.0000  0.0000  0.0000
+F temperature (indoor or not recorded)               0.1765  0.1817  0.1836  0.1882  0.1527
+F of which indoor (roof closed / dome)               0.1765  0.1817  0.1836  0.1882  0.1527
+G batter AB, 14d                                     0.0189  0.0208  0.0188  0.0175  0.0184
+G batter AB, 30d                                     0.0157  0.0167  0.0158  0.0146  0.0156
+league rates                                         0.0000  0.0000  0.0000  0.0000  0.0000
+comparator B1 (needs >= 200 PA)                      0.1740  0.1906  0.1703  0.1615  0.1734
+comparator B2                                        0.0000  0.0000  0.0000  0.0000  0.0000
+exploratory market runs                              0.0011  0.0029  0.0012  0.0004  0.0000
+exploratory wind                                     0.0001  0.0004  0.0000  0.0000  0.0000
+
+E fatigue (3-day relief pitches) is a count; zero is a value, not missing: share zero 0.0134.
+
+## Thin history (share of rows)
+        batter < 100 PA, 365d  starter < 100 BF, 365d    rows
+season                                                       
+2022                   0.0983                  0.0876   43686
+2023                   0.0865                  0.0877   43524
+2024                   0.0811                  0.0922   43524
+2025                   0.0904                  0.0924   43614
+all                    0.0891                  0.0900  174348

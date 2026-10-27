@@ -1,0 +1,194 @@
+
+### 1. Columns (pitch_matrix has 33; master_physics_vault has the same rows plus 5 more)
+         column          type  in pitch_matrix  in vault                                                                         holds
+        game_pk         int64             True      True                                                                   MLB game id
+      game_date timestamp[ns]             True      True                                                               local game date
+      game_year         int64             True      True                                                                        season
+      game_type        string            False      True                         R regular, S spring, F/D/L/W postseason, E exhibition
+      home_team        string             True      True                                                                home team code
+      away_team        string             True      True                                                                away team code
+         inning         int64             True      True                                                                 inning number
+  inning_topbot        string             True      True                                                               Top or Bot half
+   outs_when_up         int64             True      True                                                         outs before the pitch
+          on_1b         int64             True      True                                               runner id on 1B (null if empty)
+          on_2b         int64             True      True                                                               runner id on 2B
+          on_3b         int64             True      True                                                               runner id on 3B
+  at_bat_number         int64             True      True                                            PA sequence number within the game
+   pitch_number         int64             True      True                                                    pitch number within the PA
+        pitcher         int64             True      True                                                                    pitcher id
+         batter         int64             True      True                                                                     batter id
+          stand        string             True      True                                              batter side for this pitch (L/R)
+       p_throws        string             True      True                                                            pitcher hand (L/R)
+         events        string             True      True                                       PA outcome, on the PA's last pitch only
+    description        string             True      True pitch result (ball, called_strike, swinging_strike, foul, hit_into_play, ...)
+           type        string             True      True                                                 B ball / S strike / X in play
+post_away_score         int64             True      True                                                    away score after the pitch
+post_home_score         int64             True      True                                                    home score after the pitch
+     away_score         int64             True      True                                                             away score before
+     home_score         int64             True      True                                                             home score before
+     pitch_type        string             True      True                                                    pitch type code (Statcast)
+  release_speed        double             True      True                                                            release speed, mph
+          pfx_x        double             True      True                                                       horizontal movement, ft
+          pfx_z        double             True      True                                                         vertical movement, ft
+        plate_x        double             True      True                                          horizontal location at the plate, ft
+        plate_z        double             True      True                                            vertical location at the plate, ft
+          balls         int64             True      True                                                        balls before the pitch
+        strikes         int64             True      True                                                      strikes before the pitch
+           zone         int64             True      True                                                            Statcast zone 1-14
+   launch_speed        double            False      True                                            exit velocity, mph (balls in play)
+   launch_angle         int64            False      True                                                         launch angle, degrees
+           hc_x        double            False      True                                                              hit coordinate x
+           hc_y        double            False      True                                                              hit coordinate y
+
+### 1b. Needed fields
+                                              field pitch_matrix master_physics_vault                                                        columns
+                                         pitch type      present              present                                                     pitch_type
+                                       pitch result      present              present                                              description, type
+                                         PA outcome      present              present                                                         events
+                                       launch speed       absent              present                                                   launch_speed
+                                       launch angle       absent              present                                                   launch_angle
+expected stats (estimated_ba/woba_using_speedangle)       absent               absent estimated_woba_using_speedangle, estimated_ba_using_speedangle
+                                     plate location      present              present                                         plate_x, plate_z, zone
+                                  ball-strike count      present              present                                                 balls, strikes
+                              batter / pitcher hand      present              present                                                stand, p_throws
+                                   game id and date      present              present                                             game_pk, game_date
+                                 pitch number in PA      present              present                                                   pitch_number
+                                          game type       absent              present                                                      game_type
+
+### 2. Coverage by season (master_physics_vault; same rows as pitch_matrix)
+             rows  games  regular-season rows  non-null pitch_type  non-null release_speed  balls in play  BIP with launch_speed  BIP with launch_angle expected-stat columns
+game_year                                                                                                                                                                    
+2019       745395   2476               727759                  1.0                     1.0         127846                 0.9914                 0.9914                absent
+2020       279636    951               263560                  1.0                     1.0          46514                 0.9934                 0.9934                absent
+2021       744029   2547               709486                  1.0                     1.0         127452                 0.9968                 0.9968                absent
+2022       748806   2572               708117                  1.0                     1.0         131121                 0.9960                 0.9969                absent
+2023       754635   2557               717672                  1.0                     1.0         130376                 0.9975                 0.9982                absent
+2024       742826   2543               709224                  1.0                     1.0         129776                 0.9973                 0.9978                absent
+2025       752683   2575               709906                  1.0                     1.0         132085                 0.9966                 0.9973                absent
+
+### 2b. Game types by season
+game_type     D     F     L       R      S     W
+game_year                                       
+2019       5431   560  2954  727759   6539  2152
+2020       4503  5503  4314  263560      0  1756
+2021       4969   574  3517  709486  23757  1726
+2022       4775  2727  2504  708117  28957  1726
+2023       4116  2281  3942  717672  25134  1490
+2024       5182  2488  3540  709224  20816  1576
+2025       5488  3145  3079  709906  28681  2384
+
+The project's own xwOBA estimate (xwoba_est, from launch speed/angle via data/xwoba_lookup.parquet) exists only in data/contact_matrix_env_fixed.parquet (786,886 balls in play); it is not Statcast's expected stats.
+
+### 3. Pitch-type codes, pitches per season (all game types)
+game_year              family (proposed)    2019   2020    2021    2022    2023    2024    2025
+pitch_type                                                                                     
+CH                              offspeed   80445  31962   83520   83534   81817   75676   76897
+CS                              breaking     154     66     164     115      74      66     415
+CU                              breaking   62517  22843   54629   55246   49812   46217   50383
+EP                                 other      42     43     128     508     558     575     991
+FA                              fastball     292    289     837    1276    1114     632     898
+FC          fastball (cutter, ambiguous)   49732  19912   53717   55863   59974   60908   56709
+FF                              fastball  270121  97434  264224  249783  242754  236978  240128
+FO                              offspeed      36      0       0       0     779     190     542
+FS                              offspeed   11686   5131   12060   11630   16767   22654   25074
+KC                              breaking   17866   7487   17000   17341   14892   13107   13341
+KN                                 other     215    101      88      42     192    1061     139
+PO                                 other      61     16      35      41      48      55      57
+SC                              offspeed       0      0       1      17      94     182       7
+SI                              fastball  119732  43374  113265  115692  117137  117639  117279
+SL                              breaking  123429  46334  124343  122959  119841  111244  110244
+ST                              breaking    6589   3836   16946   31680   45803   52261   55783
+SV                              breaking    2478    808    3072    3079    2979    3381    3782
+UN                                 other       0      0       0       0       0       0      14
+
+### 3b. First season each code appears
+pitch_type      CH    CS    CU    EP    FA    FC    FF    FO    FS    KC    KN    PO    SC    SI    SL    ST    SV    UN
+first season  2019  2019  2019  2019  2019  2019  2019  2019  2019  2019  2019  2019  2021  2019  2019  2019  2019  2025
+
+### 3c. Breaking-ball codes as a share of all breaking balls, by season (the 2023 sweeper/slurve split)
+game_year    2019   2020   2021   2022   2023   2024   2025
+pitch_type                                                 
+SL          0.579  0.569  0.575  0.534  0.513  0.492  0.471
+ST          0.031  0.047  0.078  0.137  0.196  0.231  0.238
+SV          0.012  0.010  0.014  0.013  0.013  0.015  0.016
+CU          0.293  0.281  0.253  0.240  0.213  0.204  0.215
+KC          0.084  0.092  0.079  0.075  0.064  0.058  0.057
+CS          0.001  0.001  0.001  0.000  0.000  0.000  0.002
+
+### 4. 2024 sample sizes per family, trailing 365 days strictly before the game date, regular season (counts only)
+                            unit side   family             count  rows  p10  median  p90
+batter-game (batter's main side)    L fastball      pitches seen 19663  246     881 1435
+batter-game (batter's main side)    L fastball PA-ending pitches 19663   63     225  362
+batter-game (batter's main side)    R fastball      pitches seen 23861  261     924 1495
+batter-game (batter's main side)    R fastball PA-ending pitches 23861   68     239  386
+  starter-start (vs batter side)    L fastball    pitches thrown  4836   93     381  840
+  starter-start (vs batter side)    L fastball PA-ending pitches  4836   22      97  214
+  starter-start (vs batter side)    R fastball    pitches thrown  4836  121     619 1070
+  starter-start (vs batter side)    R fastball PA-ending pitches  4836   31     157  280
+batter-game (batter's main side)    L breaking      pitches seen 19663  123     451  698
+batter-game (batter's main side)    L breaking PA-ending pitches 19663   29     108  177
+batter-game (batter's main side)    R breaking      pitches seen 23861  154     558  872
+batter-game (batter's main side)    R breaking PA-ending pitches 23861   38     139  214
+  starter-start (vs batter side)    L breaking    pitches thrown  4836   30     171  454
+  starter-start (vs batter side)    L breaking PA-ending pitches  4836    6      41  111
+  starter-start (vs batter side)    R breaking    pitches thrown  4836   47     314  602
+  starter-start (vs batter side)    R breaking PA-ending pitches  4836   11      79  156
+batter-game (batter's main side)    L offspeed      pitches seen 19663   71     264  384
+batter-game (batter's main side)    L offspeed PA-ending pitches 19663   18      73  105
+batter-game (batter's main side)    R offspeed      pitches seen 23861   49     174  311
+batter-game (batter's main side)    R offspeed PA-ending pitches 23861   14      48   83
+  starter-start (vs batter side)    L offspeed    pitches thrown  4836    0      87  351
+  starter-start (vs batter side)    L offspeed PA-ending pitches  4836    0      22  100
+  starter-start (vs batter side)    R offspeed    pitches thrown  4836    1      68  388
+  starter-start (vs batter side)    R offspeed PA-ending pitches  4836    0      17  108
+
+### 5. 2026 pitch-level data
+vault 2026 rows: 0; pitch_matrix max date: 2025-11-01; statcast_chunks 2026 files: 0
+Postgres (Step 0 of the BTS lab): four app-log tables, no pitch-level table. pg_dump/*.dump are dumps of that database.
+
+### 6. Plate appearances with no pitch row: box score vs pitch data, 2022-2025 eligible games
+        box_pa  pitch_rows_pa  truncated_pa  box_ibb  box_bb  pitch_rows_walk  box PA - (pitch-row PA - truncated) - IBB = PAs lost  walks: box BB - IBB - pitch-row walks
+season                                                                                                                                                                    
+2022    181965         181672           298      475   14847            14359                                                   116                                     13
+2023    183592         183189           271      474   15786            15245                                                   200                                     67
+2024    182241         181897           316      509   14917            14362                                                   151                                     46
+2025    182628         182311           319      555   15357            14772                                                    81                                     30
+events present in pitch rows: ['catcher_interf', 'double', 'double_play', 'field_error', 'field_out', 'fielders_choice', 'fielders_choice_out', 'force_out', 'grounded_into_double_play', 'hit_by_pitch', 'home_run', 'sac_bunt', 'sac_bunt_double_play', 'sac_fly', 'sac_fly_double_play', 'single', 'strikeout', 'strikeout_double_play', 'triple', 'triple_play', 'truncated_pa', 'walk']
+intent_walk rows: 0
+games where PAs are lost (d > 0): 276 of 9704; d < 0: 0; distribution of d: {0.0: 9428, 1.0: 254, 2.0: 13, 3.0: 1, 4.0: 1, 8.0: 1, 20.0: 1, 23.0: 1, 29.0: 1, 39.0: 1, 64.0: 1, 78.0: 1}
+eligible games with no pitch rows at all: 1
+
+### Summary (written 2026-10-26 from the tables above; read-only, nothing fetched)
+- Source: data/master_physics_vault.parquet holds the same 4,768,010 pitches as data/pitch_matrix.parquet plus
+  game_type, launch_speed, launch_angle, hc_x, hc_y. Use it (or a schedule join) for the regular-season filter;
+  pitch_matrix has no game type.
+- Built by data_ingestion.py: a fixed column list, and every pitch with no pitch_type or release_speed is dropped
+  before saving. Pitch type is therefore 100% non-null by construction, and untracked pitches are gone.
+- Expected stats (Statcast estimated_ba / estimated_woba_using_speedangle) are not stored anywhere; the ingest
+  does not keep them. The project's own xwoba_est exists only for balls in play in contact_matrix_env_fixed.parquet.
+- Launch speed on balls in play: 99.1-99.8% by season.
+- Codes: ST (sweeper) and SV (slurve) appear from 2019 on, so Savant has retro-labelled earlier seasons; ST rises
+  from 3% to 24% of breaking balls (2019 to 2025) while SL falls from 58% to 47%. Whether that is usage or labelling
+  cannot be told from the data, so SL/ST/SV should be pooled.
+  Proposed families: fastball FF, SI, FA, (FC); breaking SL, ST, SV, CU, KC, CS; offspeed CH, FS, FO, SC;
+  other KN, EP, PO, UN. Ambiguous: FC (cutter: fastball or breaking), FS (splitter: offspeed or fastball variant),
+  KC (counted as breaking), FA (generic, mostly position players), SC/FO (rare). PO is a pitchout, not a pitch.
+- 2026: no pitch-level data in files, caches or Postgres. data_ingestion.py --year 2026 would request Baseball
+  Savant via pybaseball.statcast in monthly chunks (Mar 15 - Nov 5), i.e. the full regular season, but pybaseball
+  is not installed in either Python environment or listed in requirements.txt, and the call is untested for 2026.
+- PA alignment (2022-2025): box PA = pitch-row PA - truncated_pa + intentional walks + lost PAs.
+  truncated_pa (271-319 a season) are pitch rows that are not PAs; automatic intentional walks (474-555 a season)
+  have no pitch row (no intent_walk event exists); 548 PAs in 276 games (2.8%) were lost to dropped untracked
+  pitches, mostly one per game (254 games), but 7 games lost 8-78 PAs and 1 game has no pitch rows at all.
+
+### What would block as-of arsenal profiles
+1. No expected-stat columns: profiles based on Statcast xBA/xwOBA need a re-pull with those columns (and
+   pybaseball installed); otherwise use outcomes or the project's own launch-speed/angle lookup.
+2. Thin samples per family and side: a starter's offspeed pitches to one side over 365 days has median 68-87 and
+   10th percentile 0-1 (PA-ending: median 17-22, p10 0). Pitcher-side profiles need shrinkage or pooling over sides.
+3. Sweeper/slider labelling drift: per-code profiles (SL vs ST) are unreliable across seasons; families avoid it.
+4. Dropped untracked pitches: a few games have whole stretches missing; any PA-level join must allow for PAs with
+   no pitch rows (IBB, lost PAs) and pitch rows that are not PAs (truncated_pa).
+5. No 2026 pitch data, so lab 2 has the same 2022-2025-only scope as the BTS lab unless 2026 is pulled.
+None of these blocks building the profiles strictly before the game date: game_date, game_pk and pitch order exist
+for every row.

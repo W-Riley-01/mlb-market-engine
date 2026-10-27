@@ -32,3 +32,7 @@ frozen: 2026-10-26 15:40:44 -05:00
 Beat the Streak lab addendum A2 analysis/BEAT_THE_STREAK_LAB_ADDENDUM_A2.md (amendments before results, from the Step 2a fake-outcome self-tests; before any real outcome was read):
 btslab A2 sha256: 0d3a764728c25e6e53d03bf59527f37a379878088479b12a0c3e57fa54eb95cd
 frozen: 2026-10-26 18:18:27 -05:00
+
+Beat the Streak lab 2 plan analysis/BEAT_THE_STREAK_LAB2_ARSENAL_PLAN.md (frozen before any lab 2 feature, contact table or model):
+lab2 sha256: 0c226655a95fc862e08677a6c88211883f81c2111d2885eca80426a4dd4327ee
+frozen: 2026-10-26 20:05:33 -05:00

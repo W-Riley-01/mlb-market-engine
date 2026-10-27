@@ -351,16 +351,22 @@ def full_build() -> tuple[pd.DataFrame, dict]:
 
 
 # ---------------------------------------------------------------- fit-time derivation (per training fold)
-def estimate_m(x: np.ndarray, n: np.ndarray, w_trial: float) -> float:
-    """Method-of-moments prior strength for rate x/n: m = per-trial variance / between-unit variance (n >= 100)."""
-    k = n >= 100
-    r, nn = x[k] / n[k], n[k]
-    mu = x[k].sum() / nn.sum()
-    tau2 = max(np.average((r - mu) ** 2, weights=nn) - w_trial * len(nn) / nn.sum(), 1e-12)
-    return w_trial / tau2
+def estimate_m(x: np.ndarray, n: np.ndarray, mu, min_n: float = 100, N=None) -> float:
+    """Beta-binomial method-of-moments prior strength m for the rate x/n shrunk toward mu, rows with n >= min_n:
+    E[n (x/n - mu)^2] = n c^2 tau2 + mu(1-mu) c, so tau2 = (sum n d2 - sum mu(1-mu) c) / sum n c^2 and m = mean mu(1-mu) / tau2.
+    c = 1, or c = 1 - n/N when x/n is a subset of a window of N trials whose raw rate is mu (platoon, recent form)."""
+    mu = np.broadcast_to(np.asarray(mu, float), n.shape)
+    c = np.ones(n.shape) if N is None else 1 - n / np.where(N > 0, N, np.nan)
+    k = (n >= min_n) & np.isfinite(mu) & np.isfinite(c)
+    x, n, mu, c = x[k], n[k], mu[k], c[k]
+    w = mu * (1 - mu)
+    tau2 = ((n * (x / n - mu) ** 2).sum() - (w * c).sum()) / (n * c ** 2).sum()
+    return float(w.mean() / tau2) if tau2 > 0 else np.inf  # no between-unit spread: shrink fully
 
 
 def shrink(x, n, mu, m):
+    if np.isinf(m):
+        return np.broadcast_to(np.asarray(mu, float), np.shape(x)).copy()
     return (x + m * mu) / (n + m)
 
 
@@ -373,8 +379,15 @@ def _self_check():
     rng = np.random.default_rng(0)
     p = rng.beta(30, 70, 2000)  # true rates, variance 0.3*0.7/101
     n = rng.integers(100, 600, 2000)
-    m = estimate_m(rng.binomial(n, p).astype(float), n.astype(float), 0.3 * 0.7)
+    m = estimate_m(rng.binomial(n, p).astype(float), n.astype(float), 0.3)
     assert 60 < m < 160, m  # true prior strength 100
+    N = rng.integers(400, 600, 4000)  # nested: subset of n of N trials, true subset deviation SD 0.02
+    tot = rng.uniform(.22, .3, 4000)
+    nn = (N * rng.uniform(.25, .4, 4000)).astype(int)
+    xs = rng.binomial(nn, np.clip(tot + rng.normal(0, .02, 4000), 0, 1))
+    xa = xs + rng.binomial(N - nn, tot)
+    mn = estimate_m(xs.astype(float), nn.astype(float), xa / N, min_n=1, N=N.astype(float))
+    assert 300 < mn < 800, mn  # true about 0.19 / 0.0004 = 480
     assert np.isclose(pa_split(np.array([4.3]), np.array([24.0]), np.array([1]))[0][0], 23 / 9 + 1)  # leadoff, 24 BF
     assert np.isclose(pa_split(np.array([3.8]), np.array([10.0]), np.array([9]))[0][0], 10 / 9)    # 9th, short start
     assert pa_split(np.array([4.0]), np.array([40.0]), np.array([1]))[0][0] == 4.0                # capped at E_PA

@@ -1,0 +1,39 @@
+# Beat the Streak lab — null study on FAKE outcomes (independent Bernoulli(0.75); real hits never loaded)
+seeds 1001-1200 (200), 8 processes, 500 bootstrap resamples; skipped: coefficient bootstrap, T4, T5, exploratory models. Per-seed rows: analysis/out/btslab_null_study_seeds.csv
+
+## M1 top-20% success: z-score against 0.75 (realised decided days), and T2
+| design | tiers | z mean | z SD | M1 top-20% days (median) | T2 Confirmed | T2 excludes 0 |
+|---|---|---|---|---|---|---|
+| WF | primary | -0.045 | 0.994 | 73 | 0.020 | 0.055 |
+| WF | secondary | +0.048 | 1.038 | 37 | 0.055 | 0.085 |
+| LOSO | primary | -0.034 | 1.006 | 145 | 0.020 | 0.065 |
+| LOSO | secondary | +0.005 | 1.067 | 77 | 0.025 | 0.050 |
+
+## T1 and top-1 rates
+| design | M1 top-1 mean | B2 top-1 mean | T1 mean | T1 SD | T1 Confirmed | T1 excludes 0 |
+|---|---|---|---|---|---|---|
+| WF | 0.7506 | 0.7513 | -0.0007 | 0.0325 | 0.030 | 0.070 |
+| LOSO | 0.7505 | 0.7504 | +0.0001 | 0.0233 | 0.020 | 0.060 |
+
+## Distribution of M1's top-20% success rate
+| design / tiers | q0 | q0.025 | q0.1 | q0.25 | q0.5 | q0.75 | q0.9 | q0.975 | q1 |
+|---|---|---|---|---|---|---|---|---|---|
+| WF primary | 0.589 | 0.644 | 0.685 | 0.712 | 0.753 | 0.781 | 0.808 | 0.849 | 0.859 |
+| WF secondary | 0.200 | 0.549 | 0.645 | 0.703 | 0.757 | 0.813 | 0.854 | 0.911 | 1.000 |
+| LOSO primary | 0.641 | 0.683 | 0.701 | 0.724 | 0.750 | 0.778 | 0.793 | 0.814 | 0.840 |
+| LOSO secondary | 0.596 | 0.633 | 0.671 | 0.717 | 0.754 | 0.785 | 0.814 | 0.838 | 0.895 |
+
+## Pass criteria (set before the study): z mean within ±0.15, z SD 0.85-1.15, false-confirmation rate <= 8%
+- WF primary z mean: PASS
+- WF primary z SD: PASS
+- WF secondary z mean: PASS
+- WF secondary z SD: PASS
+- LOSO primary z mean: PASS
+- LOSO primary z SD: PASS
+- LOSO secondary z mean: PASS
+- LOSO secondary z SD: PASS
+- WF T1 Confirmed rate: PASS
+- WF primary T2 Confirmed rate: PASS
+
+NULL STUDY: PASS
+runtime 1656 s

@@ -1,0 +1,56 @@
+Beat the Streak lab, Step 2a - analysis script choices where the plan (f10661f) and addendum A1 (6d9cb3c) are silent
+Script: analysis/btslab_analysis.py. Self-tests on fake outcomes only (2026-10-26); --real has not been run.
+
+Fitting
+1. M1 is fitted by a Newton solver for sklearn's L2 objective (C * sum log loss + 0.5 |beta|^2, intercept unpenalised),
+   checked against sklearn LogisticRegression by an assert. It makes the 2,000 bootstrap refits feasible (~5 min run).
+2. All M1 inputs are standardised with the training-fold mean and SD; missing values take the training mean, with
+   the missing flags A_miss, A_plat_miss, C_miss, C_hand_miss, E_miss. A shrunk rate with no history equals its
+   shrinkage target (league or own rate) and carries its flag.
+3. Inner CV: the training dates split into 5 contiguous blocks. Shrinkage m and standardisation are taken from the
+   whole training fold, not re-estimated inside each inner block. Out-of-fold predictions at the chosen C feed
+   T2 thresholds, T3 recalibration and T4 thresholds; stop rule 2 compares their AUC with B1's on rows where B1 is
+   defined (>= 200 PA).
+4. T5 refits each drop-one-group model at the full model's C (not re-tuned).
+
+Shrinkage (plan Section 4 common rules)
+5. m is estimated per training fold on one row per unit-season (the last row of each batter-, starter- or
+   venue-season) with n >= 100, by the beta-binomial method of moments with per-trial variance mu(1-mu).
+6. Platoon H/AB and recent-form H/AB (14d, 30d) are subsets of the batter's 365-day window. Their moment estimate
+   uses the nested sampling variance mu(1-mu)(1 - n/N) against the raw window rate. Recent form uses n >= 20 AB
+   (100 AB is unreachable in 14 or 30 days).
+7. ISO is not a proportion; it shares H/AB's prior strength (same AB units).
+8. Expected BF per start: per-start variance from changes between consecutive full 10-start windows of one
+   pitcher, between-pitcher variance from 10-start means. Pitchers with few starts (openers, call-ups) differ in
+   kind, so a regression on 1/n is confounded and is not used. n >= 100 does not apply (at most 10 starts).
+9. If a moment estimate finds no between-unit spread, m = infinity: the feature equals its target exactly.
+10. Platoon and recent form enter M1 as deviations from the batter's own shrunk H/AB (shrunk rate minus own
+    H/AB). With H/AB in the model this spans the same model; the coefficients then mean "beyond the batter's
+    H/AB", which is what W7 and expectation (d) ask about, and the copies of H/AB no longer split its weight.
+11. Bullpen H/AB (E) is used as built (pooled pitch-weighted rate), not shrunk again.
+
+Tests
+12. T1/T2 are reported for walk-forward (primary) and LOSO; T3-T5, coefficients, hypotheses and expectations use
+    walk-forward. Coefficients and their bootstrap use the 2022-24 training fit, as the plan states.
+13. Tiers (addendum A2 b): primary = within-season rank of the calibrated top-pick probability (ties by raw
+    probability, then date), exactly round(0.2 D) / round(0.5 D) days for T2, exactly N days for T4, and Double Down
+    on the top round(0.1 D) days. Secondary = training-year thresholds (raw probability for T2, recalibrated for T4),
+    realised share / N reported. In the Step 2a self-tests the secondary top-20% share was 5-17%.
+13b. Recalibration (addendum A2 a): slope constrained to [0, 1]; out-of-range slope set to the nearer bound and the
+    intercept refitted; slope 0 is a constant.
+14. T4: a day whose top pick had 0 AB is a pass in every simulated season. Double Down days with one 0-AB pick
+    play the other pick alone. Ranges shift all played-day probabilities by one logit constant to each Wilson end.
+15. Seeds: plan seeds (T1 20261027, T2 20261028, T4 20261030, T5 20261031, coefficients 20261032); exploratory
+    model intervals 20261033 (not in plan). Fake outcomes: 777 (null), 778 (planted), --fake-seed to vary.
+16. Expectation (c) "slot" = the slot dummy with the largest |coef|; "BB% small" is printed but not scored (no
+    threshold in the plan); the "about 15%" in (b) is a probability and is not scored.
+17. Not run: the R2 simulator P(hit) (exploratory H) is not in the feature table.
+
+Known weakness found by the null self-test (plan as written, not changed)
+18. When the top-pick predictions barely vary, the recalibration slope is not identified and the map can be
+    extreme (null seed 777: M1 slopes -1.7 and -6.8; seed 1777: -0.4 and -3.6). Addressed by addendum A2 a.
+
+Step 2a-bis (2026-10-26, fake outcomes only)
+19. Inner CV warm-starts each block's fits along the C grid (same optimum; reproduces the Step 2a picks exactly).
+20. boot_counts is local (same draws as v4_analysis.boot_counts) so the null study can use 500 resamples.
+21. --null-study: seeds 1001-1200, 8 processes; per-seed rows in analysis/out/btslab_null_study_seeds.csv.

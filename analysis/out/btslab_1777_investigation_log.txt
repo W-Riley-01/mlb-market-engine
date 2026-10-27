@@ -1,0 +1,159 @@
+## Seed 1777 (outcome: independent Bernoulli(0.75), seed 1777), LOSO, M1 top-20% days by training-year threshold (code as of Step 2a)
+      date  batter                 team  slot   pred  threshold  fake hit
+2022-04-07  455117       Houston Astros     9 0.7723     0.7685         1
+2022-04-08  666139       Tampa Bay Rays     7 0.7801     0.7685         1
+2022-04-12  641914    Oakland Athletics     9 0.7767     0.7685         0
+2022-04-13  665506    Oakland Athletics     9 0.7695     0.7685         1
+2022-04-16  663728     Seattle Mariners     9 0.7698     0.7685         0
+2022-04-25  605548    Toronto Blue Jays     9 0.7686     0.7685         1
+2022-04-27  650907       Tampa Bay Rays     9 0.7710     0.7685         0
+2022-04-29  663616      Minnesota Twins     7 0.7693     0.7685         0
+2022-04-30  656577    Milwaukee Brewers     9 0.7743     0.7685         0
+2022-05-05  669374    Milwaukee Brewers     9 0.7707     0.7685         0
+2022-05-16  621433       Tampa Bay Rays     9 0.7696     0.7685         1
+2022-05-17  621433       Tampa Bay Rays     9 0.7692     0.7685         1
+2022-06-01  621512        New York Mets     9 0.7723     0.7685         1
+2022-06-04  663698 San Francisco Giants     9 0.7735     0.7685         1
+2022-07-04  669374    Milwaukee Brewers     7 0.7694     0.7685         0
+2022-07-11  621433       Tampa Bay Rays     9 0.7692     0.7685         0
+2022-07-16  609274        Texas Rangers     9 0.7734     0.7685         1
+2022-08-04  641313    Chicago White Sox     1 0.7685     0.7685         0
+2023-03-30  408234       Detroit Tigers     7 0.7763     0.7704         0
+2023-04-01  666139       Tampa Bay Rays     8 0.7737     0.7704         0
+2023-04-04  650333        Miami Marlins     1 0.7721     0.7704         1
+2023-04-05  682985       Detroit Tigers     2 0.7708     0.7704         1
+2023-04-12  600869 Washington Nationals     2 0.7727     0.7704         0
+2023-04-13  593428     San Diego Padres     4 0.7717     0.7704         0
+2023-04-21  663698 San Francisco Giants     7 0.7729     0.7704         1
+2023-04-23  643217    Chicago White Sox     2 0.7711     0.7704         1
+2023-04-24  682985       Detroit Tigers     2 0.7709     0.7704         0
+2023-04-26  682985       Detroit Tigers     2 0.7735     0.7704         1
+2023-05-02  621020         Chicago Cubs     2 0.7712     0.7704         0
+2023-05-04  682985       Detroit Tigers     2 0.7716     0.7704         0
+2023-05-19  661388    Milwaukee Brewers     2 0.7725     0.7704         0
+2023-05-23  666182    Toronto Blue Jays     2 0.7720     0.7704         1
+2023-05-24  666182    Toronto Blue Jays     2 0.7729     0.7704         1
+2023-05-25  605204 San Francisco Giants     4 0.7822     0.7704         0
+2023-05-29  676116    Oakland Athletics     2 0.7775     0.7704         1
+2023-06-06  456781      Minnesota Twins     4 0.7739     0.7704         1
+2023-07-24  547989       Houston Astros     4 0.7704     0.7704         1
+2023-08-01  663624    Baltimore Orioles     2 0.7750     0.7704         0
+2023-08-13  594777    Cleveland Indians     4 0.7720     0.7704         0
+2023-09-12  669242  St. Louis Cardinals     2 0.7718     0.7704         1
+2023-09-13  661388    Milwaukee Brewers     2 0.7709     0.7704         1
+2023-09-22  666182    Toronto Blue Jays     2 0.7709     0.7704         0
+2023-09-23  666182    Toronto Blue Jays     2 0.7710     0.7704         0
+2023-10-01  666139       Tampa Bay Rays     2 0.7771     0.7704         1
+2024-03-31  665487     San Diego Padres     2 0.7710     0.7691         1
+2024-04-01  543305   Los Angeles Angels     6 0.7790     0.7691         0
+2024-04-03  666397      Minnesota Twins     1 0.7777     0.7691         0
+2024-04-04  596019        New York Mets     2 0.7711     0.7691         0
+2024-04-08  682829      Cincinnati Reds     6 0.7752     0.7691         0
+2024-04-13  672761       Detroit Tigers     7 0.7692     0.7691         1
+2024-04-15  545361   Los Angeles Angels     2 0.7697     0.7691         0
+2024-05-06  641313        Miami Marlins     6 0.7715     0.7691         1
+2024-05-15  663656       Houston Astros     2 0.7726     0.7691         0
+2024-06-17  687401    Milwaukee Brewers     2 0.7708     0.7691         1
+2024-07-05  608369        Texas Rangers     2 0.7750     0.7691         1
+2024-07-06  669374   Los Angeles Angels     2 0.7692     0.7691         0
+2024-07-07  677870    Toronto Blue Jays     8 0.7730     0.7691         1
+2024-07-14  607043        New York Mets     2 0.7692     0.7691         0
+2024-07-24  621035  Los Angeles Dodgers     7 0.7696     0.7691         1
+2024-07-28  682829      Cincinnati Reds     2 0.7723     0.7691         1
+2024-07-30  669394        Miami Marlins     2 0.7772     0.7691         0
+2024-08-03  691723    Baltimore Orioles     6 0.7728     0.7691         0
+2024-08-04  670224       Tampa Bay Rays     8 0.7697     0.7691         1
+2024-08-06  572138       Houston Astros     6 0.7791     0.7691         1
+2024-08-11  680728 Arizona Diamondbacks     7 0.7698     0.7691         0
+2024-08-13  670623         Chicago Cubs     2 0.7729     0.7691         0
+2024-08-19  680728 Arizona Diamondbacks     6 0.7733     0.7691         1
+2024-08-26  694355   Kansas City Royals     9 0.7694     0.7691         1
+2024-08-28  667670    Oakland Athletics     2 0.7694     0.7691         1
+2024-08-30  664770    Toronto Blue Jays     8 0.7704     0.7691         1
+2024-08-31  805779    Oakland Athletics     9 0.7704     0.7691         1
+2024-09-08  669326   Los Angeles Angels     8 0.7694     0.7691         1
+2024-09-13  677594     Seattle Mariners     2 0.7802     0.7691         1
+2024-09-18  670242      Minnesota Twins     2 0.7698     0.7691         1
+2024-09-19  681393        Miami Marlins     2 0.7698     0.7691         0
+2025-03-27  667670    Oakland Athletics     2 0.7830     0.7710         0
+2025-03-28  592178     Colorado Rockies     4 0.7768     0.7710         0
+2025-07-03  677942 Arizona Diamondbacks     6 0.7719     0.7710         1
+2025-08-17  683227        Texas Rangers     8 0.7726     0.7710         1
+
+hits 42 of 79 = 0.532; expected 59.2; z = -4.48
+
+## Repeated batters
+distinct batters 61 of 79; batters picked 2+ times: 11
+        times  hits                  team
+batter                                   
+621433      3     2        Tampa Bay Rays
+641313      2     1     Chicago White Sox
+661388      2     1     Milwaukee Brewers
+663698      2     2  San Francisco Giants
+666139      3     2        Tampa Bay Rays
+666182      4     2     Toronto Blue Jays
+667670      2     1     Oakland Athletics
+669374      3     0     Milwaukee Brewers
+680728      2     1  Arizona Diamondbacks
+682829      2     1       Cincinnati Reds
+682985      4     2        Detroit Tigers
+
+## Clustering by date
+         days  hits   rate
+month                     
+2022-04     9     4  0.444
+2022-05     3     2  0.667
+2022-06     2     2  1.000
+2022-07     3     1  0.333
+2022-08     1     0  0.000
+2023-03     1     0  0.000
+2023-04     9     5  0.556
+2023-05     7     3  0.429
+2023-06     1     1  1.000
+2023-07     1     1  1.000
+2023-08     2     0  0.000
+2023-09     4     2  0.500
+2023-10     1     1  1.000
+2024-03     1     1  1.000
+2024-04     6     1  0.167
+2024-05     2     1  0.500
+2024-06     1     1  1.000
+2024-07     7     4  0.571
+2024-08    10     7  0.700
+2024-09     4     3  0.750
+2025-03     2     0  0.000
+2025-07     1     1  1.000
+2025-08     1     1  1.000
+gaps between picked dates (days): median 4.0 consecutive-day pairs 19
+
+## Features of the picked rows vs all test-season top-1 picks vs all rows (no outcome used)
+                          79 picked  all M1 top-1 picks  all rows
+slot 9 share                  0.203               0.112     0.111
+batter PA 365d median       364.000             396.000   436.000
+batter PA<100 share           0.228               0.106     0.089
+starter BF 365d median      262.000             546.500   517.000
+starter no history share      0.367               0.069     0.013
+hand unknown share            0.038               0.019     0.010
+bullpen missing share         0.063               0.010     0.006
+indoor share                  0.620               0.584     0.177
+B2 mean                       0.618               0.627     0.631
+
+## Generator: uniforms behind the 79 fake outcomes: mean 0.591 (expect 0.5); share above 0.75: 0.468 (expect 0.25)
+uniforms on ALL test-season top-1 picks (726): 0.522 ; hit rate 0.72
+
+## Independence check (2026-10-26)
+For each LOSO fold, every test-season fake outcome was flipped (hit <-> no hit) and the fold refitted. The test
+predictions, the daily picks and both tier selections were identical in all four folds (2022, 2023, 2024, 2025).
+The picks therefore do not depend on the outcomes they are scored on, and the 79 fake outcomes are independent
+Bernoulli(0.75) draws. Redrawing them 5,000 times gives a mean of 0.751; none of the redraws was as low as 0.532.
+The 8 other null seeds tested (2001-2008) gave pooled LOSO M1 top-20% rates of 0.695-0.867.
+
+## Conclusion
+No mechanism other than chance explains 42 of 79. The picks concentrate in unusual rows (slot 9: 20% vs 11%;
+batter PA < 100: 23% vs 11%; starter with no 365-day history: 37% vs 7% of all M1 top-1 picks; indoor games: 62% vs
+58%), because under a null outcome M1 fits noise on these flags. But fake outcomes are independent of every feature,
+so this changes which rows are picked, not how often they hit. Days and batters are spread out: 61 distinct batters
+(11 picked 2-4 times), 23 months, median gap 4 days. The generator's uniforms behind these 79 rows average 0.591;
+z = -4.48 (exact binomial one-sided p = 2.2e-5). It was noticed after scanning many numbers across several seeds, which makes
+finding one tail this far out less surprising than its own p-value suggests. The 200-seed null study tests whether
+such tails occur more often than chance allows.

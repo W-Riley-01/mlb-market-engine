@@ -1,0 +1,230 @@
+# Beat the Streak lab — SELF-TEST on FAKE outcomes: planted
+plan f10661f + addendum A1 6d9cb3c; table btslab_features.parquet: 174348 rows; outcome: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(raw K%) + 0.50*z(raw H/AB); z over all rows, missing -> 0; seed 778
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## Folds (penalty by inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | C | inner-CV log loss | AUC M1 (CV) | AUC B1 (CV) | wiring: slots 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | 0.008111 | 0.51332 | 0.6817 | 0.6567 | +0.1946 |
+| WF | 2022-2023-2024 | 2025 | 0.002848 | 0.51672 | 0.6774 | 0.6536 | +0.1871 |
+| LOSO | 2023-2024-2025 | 2022 | 0.008111 | 0.51975 | 0.6712 | 0.6474 | +0.1748 |
+| LOSO | 2022-2024-2025 | 2023 | 0.002848 | 0.51690 | 0.6764 | 0.6539 | +0.1797 |
+| LOSO | 2022-2023-2025 | 2024 | 0.002848 | 0.51483 | 0.6783 | 0.6538 | +0.1841 |
+| LOSO | 2022-2023-2024 | 2025 | 0.002848 | 0.51672 | 0.6774 | 0.6536 | +0.1871 |
+inner-CV mean log loss by C (walk-forward folds): test 2024: 0.001:0.51343, 0.00285:0.51332, 0.00811:0.51332, 0.0231:0.51332, 0.0658:0.51332, 0.187:0.51333, 0.534:0.51333, 1.52:0.51333, 4.33:0.51334, 12.3:0.51337, 35.1:0.51340, 100:0.51345 | test 2025: 0.001:0.51676, 0.00285:0.51672, 0.00811:0.51672, 0.0231:0.51672, 0.0658:0.51673, 0.187:0.51673, 0.534:0.51673, 1.52:0.51673, 4.33:0.51673, 12.3:0.51673, 35.1:0.51673, 100:0.51673
+shrinkage m per walk-forward fold: 2024: hab=367, k=51.3, bb=122, c_hab=401, c_k=87.9, c_bb=207, bf=1.69, park=1.41e+03, iso=367, plat=513, g14=1.23e+03, g30=2.39e+03; 2025: hab=383, k=51.9, bb=129, c_hab=435, c_k=93.3, c_bb=221, bf=1.81, park=1.48e+03, iso=383, plat=466, g14=inf, g30=4.09e+03
+
+## Stop rules
+- Rule 2, M1 beats B1 on batter-game AUC in the training inner CV, each walk-forward fold: PASS
+- Rule 3, training mean P(hit) slots 1-4 minus slot 9 > 0, each walk-forward fold: PASS
+
+## T1 — overall top-1 success, M1 minus B2 (confirmatory; date bootstrap 2,000, seed 20261027)
+| design | method | set | dates | passes | top-1 rate (Wilson) |
+|---|---|---|---|---|---|
+| WF | M1 | pooled | 365 | 1 | 0.959 (0.933–0.975) |
+| WF | M1 | 2024 | 183 | 0 | 0.967 (0.930–0.985) |
+| WF | M1 | 2025 | 182 | 1 | 0.950 (0.908–0.974) |
+| WF | B2 | pooled | 365 | 0 | 0.926 (0.895–0.949) |
+| WF | B2 | 2024 | 183 | 0 | 0.934 (0.889–0.962) |
+| WF | B2 | 2025 | 182 | 0 | 0.918 (0.868–0.949) |
+| WF | B1 | pooled | 365 | 0 | 0.956 (0.930–0.973) |
+| WF | B1 | 2024 | 183 | 0 | 0.951 (0.909–0.974) |
+| WF | B1 | 2025 | 182 | 0 | 0.962 (0.923–0.981) |
+WF: M1 − B2 = +0.0330 (95% +0.0055 to +0.0604), 364 paired dates; M1 − B1 = +0.0027 (-0.0220 to +0.0275)
+   2024: M1 − B2 = +0.0328 (+0.0055 to +0.0656), n 183
+   2025: M1 − B2 = +0.0331 (-0.0110 to +0.0773), n 181
+| design | method | set | dates | passes | top-1 rate (Wilson) |
+|---|---|---|---|---|---|
+| LOSO | M1 | pooled | 726 | 1 | 0.954 (0.937–0.967) |
+| LOSO | M1 | 2022 | 179 | 0 | 0.944 (0.900–0.969) |
+| LOSO | M1 | 2023 | 182 | 0 | 0.956 (0.916–0.978) |
+| LOSO | M1 | 2024 | 183 | 0 | 0.967 (0.930–0.985) |
+| LOSO | M1 | 2025 | 182 | 1 | 0.950 (0.908–0.974) |
+| LOSO | B2 | pooled | 726 | 1 | 0.934 (0.913–0.950) |
+| LOSO | B2 | 2022 | 179 | 1 | 0.949 (0.907–0.973) |
+| LOSO | B2 | 2023 | 182 | 0 | 0.934 (0.888–0.962) |
+| LOSO | B2 | 2024 | 183 | 0 | 0.934 (0.889–0.962) |
+| LOSO | B2 | 2025 | 182 | 0 | 0.918 (0.868–0.949) |
+| LOSO | B1 | pooled | 726 | 0 | 0.949 (0.931–0.963) |
+| LOSO | B1 | 2022 | 179 | 0 | 0.939 (0.893–0.965) |
+| LOSO | B1 | 2023 | 182 | 0 | 0.945 (0.902–0.970) |
+| LOSO | B1 | 2024 | 183 | 0 | 0.951 (0.909–0.974) |
+| LOSO | B1 | 2025 | 182 | 0 | 0.962 (0.923–0.981) |
+LOSO: M1 − B2 = +0.0207 (95% +0.0041 to +0.0373), 724 paired dates; M1 − B1 = +0.0055 (-0.0124 to +0.0248)
+   2022: M1 − B2 = -0.0056 (-0.0393 to +0.0281), n 178
+   2023: M1 − B2 = +0.0220 (-0.0055 to +0.0495), n 182
+   2024: M1 − B2 = +0.0328 (+0.0055 to +0.0656), n 183
+   2025: M1 − B2 = +0.0331 (-0.0110 to +0.0773), n 181
+**T1 rule (walk-forward): Confirmed** (Confirmed only if the interval lies entirely above 0)
+
+## T2 — day tiers (confirmatory at top 20%, primary version; date bootstrap, seed 20261028)
+Primary (addendum A2 b): exactly the top 20% / 50% of each season's days by within-season rank of the calibrated top-pick probability. Secondary (deployable, no rule): training-year thresholds applied unchanged.
+WF primary top20: M1 days 73 of 365 (0.20), rate 0.972 (0.904–0.992); B2 days 73 of 365 (0.20), rate 0.945 (0.867–0.978); overlap 27; M1 − B2 = +0.0270 (-0.0395 to +0.0901)
+WF primary top50: M1 days 183 of 365 (0.50), rate 0.956 (0.916–0.978); B2 days 183 of 365 (0.50), rate 0.940 (0.896–0.966); overlap 117; M1 − B2 = +0.0162 (-0.0170 to +0.0485)
+WF secondary top20: M1 days 24 of 365 (0.07), rate 1.000 (0.862–1.000); B2 days 73 of 365 (0.20), rate 0.973 (0.905–0.992); overlap 15; M1 − B2 = +0.0274 (+0.0000 to +0.0685)
+WF secondary top50: M1 days 253 of 365 (0.69), rate 0.960 (0.929–0.978); B2 days 143 of 365 (0.39), rate 0.972 (0.930–0.989); overlap 133; M1 − B2 = -0.0117 (-0.0393 to +0.0134)
+WF overall rates: M1 0.959 (0.933–0.975), B2 0.926 (0.895–0.949)
+LOSO primary top20: M1 days 145 of 726 (0.20), rate 0.951 (0.903–0.976); B2 days 145 of 726 (0.20), rate 0.938 (0.886–0.967); overlap 53; M1 − B2 = +0.0135 (-0.0401 to +0.0649)
+LOSO primary top50: M1 days 364 of 726 (0.50), rate 0.948 (0.920–0.966); B2 days 364 of 726 (0.50), rate 0.937 (0.907–0.958); overlap 235; M1 − B2 = +0.0108 (-0.0115 to +0.0331)
+LOSO secondary top20: M1 days 180 of 726 (0.25), rate 0.967 (0.929–0.985); B2 days 166 of 726 (0.23), rate 0.952 (0.908–0.975); overlap 95; M1 − B2 = +0.0149 (-0.0119 to +0.0432)
+LOSO secondary top50: M1 days 387 of 726 (0.53), rate 0.961 (0.937–0.976); B2 days 367 of 726 (0.51), rate 0.948 (0.921–0.967); overlap 256; M1 − B2 = +0.0129 (-0.0085 to +0.0351)
+LOSO overall rates: M1 0.954 (0.937–0.967), B2 0.934 (0.913–0.950)
+**T2 rule (walk-forward, primary, top 20%): not confirmed**
+Multiplicity (plan): T1 and T2 form the confirmatory family; about 0.049 if independent, at most 0.05.
+
+## T3 — calibration, cross-fitted recalibration (walk-forward)
+| method | set | n decided | mean raw | mean recalibrated | realised (Wilson) |
+|---|---|---|---|---|---|
+| M1 | all top-1 | 364 | 0.9711 | 0.9562 | 0.959 (0.933–0.975) |
+| M1 | top 50% days | 182 | 0.9768 | 0.9568 | 0.956 (0.916–0.978) |
+| M1 | top 20% days | 72 | 0.9790 | 0.9570 | 0.972 (0.904–0.992) |
+| B2 | all top-1 | 365 | 0.7706 | 0.9381 | 0.926 (0.895–0.949) |
+| B2 | top 50% days | 183 | 0.7822 | 0.9397 | 0.940 (0.896–0.966) |
+| B2 | top 20% days | 73 | 0.7917 | 0.9411 | 0.945 (0.867–0.978) |
+recalibration map fold test 2024: M1 a=+2.947 b=0.017; B2 a=+2.781 b=0.000
+recalibration map fold test 2025: M1 a=+2.646 b=0.150; B2 a=+1.500 b=1.000
+M1 batter-game calibration, test seasons, R2 bins:
+| bin | n | mean predicted | realised (Wilson) |
+|---|---|---|---|
+| <0.50 | 3202 | 0.4398 | 0.435 (0.418–0.453) |
+| 0.50–0.60 | 7343 | 0.5584 | 0.546 (0.534–0.557) |
+| 0.60–0.65 | 6917 | 0.6262 | 0.617 (0.605–0.628) |
+| 0.65–0.70 | 9463 | 0.6758 | 0.668 (0.659–0.678) |
+| 0.70–0.75 | 11739 | 0.7259 | 0.734 (0.726–0.742) |
+| 0.75–0.80 | 13267 | 0.7752 | 0.788 (0.780–0.794) |
+| 0.80–0.85 | 14127 | 0.8251 | 0.819 (0.812–0.825) |
+| ≥0.85 | 20963 | 0.8954 | 0.891 (0.886–0.895) |
+
+## T4 — chance of a 57-game streak in a season (100,000 seasons, seed 20261030; Streak Saver ignored)
+
+primary: exactly N days per season by within-season rank; Double Down on the top 10% of days by rank
+| test | method | N | played days | mean recal p | realised (Wilson) | P(57) | range (Wilson ends) | Double Down |
+|---|---|---|---|---|---|---|---|---|
+| 2024 | M1 | 60 | 60 | 0.9533 | 0.983 (0.911–0.997) | 1 in 13 | 1 in 151 .. 1 in 1 | 1 in 8 |
+| 2024 | M1 | 80 | 80 | 0.9532 | 0.963 (0.895–0.987) | 1 in 7 | 1 in 158 .. 1 in 2 | 1 in 5 |
+| 2024 | M1 | 100 | 100 | 0.9532 | 0.970 (0.915–0.990) | 1 in 5 | 1 in 34 .. 1 in 1 | 1 in 4 |
+| 2024 | M1 | 130 | 130 | 0.9531 | 0.977 (0.934–0.992) | 1 in 4 | 1 in 8 .. 1 in 1 | 1 in 3 |
+| 2024 | M1 | all | 183 | 0.9530 | 0.967 (0.930–0.985) | 1 in 2 | 1 in 6 .. 1 in 1 | 1 in 2 |
+| 2024 | B2 | 60 | 60 | 0.9417 | 0.967 (0.886–0.991) | 1 in 26 | 1 in 741 .. 1 in 2 | 1 in 14 |
+| 2024 | B2 | 80 | 80 | 0.9417 | 0.975 (0.913–0.993) | 1 in 13 | 1 in 59 .. 1 in 1 | 1 in 9 |
+| 2024 | B2 | 100 | 100 | 0.9417 | 0.960 (0.902–0.984) | 1 in 9 | 1 in 74 .. 1 in 1 | 1 in 7 |
+| 2024 | B2 | 130 | 130 | 0.9417 | 0.962 (0.913–0.983) | 1 in 6 | 1 in 25 .. 1 in 1 | 1 in 5 |
+| 2024 | B2 | all | 183 | 0.9417 | 0.934 (0.889–0.962) | 1 in 4 | 1 in 58 .. 1 in 2 | 1 in 4 |
+| 2025 | M1 | 60 | 60 | 0.9607 | 0.966 (0.885–0.991) | 1 in 9 | 1 in 909 .. 1 in 2 | 1 in 6 |
+| 2025 | M1 | 80 | 80 | 0.9606 | 0.962 (0.894–0.987) | 1 in 5 | 1 in 178 .. 1 in 2 | 1 in 4 |
+| 2025 | M1 | 100 | 100 | 0.9604 | 0.949 (0.887–0.978) | 1 in 4 | 1 in 166 .. 1 in 2 | 1 in 3 |
+| 2025 | M1 | 130 | 130 | 0.9602 | 0.946 (0.892–0.973) | 1 in 3 | 1 in 81 .. 1 in 2 | 1 in 2 |
+| 2025 | M1 | all | 182 | 0.9595 | 0.950 (0.908–0.974) | 1 in 2 | 1 in 20 .. 1 in 1 | 1 in 2 |
+| 2025 | B2 | 60 | 60 | 0.9390 | 0.917 (0.819–0.964) | 1 in 31 | 1 in 50,000 .. 1 in 7 | 1 in 16 |
+| 2025 | B2 | 80 | 80 | 0.9381 | 0.912 (0.830–0.957) | 1 in 15 | 1 in 7,692 .. 1 in 6 | 1 in 11 |
+| 2025 | B2 | 100 | 100 | 0.9373 | 0.920 (0.850–0.959) | 1 in 11 | 1 in 1,351 .. 1 in 4 | 1 in 8 |
+| 2025 | B2 | 130 | 130 | 0.9363 | 0.915 (0.855–0.952) | 1 in 8 | 1 in 625 .. 1 in 4 | 1 in 6 |
+| 2025 | B2 | all | 182 | 0.9345 | 0.918 (0.868–0.949) | 1 in 5 | 1 in 173 .. 1 in 3 | 1 in 5 |
+
+secondary: training-year thresholds; realised N; below 57 is zero by construction
+| test | method | N | played days | mean recal p | realised (Wilson) | P(57) | range (Wilson ends) | Double Down |
+|---|---|---|---|---|---|---|---|---|
+| 2024 | M1 | 60 | 92 | 0.9532 | 0.967 (0.908–0.989) | 1 in 6 | 1 in 58 .. 1 in 1 | 1 in 5 |
+| 2024 | M1 | 80 | 145 | 0.9531 | 0.972 (0.931–0.989) | 1 in 3 | 1 in 8 .. 1 in 1 | 1 in 3 |
+| 2024 | M1 | 100 | 158 | 0.9531 | 0.968 (0.928–0.986) | 1 in 3 | 1 in 9 .. 1 in 1 | 1 in 3 |
+| 2024 | M1 | 130 | 171 | 0.9531 | 0.971 (0.933–0.987) | 1 in 3 | 1 in 6 .. 1 in 1 | 1 in 3 |
+| 2024 | M1 | all | 183 | 0.9530 | 0.967 (0.930–0.985) | 1 in 2 | 1 in 6 .. 1 in 1 | 1 in 2 |
+| 2024 | B2 | 60 | 183 | 0.9417 | 0.934 (0.889–0.962) | 1 in 4 | 1 in 58 .. 1 in 2 | 1 in 2 |
+| 2024 | B2 | 80 | 183 | 0.9417 | 0.934 (0.889–0.962) | 1 in 4 | 1 in 58 .. 1 in 2 | 1 in 2 |
+| 2024 | B2 | 100 | 183 | 0.9417 | 0.934 (0.889–0.962) | 1 in 4 | 1 in 58 .. 1 in 2 | 1 in 2 |
+| 2024 | B2 | 130 | 183 | 0.9417 | 0.934 (0.889–0.962) | 1 in 4 | 1 in 58 .. 1 in 2 | 1 in 2 |
+| 2024 | B2 | all | 183 | 0.9417 | 0.934 (0.889–0.962) | 1 in 4 | 1 in 58 .. 1 in 2 | 1 in 2 |
+| 2025 | M1 | 60 | 14 | 0.9612 | 0.929 (0.685–0.987) | 0 of 100,000 (< 1 in 100,000) (zero by construction) | 0 of 100,000 (< 1 in 100,000) .. 0 of 100,000 (< 1 in 100,000) | 0 of 100,000 (< 1 in 100,000) |
+| 2025 | M1 | 80 | 77 | 0.9606 | 0.961 (0.890–0.986) | 1 in 6 | 1 in 244 .. 1 in 2 | 1 in 6 |
+| 2025 | M1 | 100 | 117 | 0.9603 | 0.940 (0.881–0.970) | 1 in 3 | 1 in 180 .. 1 in 2 | 1 in 3 |
+| 2025 | M1 | 130 | 163 | 0.9598 | 0.951 (0.906–0.975) | 1 in 2 | 1 in 27 .. 1 in 1 | 1 in 2 |
+| 2025 | M1 | all | 182 | 0.9595 | 0.950 (0.908–0.974) | 1 in 2 | 1 in 20 .. 1 in 1 | 1 in 2 |
+| 2025 | B2 | 60 | 10 | 0.9439 | 1.000 (0.722–1.000) | 0 of 100,000 (< 1 in 100,000) (zero by construction) | 0 of 100,000 (< 1 in 100,000) .. 0 of 100,000 (< 1 in 100,000) | 0 of 100,000 (< 1 in 100,000) |
+| 2025 | B2 | 80 | 22 | 0.9421 | 1.000 (0.851–1.000) | 0 of 100,000 (< 1 in 100,000) (zero by construction) | 0 of 100,000 (< 1 in 100,000) .. 0 of 100,000 (< 1 in 100,000) | 0 of 100,000 (< 1 in 100,000) |
+| 2025 | B2 | 100 | 27 | 0.9415 | 0.963 (0.817–0.993) | 0 of 100,000 (< 1 in 100,000) (zero by construction) | 0 of 100,000 (< 1 in 100,000) .. 0 of 100,000 (< 1 in 100,000) | 0 of 100,000 (< 1 in 100,000) |
+| 2025 | B2 | 130 | 59 | 0.9390 | 0.915 (0.816–0.963) | 1 in 33 | 1 in 100,000 .. 1 in 8 | 1 in 33 |
+| 2025 | B2 | all | 182 | 0.9345 | 0.918 (0.868–0.949) | 1 in 5 | 1 in 173 .. 1 in 3 | 1 in 5 |
+Primary: N = 100, primary version.
+
+## T5 — drop-one-group value (EXPLORATORY; same C, date bootstrap 2,000, seed 20261031)
+| dropped group | Δ top-1 rate (drop − full) | Δ log loss (drop − full) |
+|---|---|---|
+| A | -0.0854 (-0.1267 to -0.0468) | +0.026843 (+0.025420 to +0.028225) |
+| B | -0.0027 (-0.0082 to +0.0000) | +0.000303 (+0.000175 to +0.000431) |
+| C | -0.0027 (-0.0082 to +0.0000) | +0.000059 (+0.000003 to +0.000116) |
+| D | +0.0000 (+0.0000 to +0.0000) | +0.000006 (-0.000018 to +0.000029) |
+| E | +0.0027 (+0.0000 to +0.0082) | -0.000029 (-0.000072 to +0.000014) |
+| F | +0.0000 (+0.0000 to +0.0000) | -0.000014 (-0.000051 to +0.000022) |
+| G | -0.0082 (-0.0220 to +0.0027) | +0.000131 (+0.000030 to +0.000232) |
+
+EXPLORATORY models (walk-forward; seed 20261033 for their intervals):
+| model | top-1 rate | minus B2 | batter-game log loss | batter-game AUC |
+|---|---|---|---|---|
+| M1 + market | 0.959 (0.933–0.975) | +0.0330 (+0.0082 to +0.0604) | 0.52053 | 0.6858 |
+| M1 + H (B2) | 0.956 (0.930–0.973) | +0.0302 (+0.0055 to +0.0577) | 0.52016 | 0.6863 |
+| gradient boosting | 0.937 (0.907–0.957) | +0.0110 (-0.0220 to +0.0441) | 0.51977 | 0.6869 |
+| M1 (reference) | 0.959 (0.933–0.975) | +0.0330 | 0.52057 | 0.6858 |
+| B2 (comparator) | 0.926 (0.895–0.949) | – | 0.57627 | 0.6479 |
+Not run: the R2 simulator P(hit) (exploratory H) is not in the feature table (Step 1 notes, item 21).
+
+## M1 standardised coefficients, fit on 2022–24 (date bootstrap 2,000, seed 20261032)
+| feature | coef | lo | hi | group |
+|---|---|---|---|---|
+| a_hab | +0.3279 | +0.3079 | +0.3486 | A |
+| a_k | -0.3908 | -0.4070 | -0.3752 | A |
+| a_bb | -0.0108 | -0.0247 | +0.0035 | A |
+| a_iso | +0.0249 | +0.0091 | +0.0413 | A |
+| a_plat | +0.0271 | +0.0111 | +0.0441 | A |
+| A_miss | +0.0339 | +0.0167 | +0.0511 | A |
+| A_plat_miss | -0.0571 | -0.0855 | -0.0263 | A |
+| slot_1 | +0.0454 | +0.0321 | +0.0583 | B |
+| slot_2 | +0.0500 | +0.0374 | +0.0629 | B |
+| slot_3 | +0.0439 | +0.0315 | +0.0565 | B |
+| slot_4 | +0.0515 | +0.0399 | +0.0634 | B |
+| slot_5 | -0.0196 | -0.0303 | -0.0090 | B |
+| slot_6 | -0.0336 | -0.0448 | -0.0224 | B |
+| slot_7 | -0.0326 | -0.0430 | -0.0222 | B |
+| slot_8 | -0.0405 | -0.0520 | -0.0297 | B |
+| slot_9 | -0.0646 | -0.0775 | -0.0513 | B |
+| c_hab | -0.0030 | -0.0198 | +0.0135 | C |
+| c_k | +0.0028 | -0.0132 | +0.0191 | C |
+| c_bb | -0.0050 | -0.0175 | +0.0083 | C |
+| c_hand_L | -0.0104 | -0.0238 | +0.0032 | C |
+| c_bf_exp | -0.0349 | -0.0563 | -0.0131 | C |
+| C_miss | -0.0074 | -0.0285 | +0.0160 | C |
+| C_hand_miss | +0.0563 | +0.0248 | +0.0863 | C |
+| d_pa_sp | +0.0604 | +0.0512 | +0.0694 | D |
+| d_pa_bp | -0.0206 | -0.0480 | +0.0065 | D |
+| e_bp_hab | +0.0093 | -0.0039 | +0.0229 | E |
+| e_fat_pitches | -0.0183 | -0.0376 | +0.0017 | E |
+| e_fat_relievers | +0.0117 | -0.0085 | +0.0318 | E |
+| E_miss | +0.0081 | -0.0013 | +0.0177 | E |
+| f_park | +0.0077 | -0.0057 | +0.0210 | F |
+| f_temp | -0.0038 | -0.0176 | +0.0090 | F |
+| f_indoor | +0.0061 | -0.0068 | +0.0184 | F |
+| g_hab14 | +0.0000 | +0.0000 | +0.0000 | G |
+| g_hab30 | +0.0414 | +0.0270 | +0.0563 | G |
+
+## William's hypotheses (no decision rules)
+W1 slots 1-4 hit more. Slot coefficients: 1 +0.045, 2 +0.050, 3 +0.044, 4 +0.052, 5 -0.020, 6 -0.034, 7 -0.033, 8 -0.040, 9 -0.065. Realised hit rate by slot (test seasons): 1: 0.839 (0.831–0.846); 2: 0.832 (0.824–0.839); 3: 0.821 (0.813–0.828); 4: 0.807 (0.799–0.814); 5: 0.734 (0.725–0.743); 6: 0.709 (0.700–0.718); 7: 0.689 (0.679–0.698); 8: 0.668 (0.658–0.677); 9: 0.655 (0.646–0.665)
+W2 more walks help (Claude: small or negative). BB% coefficient -0.0108 (-0.0247 to +0.0035)
+W3 power helps, K-heavy power hurts (Claude: contact and low K% dominate, ISO little). ISO +0.0249 (+0.0091 to +0.0413); K% -0.3908 (-0.4070 to -0.3752); group A drop in T5 above
+W4 hitter-friendly parks. Park-factor coefficient +0.0077 (-0.0057 to +0.0210)
+W5 bad starter AND bad bullpen (top quartile of both, per test season): realised 0.751 (0.742–0.761) vs others 0.750 (0.747–0.753)
+W6 bullpen usage. Fatigue pitches -0.0183 (-0.0376 to +0.0017); relievers +0.0117 (-0.0085 to +0.0318); group E drop in T5 above
+W7 hot hitter (Claude: small). 14-day +0.0000 (+0.0000 to +0.0000); 30-day +0.0414 (+0.0270 to +0.0563); group G drop in T5 above
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) M1 − B2 within −0.015..+0.020 and T1 not confirmed | not met | M1 − B2 +0.0330; T1 Confirmed |
+| (b) M1 top-20% rate ≥ overall + 0.05 | not met | top-20% 0.9722 vs overall 0.9588 |
+| (b) M1 − B2 on top-20% days in 0..+0.04 | met | +0.0270 (-0.0395 to +0.0901); interval excludes 0: False (the ~15% is a probability, not scored) |
+| (c) top three |coef| are K%, H/AB and slot | met | top three: a_k, a_hab, slot_9 |
+| (c) ISO interval includes 0 | not met | ISO +0.0249 (+0.0091 to +0.0413) |
+| (c) BB% small | – | BB% -0.0108; the plan sets no threshold, so not scored |
+| (d) each G coef |.| < 0.05 | met | g_hab14 +0.0000, g_hab30 +0.0414 |
+| (e) both fatigue intervals include 0 | met | see W6 |
+| (f) M1 top-20% raw predicted − realised ≥ 0.03 | not met | 0.9790 − 0.9722 = +0.0068 |
+
+runtime 278 s

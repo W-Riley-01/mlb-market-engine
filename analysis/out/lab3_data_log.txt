@@ -1,0 +1,30 @@
+Lab 3 data collection log (2026-11-06 13:06:59 -0600)
+python 3.13.0; pandas 3.1.0; pyarrow 26.0.0; pybaseball 2.2.7; requests 2.34.2
+
+## 1. Player bio (https://statsapi.mlb.com/api/v1/people?personIds=..., batches of 100)
+distinct ids: vault 2019-2025 4,803; current pull 2025-2026 3,233; union requested 5,526
+batches 56 (newly fetched 56); ids returned 5,526; requested but not returned 0 []
+ids missing a birth date: 0 []
+missing bat_side 0; missing pitch_hand 0; bat_side codes {'R': 3523, 'L': 1672, 'S': 331}; pitch_hand codes {'R': 4542, 'L': 980, 'S': 4}
+2022-25 regular-season plate appearances (distinct game_pk + at_bat_number in the vault): 731,318; share whose batter has a birth date 1.00000; a bat side 1.00000; both 1.00000
+age on 2022-04-01, all returned ids: min 13.63, max 45.04 (n 5,526); 2022-25 batters: min 17.45, median 25.93, max 42.21 (n 1,052); 2022-25 batters and pitchers n 2,875
+
+## 2. Sprint speed (pybaseball.statcast_sprint_speed(year, min_opp=0); Savant sprint speed leaderboard)
+2019: rows 601; competitive runs min 5, max 324; columns ['last_name, first_name', 'player_id', 'team_id', 'team', 'position', 'age', 'competitive_runs', 'bolts', 'hp_to_1b', 'sprint_speed']
+2020: rows 507; competitive runs min 5, max 119
+2021: rows 602; competitive runs min 5, max 327
+2022: rows 628; competitive runs min 5, max 369
+2023: rows 614; competitive runs min 5, max 334
+2024: rows 606; competitive runs min 5, max 334
+2025: rows 617; competitive runs min 5, max 302
+sprint speed: min 20.8, median 27.2, max 30.7 (n 4,175; nulls 0)
+2022-25 plate appearances whose batter has a PRIOR-season sprint speed: 2022 0.8751; 2023 0.8939; 2024 0.9147; 2025 0.8923; all 0.8940
+same, batter has >= 10 prior-season competitive runs: 0.8822
+
+## 3. Files
+analysis\cache\player_bio.parquet: 5,526 rows, sha256 3299f3db84a2dbcb827bbba35c452a6fbf1342af283c901c88fcff6bed862a0c
+analysis\cache\sprint_speed_by_season.parquet: 4,175 rows, sha256 f39f25914f1ab9acf31148bf43535844565d8d1653de12a8ee05e3caa81541c8
+
+note: the youngest ids (born 2008, age 13.6 on 2022-04-01) first appear in 2026 (current pull, which includes spring training);
+youngest age at a player's first season (April 1) is 17.47. sprint speed min_opp: 0, 1 and Savant's own floor all give competitive runs >= 5
+(2023 check: min_opp 0 -> 614 rows, 1 -> 614, 10 -> 583).

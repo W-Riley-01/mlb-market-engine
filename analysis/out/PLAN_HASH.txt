@@ -36,3 +36,8 @@ frozen: 2026-10-26 18:18:27 -05:00
 Beat the Streak lab 2 plan analysis/BEAT_THE_STREAK_LAB2_ARSENAL_PLAN.md (frozen before any lab 2 feature, contact table or model):
 lab2 sha256: 0c226655a95fc862e08677a6c88211883f81c2111d2885eca80426a4dd4327ee
 frozen: 2026-10-26 20:05:33 -05:00
+
+Beat the Streak lab 2 addendum A1 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A1.md (amendments before results; before any lab 2 feature exists):
+revised before first commit; earlier unpublished hash fe3e202d…
+lab2 A1 sha256: 74e182c7c236fd4daebccc474e246daf8403f6afb4a3c903b91ae0aa181708ba
+frozen: 2026-11-06 10:10:04 -06:00

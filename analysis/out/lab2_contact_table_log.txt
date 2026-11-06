@@ -1,0 +1,108 @@
+vault rows 2020-2022: 1,772,471; in schedule regular-season games: 1,681,163; vault game_type == 'R': 1,681,163; disagreements: 0
+balls in play without launch speed or angle (excluded), by season: {np.int64(2020): 304, np.int64(2021): 333, np.int64(2022): 484}
+fitting balls in play: 164,985 (by season {np.int64(2020): 43665, np.int64(2021): 121320}); game_date 2020-07-23 to 2021-10-03
+wrote lab2_contact_table.csv: 143 cells, 21 sparse
+
+## Balls per cell (rows: launch angle, columns: launch speed mph)
+          <60  60-65  65-70  70-75  75-80  80-85  85-90  90-95  95-100  100-105  105-110  110-115  >=115
+<-30     3825   1247   1304   1306   1239   1147    859    552     296      111       47        2      1
+-30--20   636    391    581    647    745    878   1131   1105     834      565      294       11      2
+-20--10   532    425    761   1000   1042   1274   1734   2124    2190     1402      557       58      3
+-10-0     425    318    684   1132   1300   1507   2007   2787    3532     3225     1441      250     26
+0-10      381    325    564   1127   1358   1660   2128   3047    4086     4646     2886      601     49
+10-20     440    289    564    922   1419   1843   2363   3193    4288     4842     3183      758     78
+20-30     481    270    517    911   1352   1775   2305   3315    4302     4394     2492      511     44
+30-40     424    276    449    790   1202   1662   2323   3008    3380     2616     1000      156      6
+40-50     339    210    392    634    899   1287   1711   2071    1812      840      182       14      0
+50-60     306    213    358    486    699   1075   1394   1349     779      262       36        1      0
+>=60      459    447    674   1054   1386   1713   1702   1188     451       62        7        0      0
+
+## p_hit per cell (sparse cells show their angle bin's pooled rate)
+           <60  60-65  65-70  70-75  75-80  80-85  85-90  90-95  95-100  100-105  105-110  110-115  >=115
+<-30     0.182  0.176  0.166  0.145  0.142  0.106  0.099  0.094   0.078    0.126    0.126    0.151  0.151
+-30--20  0.175  0.051  0.052  0.057  0.052  0.063  0.097  0.090   0.095    0.129    0.146    0.146  0.089
+-20--10  0.164  0.066  0.055  0.057  0.059  0.084  0.110  0.126   0.180    0.205    0.248    0.248  0.128
+-10-0    0.162  0.088  0.086  0.097  0.108  0.141  0.190  0.236   0.287    0.334    0.383    0.432  0.432
+0-10     0.150  0.145  0.184  0.184  0.228  0.332  0.401  0.472   0.517    0.563    0.625    0.666  0.666
+10-20    0.202  0.256  0.411  0.525  0.677  0.768  0.802  0.747   0.697    0.700    0.753    0.831  0.831
+20-30    0.252  0.619  0.915  0.905  0.618  0.359  0.191  0.187   0.383    0.716    0.930    0.992  0.992
+30-40    0.250  0.529  0.820  0.434  0.094  0.028  0.026  0.082   0.258    0.576    0.886    0.987  0.987
+40-50    0.118  0.329  0.327  0.249  0.048  0.016  0.003  0.007   0.042    0.143    0.429    0.429  0.074
+50-60    0.020  0.066  0.061  0.093  0.052  0.021  0.014  0.009   0.006    0.011    0.011    0.027  0.027
+>=60     0.015  0.000  0.007  0.001  0.003  0.006  0.009  0.008   0.002    0.006    0.006    0.006  0.006
+
+sparse cells (n < 100): 21 of 143; balls in sparse cells: 447
+
+## Sparse cells at >= 105 mph: before (p_pooled, angle-bin pooled rate) and after (p_hit, A1 d3)
+ speed_bin  angle_bin  n  p_raw  p_pooled        rule  p_hit
+105-110mph    <-30deg 47 0.1064    0.1509 lower speed 0.1261
+110-115mph    <-30deg  2 0.5000    0.1509  angle pool 0.1509
+  >=115mph    <-30deg  1 1.0000    0.1509  angle pool 0.1509
+110-115mph -30--20deg 11 0.0000    0.0890 lower speed 0.1463
+  >=115mph -30--20deg  2 0.0000    0.0890  angle pool 0.0890
+110-115mph -20--10deg 58 0.3621    0.1285 lower speed 0.2478
+  >=115mph -20--10deg  3 0.3333    0.1285  angle pool 0.1285
+  >=115mph   -10-0deg 26 0.5000    0.2373 lower speed 0.4320
+  >=115mph    0-10deg 49 0.7755    0.4610 lower speed 0.6656
+  >=115mph   10-20deg 78 0.8974    0.7034 lower speed 0.8311
+  >=115mph   20-30deg 44 1.0000    0.5199 lower speed 0.9922
+  >=115mph   30-40deg  6 1.0000    0.2808 lower speed 0.9872
+110-115mph   40-50deg 14 1.0000    0.0739 lower speed 0.4286
+  >=115mph   40-50deg  0    NaN    0.0739  angle pool 0.0739
+105-110mph   50-60deg 36 0.0833    0.0270 lower speed 0.0115
+110-115mph   50-60deg  1 0.0000    0.0270  angle pool 0.0270
+  >=115mph   50-60deg  0    NaN    0.0270  angle pool 0.0270
+105-110mph    >=60deg  7 0.0000    0.0057  angle pool 0.0057
+110-115mph    >=60deg  0    NaN    0.0057  angle pool 0.0057
+  >=115mph    >=60deg  0    NaN    0.0057  angle pool 0.0057
+2022 balls at >= 105 mph, mean predicted before and after the rule vs actual:
+                n  before   after  actual
+105-110 mph  8905  0.6729  0.6727  0.6592
+110-115 mph  1576  0.7671  0.7724  0.7678
+>=115 mph      84  0.5370  0.7466  0.7381
+
+## Check 1, barrels vs weak contact: mean p_hit for speed >= 98 and angle 20-35 = 0.6847 (n 12,812; raw hit rate 0.7238); speed < 80, all angles = 0.2148 (n 42,157; raw 0.2148); difference +0.4699, required >= +0.25: PASS
+
+## Discrimination rule: the 2020-2021 table applied to 2022 (123,716 regular-season balls in play with launch data)
+2022 log loss: table 0.44243; constant 0.3261 (2020-2021 rate) 0.62666; improvement 0.18422, required >= 0.10: PASS
+
+## Drift report, 2022 (descriptive, no pass/fail): mean predicted vs actual hit rate by speed bin (mph)
+              n  predicted  actual  difference
+<60        5718     0.1674  0.1829     -0.0155
+60-65      3310     0.1887  0.1843      0.0044
+65-70      5234     0.2557  0.2635     -0.0078
+70-75      7569     0.2494  0.2505     -0.0011
+75-80      9699     0.2131  0.2180     -0.0048
+80-85     12032     0.1992  0.1976      0.0016
+85-90     15004     0.2019  0.1997      0.0022
+90-95     17515     0.2408  0.2346      0.0062
+95-100    19670     0.3589  0.3490      0.0099
+100-105   17400     0.5309  0.5176      0.0133
+105-110    8905     0.6727  0.6592      0.0136
+110-115    1576     0.7724  0.7678      0.0047
+>=115        84     0.7466  0.7381      0.0085
+overall  123716     0.3240  0.3196      0.0044
+
+80-85 mph, -30 to -20 deg: most frequent recorded (speed, angle) pairs, all seasons: (82.9, -21) x3,809; (82.3, -21) x22; (84.9, -21) x18
+
+80-85 mph, >= 60 deg: most frequent recorded (speed, angle) pairs, all seasons: (80, 69) x4,355; (84.5, 62) x19; (81, 60) x18
+
+## Descriptive: the two oversized cells by season (regular-season balls in play, launch data only)
+                     cell  season  balls in play share of season's BIP
+80-85 mph, -30 to -20 deg    2019           4557                0.0368
+80-85 mph, -30 to -20 deg    2020            237                0.0054
+80-85 mph, -30 to -20 deg    2021            641                0.0053
+80-85 mph, -30 to -20 deg    2022            677                0.0055
+80-85 mph, -30 to -20 deg    2023            673                0.0054
+80-85 mph, -30 to -20 deg    2024            690                0.0056
+80-85 mph, -30 to -20 deg    2025            622                0.0050
+     80-85 mph, >= 60 deg    2019           4822                0.0389
+     80-85 mph, >= 60 deg    2020            452                0.0104
+     80-85 mph, >= 60 deg    2021           1261                0.0104
+     80-85 mph, >= 60 deg    2022           1358                0.0110
+     80-85 mph, >= 60 deg    2023           1298                0.0105
+     80-85 mph, >= 60 deg    2024           1463                0.0118
+     80-85 mph, >= 60 deg    2025           1390                0.0112
+hit rates, fitting seasons 2020-2021 only: 80-85 mph, -30 to -20 deg: 0.0626 (n 878); 80-85 mph, >= 60 deg: 0.0058 (n 1,713)
+
+CONTACT TABLE CHECKS (1 and discrimination): PASS

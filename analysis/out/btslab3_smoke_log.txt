@@ -1,0 +1,1397 @@
+# Beat the Streak lab 3 — SMOKE TEST ONLY (not a result): fake outcomes, throwaway seeds 9001 and 9002, 20 bootstrap resamples, 2 placebo permutations. It shows the code runs end to end; nothing here is evidence.
+guard: fake-mode read of btslab_features.parquet asked for 63 columns, 'h' not among them; 'ab' present; run-once guard on a temp dummy log refused: "refusing to run: C:\Users\W\AppData\Local\Temp\tmp6ot7h8pc\lab3_results_log.txt already exists (the real run is run once, plan Section 11 step 3)"
+outcome: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(raw K%) + 0.50*z(raw H/AB) + 0.10*z(raw h_xhit); z over all rows, missing -> 0; seed 9001
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## M1 reproduction (plan Section 10 rule 3)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 0.008111 | 0.51414 | 0.6827 | 0.6633 | +0.2065 |
+| WF | 2022-2023 | 2024 | M3 | 0.008111 | 0.51350 | 0.6828 | 0.6633 | +0.2065 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51578 | 0.6806 | 0.6616 | +0.2069 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51500 | 0.6805 | 0.6616 | +0.2070 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.51813 | 0.6753 | 0.6568 | +0.1979 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.008111 | 0.51715 | 0.6751 | 0.6568 | +0.1979 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.008111 | 0.51529 | 0.6809 | 0.6627 | +0.2120 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.008111 | 0.51417 | 0.6807 | 0.6627 | +0.2121 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.008111 | 0.51480 | 0.6806 | 0.6614 | +0.2046 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.008111 | 0.51387 | 0.6808 | 0.6614 | +0.2047 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51578 | 0.6806 | 0.6616 | +0.2069 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51500 | 0.6805 | 0.6616 | +0.2070 |
+| T6 | 2023 | 2024 | M1 | 0.008111 | 0.51840 | 0.6738 | 0.6544 | +0.1847 |
+| T6 | 2023 | 2024 | M3 | 0.008111 | 0.51820 | 0.6733 | 0.6544 | +0.1847 |
+| T6 | 2023-2024 | 2025 | M1 | 0.008111 | 0.51890 | 0.6750 | 0.6563 | +0.1962 |
+| T6 | 2023-2024 | 2025 | M3 | 0.008111 | 0.51822 | 0.6747 | 0.6563 | +0.1963 |
+group H shrinkage m, test 2024: h_hard=47.7, h_gb=61.5, h_ld=750, h_pu=93.3, h_whiff=52.1, h_chase=58.6, h_zcon=56.3, h_xhit=124, h_park_hand=1.32e+03
+group H shrinkage m, test 2025: h_hard=46.5, h_gb=62.7, h_ld=892, h_pu=97.1, h_whiff=52.1, h_chase=60.7, h_zcon=56.1, h_xhit=120, h_park_hand=1.4e+03
+
+## Stop rules
+- Rule 6a, model beats B1 on batter-game AUC in the training inner CV (M1 and M3, each walk-forward fold): PASS
+- Rule 6b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1 and M3, each walk-forward fold): PASS
+
+## T4 — placebo: H columns permuted within date, 2 permutations (seeds 20261250 + k), M3 refitted at each fold's real C; date bootstrap seed 20261204
+placebo gain (log loss M1 − permuted M3, per-row mean over permutations) -0.00012 (95% -0.00016 to -0.00005); per-permutation statistics 2.5–97.5%: -0.00012 to -0.00012
+- Rule 5, placebo interval entirely above 0: no
+
+## T1 — PRIMARY: walk-forward log loss M1 − M3, paired by row (date bootstrap seed 20261201)
+pooled 2024–25: +0.00111 (95% +0.00085 to +0.00132), rows 87021
+   2024: +0.00083 (95% +0.00051 to +0.00116)
+   2025: +0.00139 (95% +0.00097 to +0.00170)
+batter-game log loss M1 0.51758, M3 0.51647; AUC M1 0.6929, M3 0.6941
+**T1 rule: Confirmed** (95% interval entirely above 0 and the point estimate positive in 2024 and in 2025)
+
+## T2 — LOSO log loss M1 − M3 (secondary, seed 20261202): +0.00094 (95% +0.00082 to +0.00110); 2022 +0.00100 (95% +0.00041 to +0.00121); 2023 +0.00042 (95% +0.00011 to +0.00090); 2024 +0.00093 (95% +0.00061 to +0.00126); 2025 +0.00139 (95% +0.00110 to +0.00159). T1's rule applied: Confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261203)
+M3 0.961 (0.936–0.977), M1 0.970 (0.947–0.983), B2 0.962 (0.937–0.977); M3 − M1 -0.0110 (95% -0.0222 to +0.0000) (363 dates); M3 − B2 -0.0028 (95% -0.0251 to +0.0125) (363 dates)
+
+## T5 — EXPLORATORY ablations (walk-forward; date bootstrap seed 20261205); gain = log loss(reference) − log loss(model)
+| model | vs | log-loss gain | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + H1 | M1 | +0.000746 (95% +0.000622 to +0.000981) | -0.0055 (95% -0.0110 to +0.0042) |
+| M3 − H1 | M3 | -0.000775 (95% -0.001010 to -0.000588) | +0.0083 (95% -0.0014 to +0.0138) |
+| M1 + H2 | M1 | -0.000049 (95% -0.000116 to +0.000026) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H2 | M3 | +0.000012 (95% -0.000036 to +0.000047) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H3 | M1 | +0.000090 (95% -0.000038 to +0.000221) | +0.0027 (95% +0.0000 to +0.0111) |
+| M3 − H3 | M3 | -0.000048 (95% -0.000159 to +0.000055) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H4 | M1 | +0.000329 (95% +0.000191 to +0.000472) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H4 | M3 | -0.000233 (95% -0.000312 to -0.000161) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H5 | M1 | +0.000136 (95% -0.000022 to +0.000258) | +0.0000 (95% -0.0042 to +0.0042) |
+| M3 − H5 | M3 | +0.000014 (95% -0.000039 to +0.000075) | +0.0055 (95% +0.0000 to +0.0125) |
+
+## M3 standardised coefficients, fit on 2022–24 at C 0.008111 (date bootstrap seed 20261207); group H rows
+| feature | coef | lo | hi |
+|---|---|---|---|
+| h_hard | -0.0144 | -0.0283 | +0.0192 |
+| h_xhit | +0.1698 | +0.1424 | +0.1893 |
+| h_gb | -0.0289 | -0.0462 | -0.0127 |
+| h_ld | -0.0495 | -0.0629 | -0.0318 |
+| h_pu | +0.0119 | -0.0027 | +0.0269 |
+| H1_miss | -0.0948 | -0.1354 | -0.0664 |
+| h_whiff | -0.0199 | -0.0566 | +0.0074 |
+| h_chase | -0.0075 | -0.0151 | +0.0151 |
+| h_zcon | -0.0325 | -0.0574 | +0.0030 |
+| H2_miss | +0.0645 | +0.0530 | +0.0904 |
+| h_same | +0.0296 | +0.0171 | +0.0402 |
+| h_same_miss | +0.0000 | +0.0000 | +0.0000 |
+| h_park_hand | -0.0361 | -0.0615 | -0.0064 |
+| h_speed | +0.0235 | +0.0156 | +0.0329 |
+| h_speed_miss | -0.0441 | -0.0598 | -0.0275 |
+| h_age | +0.0056 | -0.0153 | +0.0208 |
+| h_age2 | +0.0105 | +0.0033 | +0.0301 |
+| sp_age | -0.0147 | -0.0295 | +0.0034 |
+| sp_age2 | +0.0142 | -0.0033 | +0.0284 |
+| trend_hab | +0.0352 | +0.0166 | +0.0539 |
+| trend_xhit | -0.0196 | -0.0405 | +0.0078 |
+| H5_trend_miss | +0.0051 | -0.0169 | +0.0214 |
+M3 + x_speed_gb (exploratory, same C and resamples): x_speed_gb -0.0108 (-0.0198 to -0.0043)
+
+## T6 — DIAGNOSTICS (seed 20261206)
+2022 dropped from training: +0.00107 (95% +0.00083 to +0.00127); 2024 +0.00075 (95% +0.00056 to +0.00097); 2025 +0.00139 (95% +0.00108 to +0.00187)
+batter side R: +0.00126 (95% +0.00095 to +0.00157), rows 46954
+batter side L: +0.00098 (95% +0.00055 to +0.00124), rows 30750
+batter side S: +0.00075 (95% +0.00012 to +0.00145), rows 9317
+
+## T7 — hypothesis checks (proposed by Claude; kept by William; coefficients from the table above; no rule)
+V1: h_xhit +0.1698 (+0.1424 to +0.1893), sign as read for support; h_hard -0.0144 (-0.0283 to +0.0192), sign against
+V2: h_zcon -0.0325 (-0.0574 to +0.0030), sign against; h_whiff -0.0199 (-0.0566 to +0.0074), sign as read for support
+V3: h_same +0.0296 (+0.0171 to +0.0402), sign against
+V4: h_speed +0.0235 (+0.0156 to +0.0329), sign as read for support; x_speed_gb -0.0108 (-0.0198 to -0.0043), sign against
+V5: age contrast 34 vs 29 (logit) +0.0253 (+0.0042 to +0.0609), sign against; trend_hab +0.0352 (+0.0166 to +0.0539), sign as read for support
+V6: h_chase -0.0075 (-0.0151 to +0.0151), sign as read for support
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) T1 gain in +0.0002..+0.0010 | not met | +0.00111; interval excludes 0: True |
+| (b) M1 + H1 has the largest gain of the five M1 + Hk | met | H1 +0.000746, H2 -0.000049, H3 +0.000090, H4 +0.000329, H5 +0.000136 |
+| (c) h_same < 0, interval excludes 0 | not met | +0.0296 (+0.0171 to +0.0402), sign against |
+| (d) h_whiff, h_chase, h_zcon intervals each include 0 | met |  |
+| (e) |h_speed| < 0.02 per SD | not met | +0.0235 |
+| (e) age contrast interval excludes 0 | met | +0.0253 (+0.0042 to +0.0609) |
+| (e) trend_hab interval includes 0 | not met | +0.0352 (+0.0166 to +0.0539), sign as read for support |
+| (f) top-1 M3 − M1 in −0.015..+0.025 | met | -0.0110 |
+| (g) placebo interval includes 0 | not met | -0.00012 (95% -0.00016 to -0.00005) |
+| (h) T6 2022-dropped same sign as T1 | met | +0.00107 vs +0.00111 |
+| (i) M3 top-20% days ≤ overall + 0.03 | met | top-20% 0.9444 vs overall 0.9614 |
+
+runtime 107 s
+
+## Null-study code path, 1 seed (9002), same tiny settings
+seeds 9002-9002 (1), 1 processes, 20 bootstrap resamples, 2 placebo permutations per seed; per-seed rows: btslab3_smoke_null_seed.csv
+- T1 false confirmation <= 8%: 0.000 -> PASS
+- T4 false stop <= 8%: 0.000 -> PASS
+- T1 centred: |mean| < 0.25 SD across seeds: mean +0.000002, SD nan -> FAIL
+runtime 27 s
+
+
+# SMOKE TEST ONLY (not a result): dry run of the planted-recovery criterion of addendum A2 item 1 on throwaway seeds planted-H 9001 and planted-null 9003 (not registered), 20 bootstrap resamples, 2 placebo permutations
+
+## planted, seed 9001: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(raw K%) + 0.50*z(raw H/AB) + 0.10*z(raw h_xhit); z over all rows, missing -> 0; seed 9001
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## M1 reproduction (plan Section 10 rule 3)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 0.008111 | 0.51414 | 0.6827 | 0.6633 | +0.2065 |
+| WF | 2022-2023 | 2024 | M3 | 0.008111 | 0.51350 | 0.6828 | 0.6633 | +0.2065 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51578 | 0.6806 | 0.6616 | +0.2069 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51500 | 0.6805 | 0.6616 | +0.2070 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.51813 | 0.6753 | 0.6568 | +0.1979 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.008111 | 0.51715 | 0.6751 | 0.6568 | +0.1979 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.008111 | 0.51529 | 0.6809 | 0.6627 | +0.2120 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.008111 | 0.51417 | 0.6807 | 0.6627 | +0.2121 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.008111 | 0.51480 | 0.6806 | 0.6614 | +0.2046 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.008111 | 0.51387 | 0.6808 | 0.6614 | +0.2047 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51578 | 0.6806 | 0.6616 | +0.2069 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51500 | 0.6805 | 0.6616 | +0.2070 |
+| T6 | 2023 | 2024 | M1 | 0.008111 | 0.51840 | 0.6738 | 0.6544 | +0.1847 |
+| T6 | 2023 | 2024 | M3 | 0.008111 | 0.51820 | 0.6733 | 0.6544 | +0.1847 |
+| T6 | 2023-2024 | 2025 | M1 | 0.008111 | 0.51890 | 0.6750 | 0.6563 | +0.1962 |
+| T6 | 2023-2024 | 2025 | M3 | 0.008111 | 0.51822 | 0.6747 | 0.6563 | +0.1963 |
+group H shrinkage m, test 2024: h_hard=47.7, h_gb=61.5, h_ld=750, h_pu=93.3, h_whiff=52.1, h_chase=58.6, h_zcon=56.3, h_xhit=124, h_park_hand=1.32e+03
+group H shrinkage m, test 2025: h_hard=46.5, h_gb=62.7, h_ld=892, h_pu=97.1, h_whiff=52.1, h_chase=60.7, h_zcon=56.1, h_xhit=120, h_park_hand=1.4e+03
+
+## Stop rules
+- Rule 6a, model beats B1 on batter-game AUC in the training inner CV (M1 and M3, each walk-forward fold): PASS
+- Rule 6b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1 and M3, each walk-forward fold): PASS
+
+## T4 — placebo: H columns permuted within date, 2 permutations (seeds 20261250 + k), M3 refitted at each fold's real C; date bootstrap seed 20261204
+placebo gain (log loss M1 − permuted M3, per-row mean over permutations) -0.00012 (95% -0.00016 to -0.00005); per-permutation statistics 2.5–97.5%: -0.00012 to -0.00012
+- Rule 5, placebo interval entirely above 0: no
+
+## T1 — PRIMARY: walk-forward log loss M1 − M3, paired by row (date bootstrap seed 20261201)
+pooled 2024–25: +0.00111 (95% +0.00085 to +0.00132), rows 87021
+   2024: +0.00083 (95% +0.00051 to +0.00116)
+   2025: +0.00139 (95% +0.00097 to +0.00170)
+batter-game log loss M1 0.51758, M3 0.51647; AUC M1 0.6929, M3 0.6941
+**T1 rule: Confirmed** (95% interval entirely above 0 and the point estimate positive in 2024 and in 2025)
+
+## T2 — LOSO log loss M1 − M3 (secondary, seed 20261202): +0.00094 (95% +0.00082 to +0.00110); 2022 +0.00100 (95% +0.00041 to +0.00121); 2023 +0.00042 (95% +0.00011 to +0.00090); 2024 +0.00093 (95% +0.00061 to +0.00126); 2025 +0.00139 (95% +0.00110 to +0.00159). T1's rule applied: Confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261203)
+M3 0.961 (0.936–0.977), M1 0.970 (0.947–0.983), B2 0.962 (0.937–0.977); M3 − M1 -0.0110 (95% -0.0222 to +0.0000) (363 dates); M3 − B2 -0.0028 (95% -0.0251 to +0.0125) (363 dates)
+
+## T5 — EXPLORATORY ablations (walk-forward; date bootstrap seed 20261205); gain = log loss(reference) − log loss(model)
+| model | vs | log-loss gain | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + H1 | M1 | +0.000746 (95% +0.000622 to +0.000981) | -0.0055 (95% -0.0110 to +0.0042) |
+| M3 − H1 | M3 | -0.000775 (95% -0.001010 to -0.000588) | +0.0083 (95% -0.0014 to +0.0138) |
+| M1 + H2 | M1 | -0.000049 (95% -0.000116 to +0.000026) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H2 | M3 | +0.000012 (95% -0.000036 to +0.000047) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H3 | M1 | +0.000090 (95% -0.000038 to +0.000221) | +0.0027 (95% +0.0000 to +0.0111) |
+| M3 − H3 | M3 | -0.000048 (95% -0.000159 to +0.000055) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H4 | M1 | +0.000329 (95% +0.000191 to +0.000472) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H4 | M3 | -0.000233 (95% -0.000312 to -0.000161) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H5 | M1 | +0.000136 (95% -0.000022 to +0.000258) | +0.0000 (95% -0.0042 to +0.0042) |
+| M3 − H5 | M3 | +0.000014 (95% -0.000039 to +0.000075) | +0.0055 (95% +0.0000 to +0.0125) |
+
+## M3 standardised coefficients, fit on 2022–24 at C 0.008111 (date bootstrap seed 20261207); group H rows
+| feature | coef | lo | hi |
+|---|---|---|---|
+| h_hard | -0.0144 | -0.0283 | +0.0192 |
+| h_xhit | +0.1698 | +0.1424 | +0.1893 |
+| h_gb | -0.0289 | -0.0462 | -0.0127 |
+| h_ld | -0.0495 | -0.0629 | -0.0318 |
+| h_pu | +0.0119 | -0.0027 | +0.0269 |
+| H1_miss | -0.0948 | -0.1354 | -0.0664 |
+| h_whiff | -0.0199 | -0.0566 | +0.0074 |
+| h_chase | -0.0075 | -0.0151 | +0.0151 |
+| h_zcon | -0.0325 | -0.0574 | +0.0030 |
+| H2_miss | +0.0645 | +0.0530 | +0.0904 |
+| h_same | +0.0296 | +0.0171 | +0.0402 |
+| h_same_miss | +0.0000 | +0.0000 | +0.0000 |
+| h_park_hand | -0.0361 | -0.0615 | -0.0064 |
+| h_speed | +0.0235 | +0.0156 | +0.0329 |
+| h_speed_miss | -0.0441 | -0.0598 | -0.0275 |
+| h_age | +0.0056 | -0.0153 | +0.0208 |
+| h_age2 | +0.0105 | +0.0033 | +0.0301 |
+| sp_age | -0.0147 | -0.0295 | +0.0034 |
+| sp_age2 | +0.0142 | -0.0033 | +0.0284 |
+| trend_hab | +0.0352 | +0.0166 | +0.0539 |
+| trend_xhit | -0.0196 | -0.0405 | +0.0078 |
+| H5_trend_miss | +0.0051 | -0.0169 | +0.0214 |
+M3 + x_speed_gb (exploratory, same C and resamples): x_speed_gb -0.0108 (-0.0198 to -0.0043)
+
+## T6 — DIAGNOSTICS (seed 20261206)
+2022 dropped from training: +0.00107 (95% +0.00083 to +0.00127); 2024 +0.00075 (95% +0.00056 to +0.00097); 2025 +0.00139 (95% +0.00108 to +0.00187)
+batter side R: +0.00126 (95% +0.00095 to +0.00157), rows 46954
+batter side L: +0.00098 (95% +0.00055 to +0.00124), rows 30750
+batter side S: +0.00075 (95% +0.00012 to +0.00145), rows 9317
+
+## T7 — hypothesis checks (proposed by Claude; kept by William; coefficients from the table above; no rule)
+V1: h_xhit +0.1698 (+0.1424 to +0.1893), sign as read for support; h_hard -0.0144 (-0.0283 to +0.0192), sign against
+V2: h_zcon -0.0325 (-0.0574 to +0.0030), sign against; h_whiff -0.0199 (-0.0566 to +0.0074), sign as read for support
+V3: h_same +0.0296 (+0.0171 to +0.0402), sign against
+V4: h_speed +0.0235 (+0.0156 to +0.0329), sign as read for support; x_speed_gb -0.0108 (-0.0198 to -0.0043), sign against
+V5: age contrast 34 vs 29 (logit) +0.0253 (+0.0042 to +0.0609), sign against; trend_hab +0.0352 (+0.0166 to +0.0539), sign as read for support
+V6: h_chase -0.0075 (-0.0151 to +0.0151), sign as read for support
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) T1 gain in +0.0002..+0.0010 | not met | +0.00111; interval excludes 0: True |
+| (b) M1 + H1 has the largest gain of the five M1 + Hk | met | H1 +0.000746, H2 -0.000049, H3 +0.000090, H4 +0.000329, H5 +0.000136 |
+| (c) h_same < 0, interval excludes 0 | not met | +0.0296 (+0.0171 to +0.0402), sign against |
+| (d) h_whiff, h_chase, h_zcon intervals each include 0 | met |  |
+| (e) |h_speed| < 0.02 per SD | not met | +0.0235 |
+| (e) age contrast interval excludes 0 | met | +0.0253 (+0.0042 to +0.0609) |
+| (e) trend_hab interval includes 0 | not met | +0.0352 (+0.0166 to +0.0539), sign as read for support |
+| (f) top-1 M3 − M1 in −0.015..+0.025 | met | -0.0110 |
+| (g) placebo interval includes 0 | not met | -0.00012 (95% -0.00016 to -0.00005) |
+| (h) T6 2022-dropped same sign as T1 | met | +0.00107 vs +0.00111 |
+| (i) M3 top-20% days ≤ overall + 0.03 | met | top-20% 0.9444 vs overall 0.9614 |
+
+runtime 112 s
+
+M3 h_xhit coefficient (per SD of the shrunk h_xhit, fit 2022–24; descriptive on its own): +0.169759; T1 Confirmed; placebo not Confirmed
+
+## planted-null, seed 9003: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(raw K%) + 0.50*z(raw H/AB); z over all rows, missing -> 0; seed 9003
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## M1 reproduction (plan Section 10 rule 3)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 0.008111 | 0.51543 | 0.6805 | 0.6537 | +0.1864 |
+| WF | 2022-2023 | 2024 | M3 | 0.008111 | 0.51501 | 0.6799 | 0.6537 | +0.1864 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.002848 | 0.51749 | 0.6792 | 0.6523 | +0.1845 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51697 | 0.6787 | 0.6523 | +0.1851 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.52020 | 0.6744 | 0.6497 | +0.1772 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.008111 | 0.51961 | 0.6738 | 0.6497 | +0.1772 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.008111 | 0.51736 | 0.6759 | 0.6530 | +0.1908 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.008111 | 0.51648 | 0.6753 | 0.6530 | +0.1908 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.008111 | 0.51664 | 0.6768 | 0.6528 | +0.1854 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.008111 | 0.51603 | 0.6762 | 0.6528 | +0.1854 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.002848 | 0.51749 | 0.6792 | 0.6523 | +0.1845 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51697 | 0.6787 | 0.6523 | +0.1851 |
+| T6 | 2023 | 2024 | M1 | 0.008111 | 0.52003 | 0.6775 | 0.6489 | +0.1655 |
+| T6 | 2023 | 2024 | M3 | 0.008111 | 0.51994 | 0.6766 | 0.6489 | +0.1654 |
+| T6 | 2023-2024 | 2025 | M1 | 0.008111 | 0.52078 | 0.6770 | 0.6490 | +0.1740 |
+| T6 | 2023-2024 | 2025 | M3 | 0.008111 | 0.52046 | 0.6763 | 0.6490 | +0.1740 |
+group H shrinkage m, test 2024: h_hard=47.7, h_gb=61.5, h_ld=750, h_pu=93.3, h_whiff=52.1, h_chase=58.6, h_zcon=56.3, h_xhit=124, h_park_hand=1.32e+03
+group H shrinkage m, test 2025: h_hard=46.5, h_gb=62.7, h_ld=892, h_pu=97.1, h_whiff=52.1, h_chase=60.7, h_zcon=56.1, h_xhit=120, h_park_hand=1.4e+03
+
+## Stop rules
+- Rule 6a, model beats B1 on batter-game AUC in the training inner CV (M1 and M3, each walk-forward fold): PASS
+- Rule 6b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1 and M3, each walk-forward fold): PASS
+
+## T4 — placebo: H columns permuted within date, 2 permutations (seeds 20261250 + k), M3 refitted at each fold's real C; date bootstrap seed 20261204
+placebo gain (log loss M1 − permuted M3, per-row mean over permutations) -0.00008 (95% -0.00014 to -0.00003); per-permutation statistics 2.5–97.5%: -0.00009 to -0.00007
+- Rule 5, placebo interval entirely above 0: no
+
+## T1 — PRIMARY: walk-forward log loss M1 − M3, paired by row (date bootstrap seed 20261201)
+pooled 2024–25: +0.00078 (95% +0.00046 to +0.00095), rows 87021
+   2024: +0.00056 (95% +0.00019 to +0.00086)
+   2025: +0.00100 (95% +0.00074 to +0.00125)
+batter-game log loss M1 0.52012, M3 0.51934; AUC M1 0.6875, M3 0.6880
+**T1 rule: Confirmed** (95% interval entirely above 0 and the point estimate positive in 2024 and in 2025)
+
+## T2 — LOSO log loss M1 − M3 (secondary, seed 20261202): +0.00061 (95% +0.00051 to +0.00079); 2022 +0.00085 (95% +0.00052 to +0.00109); 2023 -0.00003 (95% -0.00041 to +0.00030); 2024 +0.00064 (95% +0.00034 to +0.00083); 2025 +0.00100 (95% +0.00079 to +0.00129). T1's rule applied: not confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261203)
+M3 0.956 (0.930–0.973), M1 0.956 (0.930–0.973), B2 0.951 (0.923–0.969); M3 − M1 +0.0000 (95% -0.0042 to +0.0071) (364 dates); M3 − B2 +0.0055 (95% -0.0207 to +0.0306) (364 dates)
+
+## T5 — EXPLORATORY ablations (walk-forward; date bootstrap seed 20261205); gain = log loss(reference) − log loss(model)
+| model | vs | log-loss gain | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + H1 | M1 | +0.000322 (95% +0.000222 to +0.000428) | +0.0027 (95% +0.0000 to +0.0097) |
+| M3 − H1 | M3 | -0.000326 (95% -0.000450 to -0.000210) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H2 | M1 | +0.000038 (95% -0.000002 to +0.000068) | +0.0027 (95% +0.0000 to +0.0097) |
+| M3 − H2 | M3 | -0.000039 (95% -0.000073 to -0.000006) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H3 | M1 | -0.000002 (95% -0.000030 to +0.000066) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H3 | M3 | +0.000006 (95% -0.000053 to +0.000030) | +0.0000 (95% -0.0055 to +0.0084) |
+| M1 + H4 | M1 | +0.000481 (95% +0.000356 to +0.000625) | -0.0055 (95% -0.0137 to +0.0000) |
+| M3 − H4 | M3 | -0.000214 (95% -0.000327 to -0.000134) | +0.0027 (95% -0.0027 to +0.0152) |
+| M1 + H5 | M1 | +0.000228 (95% +0.000114 to +0.000340) | +0.0027 (95% +0.0000 to +0.0097) |
+| M3 − H5 | M3 | +0.000062 (95% +0.000002 to +0.000127) | +0.0000 (95% -0.0055 to +0.0124) |
+
+## M3 standardised coefficients, fit on 2022–24 at C 0.008111 (date bootstrap seed 20261207); group H rows
+| feature | coef | lo | hi |
+|---|---|---|---|
+| h_hard | -0.0173 | -0.0414 | -0.0003 |
+| h_xhit | +0.1038 | +0.0930 | +0.1318 |
+| h_gb | -0.0253 | -0.0573 | +0.0036 |
+| h_ld | -0.0290 | -0.0506 | -0.0130 |
+| h_pu | +0.0012 | -0.0253 | +0.0234 |
+| H1_miss | -0.0899 | -0.1199 | -0.0639 |
+| h_whiff | -0.0427 | -0.0665 | +0.0078 |
+| h_chase | -0.0122 | -0.0347 | +0.0216 |
+| h_zcon | -0.0256 | -0.0461 | +0.0127 |
+| H2_miss | +0.0471 | +0.0333 | +0.0638 |
+| h_same | +0.0182 | +0.0092 | +0.0275 |
+| h_same_miss | +0.0000 | +0.0000 | +0.0000 |
+| h_park_hand | -0.0340 | -0.0703 | -0.0117 |
+| h_speed | +0.0306 | +0.0195 | +0.0450 |
+| h_speed_miss | -0.0469 | -0.0689 | -0.0328 |
+| h_age | +0.0131 | -0.0032 | +0.0310 |
+| h_age2 | -0.0033 | -0.0165 | +0.0089 |
+| sp_age | -0.0069 | -0.0281 | +0.0132 |
+| sp_age2 | -0.0042 | -0.0213 | +0.0123 |
+| trend_hab | +0.0314 | +0.0114 | +0.0473 |
+| trend_xhit | -0.0125 | -0.0272 | +0.0041 |
+| H5_trend_miss | -0.0022 | -0.0154 | +0.0105 |
+M3 + x_speed_gb (exploratory, same C and resamples): x_speed_gb -0.0072 (-0.0167 to +0.0015)
+
+## T6 — DIAGNOSTICS (seed 20261206)
+2022 dropped from training: +0.00049 (95% +0.00027 to +0.00066); 2024 +0.00007 (95% -0.00021 to +0.00039); 2025 +0.00091 (95% +0.00073 to +0.00125)
+batter side R: +0.00064 (95% +0.00048 to +0.00086), rows 46954
+batter side L: +0.00097 (95% +0.00064 to +0.00118), rows 30750
+batter side S: +0.00087 (95% +0.00024 to +0.00119), rows 9317
+
+## T7 — hypothesis checks (proposed by Claude; kept by William; coefficients from the table above; no rule)
+V1: h_xhit +0.1038 (+0.0930 to +0.1318), sign as read for support; h_hard -0.0173 (-0.0414 to -0.0003), sign against
+V2: h_zcon -0.0256 (-0.0461 to +0.0127), sign against; h_whiff -0.0427 (-0.0665 to +0.0078), sign as read for support
+V3: h_same +0.0182 (+0.0092 to +0.0275), sign against
+V4: h_speed +0.0306 (+0.0195 to +0.0450), sign as read for support; x_speed_gb -0.0072 (-0.0167 to +0.0015), sign against
+V5: age contrast 34 vs 29 (logit) +0.0123 (-0.0081 to +0.0362), sign against; trend_hab +0.0314 (+0.0114 to +0.0473), sign as read for support
+V6: h_chase -0.0122 (-0.0347 to +0.0216), sign as read for support
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) T1 gain in +0.0002..+0.0010 | met | +0.00078; interval excludes 0: True |
+| (b) M1 + H1 has the largest gain of the five M1 + Hk | not met | H1 +0.000322, H2 +0.000038, H3 -0.000002, H4 +0.000481, H5 +0.000228 |
+| (c) h_same < 0, interval excludes 0 | not met | +0.0182 (+0.0092 to +0.0275), sign against |
+| (d) h_whiff, h_chase, h_zcon intervals each include 0 | met |  |
+| (e) |h_speed| < 0.02 per SD | not met | +0.0306 |
+| (e) age contrast interval excludes 0 | not met | +0.0123 (-0.0081 to +0.0362) |
+| (e) trend_hab interval includes 0 | not met | +0.0314 (+0.0114 to +0.0473), sign as read for support |
+| (f) top-1 M3 − M1 in −0.015..+0.025 | met | +0.0000 |
+| (g) placebo interval includes 0 | not met | -0.00008 (95% -0.00014 to -0.00003) |
+| (h) T6 2022-dropped same sign as T1 | met | +0.00049 vs +0.00078 |
+| (i) M3 top-20% days ≤ overall + 0.03 | met | top-20% 0.9444 vs overall 0.9560 |
+
+runtime 117 s
+
+M3 h_xhit coefficient (per SD of the shrunk h_xhit, fit 2022–24; descriptive on its own): +0.103796; T1 Confirmed; placebo not Confirmed
+
+## Combined criterion (dry run)
+planted-H (seed 9001) h_xhit +0.169759; planted-null (seed 9003) h_xhit +0.103796; difference +0.065963
+- h_xhit coefficient difference planted-H − planted-null in 0.05..0.15: yes
+- T1 Confirmed in planted-H: yes
+- placebo not Confirmed in planted-H: yes
+- T1 not Confirmed in planted-null: NO
+
+
+# SMOKE TEST ONLY (not a result): second dry run, new generator (addendum A2 item 1). Throwaway seeds, not registered: planted-H 9001, 9002; planted-null 9003-9008. 20 bootstrap resamples, 2 placebo permutations.
+Freeze conditions, fixed in advance: both planted-H seeds have the h_xhit coefficient in 0.05..0.15, T1 Confirmed and the placebo not Confirmed; AND T1 is Confirmed on at most 1 of the 6 planted-null seeds.
+
+## planted, seed 9001: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(a_k) + 0.50*z(a_hab) + 0.10*z(h_xhit shrunk); shrunk columns and z from the train-2022-24 fold, applied to all rows; missing -> 0; seed 9001
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## M1 reproduction (plan Section 10 rule 3)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 100 (grid edge) | 0.50993 | 0.7230 | 0.7022 | +0.2035 |
+| WF | 2022-2023 | 2024 | M3 | 100 (grid edge) | 0.50991 | 0.7232 | 0.7022 | +0.2035 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51167 | 0.7204 | 0.7001 | +0.1992 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51156 | 0.7207 | 0.7001 | +0.1992 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.51340 | 0.7152 | 0.6952 | +0.1869 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.008111 | 0.51322 | 0.7155 | 0.6952 | +0.1869 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.008111 | 0.51254 | 0.7194 | 0.6998 | +0.2007 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.008111 | 0.51231 | 0.7198 | 0.6998 | +0.2007 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.008111 | 0.51113 | 0.7201 | 0.6995 | +0.1979 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.008111 | 0.51090 | 0.7206 | 0.6995 | +0.1979 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51167 | 0.7204 | 0.7001 | +0.1992 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51156 | 0.7207 | 0.7001 | +0.1992 |
+| T6 | 2023 | 2024 | M1 | 0.008111 | 0.51154 | 0.7159 | 0.6951 | +0.1821 |
+| T6 | 2023 | 2024 | M3 | 0.008111 | 0.51177 | 0.7157 | 0.6951 | +0.1822 |
+| T6 | 2023-2024 | 2025 | M1 | 0.008111 | 0.51337 | 0.7157 | 0.6956 | +0.1867 |
+| T6 | 2023-2024 | 2025 | M3 | 0.008111 | 0.51334 | 0.7159 | 0.6956 | +0.1867 |
+group H shrinkage m, test 2024: h_hard=47.7, h_gb=61.5, h_ld=750, h_pu=93.3, h_whiff=52.1, h_chase=58.6, h_zcon=56.3, h_xhit=124, h_park_hand=1.32e+03
+group H shrinkage m, test 2025: h_hard=46.5, h_gb=62.7, h_ld=892, h_pu=97.1, h_whiff=52.1, h_chase=60.7, h_zcon=56.1, h_xhit=120, h_park_hand=1.4e+03
+
+## Stop rules
+- Rule 6a, model beats B1 on batter-game AUC in the training inner CV (M1 and M3, each walk-forward fold): PASS
+- Rule 6b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1 and M3, each walk-forward fold): PASS
+
+## T4 — placebo: H columns permuted within date, 2 permutations (seeds 20261250 + k), M3 refitted at each fold's real C; date bootstrap seed 20261204
+placebo gain (log loss M1 − permuted M3, per-row mean over permutations) -0.00010 (95% -0.00014 to -0.00001); per-permutation statistics 2.5–97.5%: -0.00010 to -0.00010
+- Rule 5, placebo interval entirely above 0: no
+
+## T1 — PRIMARY: walk-forward log loss M1 − M3, paired by row (date bootstrap seed 20261201)
+pooled 2024–25: +0.00026 (95% +0.00016 to +0.00043), rows 87021
+   2024: +0.00010 (95% -0.00006 to +0.00033)
+   2025: +0.00041 (95% +0.00016 to +0.00064)
+batter-game log loss M1 0.51453, M3 0.51427; AUC M1 0.7081, M3 0.7085
+**T1 rule: Confirmed** (95% interval entirely above 0 and the point estimate positive in 2024 and in 2025)
+
+## T2 — LOSO log loss M1 − M3 (secondary, seed 20261202): +0.00021 (95% +0.00014 to +0.00033); 2022 +0.00027 (95% +0.00013 to +0.00044); 2023 +0.00010 (95% -0.00011 to +0.00027); 2024 +0.00007 (95% -0.00023 to +0.00033); 2025 +0.00041 (95% +0.00019 to +0.00060). T1's rule applied: Confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261203)
+M3 0.989 (0.972–0.996), M1 0.989 (0.972–0.996), B2 0.973 (0.950–0.985); M3 − M1 +0.0000 (95% -0.0070 to +0.0055) (363 dates); M3 − B2 +0.0138 (95% -0.0001 to +0.0262) (363 dates)
+
+## T5 — EXPLORATORY ablations (walk-forward; date bootstrap seed 20261205); gain = log loss(reference) − log loss(model)
+| model | vs | log-loss gain | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + H1 | M1 | +0.000288 (95% +0.000203 to +0.000415) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H1 | M3 | -0.000260 (95% -0.000385 to -0.000143) | +0.0000 (95% -0.0055 to +0.0083) |
+| M1 + H2 | M1 | -0.000013 (95% -0.000064 to +0.000041) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H2 | M3 | +0.000017 (95% -0.000020 to +0.000042) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H3 | M1 | -0.000006 (95% -0.000044 to +0.000040) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H3 | M3 | +0.000012 (95% -0.000021 to +0.000033) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H4 | M1 | +0.000001 (95% -0.000051 to +0.000079) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H4 | M3 | +0.000031 (95% +0.000002 to +0.000048) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H5 | M1 | +0.000041 (95% +0.000006 to +0.000112) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H5 | M3 | +0.000002 (95% -0.000021 to +0.000030) | +0.0028 (95% +0.0000 to +0.0097) |
+
+## M3 standardised coefficients, fit on 2022–24 at C 0.008111 (date bootstrap seed 20261207); group H rows
+| feature | coef | lo | hi |
+|---|---|---|---|
+| h_hard | -0.0061 | -0.0287 | +0.0283 |
+| h_xhit | +0.1067 | +0.0775 | +0.1309 |
+| h_gb | +0.0061 | -0.0127 | +0.0202 |
+| h_ld | -0.0141 | -0.0299 | +0.0065 |
+| h_pu | +0.0097 | -0.0042 | +0.0258 |
+| H1_miss | -0.0091 | -0.0383 | +0.0181 |
+| h_whiff | +0.0241 | -0.0227 | +0.0499 |
+| h_chase | -0.0094 | -0.0207 | +0.0129 |
+| h_zcon | +0.0042 | -0.0237 | +0.0431 |
+| H2_miss | -0.0020 | -0.0175 | +0.0163 |
+| h_same | +0.0050 | -0.0065 | +0.0155 |
+| h_same_miss | +0.0000 | +0.0000 | +0.0000 |
+| h_park_hand | -0.0152 | -0.0395 | +0.0150 |
+| h_speed | +0.0024 | -0.0091 | +0.0133 |
+| h_speed_miss | +0.0062 | -0.0133 | +0.0272 |
+| h_age | +0.0072 | -0.0091 | +0.0246 |
+| h_age2 | +0.0011 | -0.0115 | +0.0202 |
+| sp_age | -0.0065 | -0.0220 | +0.0094 |
+| sp_age2 | +0.0072 | -0.0068 | +0.0192 |
+| trend_hab | +0.0068 | -0.0086 | +0.0296 |
+| trend_xhit | -0.0162 | -0.0329 | +0.0106 |
+| H5_trend_miss | +0.0106 | -0.0086 | +0.0332 |
+M3 + x_speed_gb (exploratory, same C and resamples): x_speed_gb -0.0104 (-0.0159 to -0.0020)
+
+## T6 — DIAGNOSTICS (seed 20261206)
+2022 dropped from training: +0.00017 (95% +0.00002 to +0.00032); 2024 +0.00002 (95% -0.00023 to +0.00020); 2025 +0.00031 (95% +0.00012 to +0.00055)
+batter side R: +0.00033 (95% +0.00016 to +0.00053), rows 46954
+batter side L: +0.00022 (95% -0.00001 to +0.00043), rows 30750
+batter side S: -0.00003 (95% -0.00033 to +0.00036), rows 9317
+
+## T7 — hypothesis checks (proposed by Claude; kept by William; coefficients from the table above; no rule)
+V1: h_xhit +0.1067 (+0.0775 to +0.1309), sign as read for support; h_hard -0.0061 (-0.0287 to +0.0283), sign against
+V2: h_zcon +0.0042 (-0.0237 to +0.0431), sign as read for support; h_whiff +0.0241 (-0.0227 to +0.0499), sign against
+V3: h_same +0.0050 (-0.0065 to +0.0155), sign against
+V4: h_speed +0.0024 (-0.0091 to +0.0133), sign as read for support; x_speed_gb -0.0104 (-0.0159 to -0.0020), sign against
+V5: age contrast 34 vs 29 (logit) +0.0117 (-0.0115 to +0.0477), sign against; trend_hab +0.0068 (-0.0086 to +0.0296), sign as read for support
+V6: h_chase -0.0094 (-0.0207 to +0.0129), sign as read for support
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) T1 gain in +0.0002..+0.0010 | met | +0.00026; interval excludes 0: True |
+| (b) M1 + H1 has the largest gain of the five M1 + Hk | met | H1 +0.000288, H2 -0.000013, H3 -0.000006, H4 +0.000001, H5 +0.000041 |
+| (c) h_same < 0, interval excludes 0 | not met | +0.0050 (-0.0065 to +0.0155), sign against |
+| (d) h_whiff, h_chase, h_zcon intervals each include 0 | met |  |
+| (e) |h_speed| < 0.02 per SD | met | +0.0024 |
+| (e) age contrast interval excludes 0 | not met | +0.0117 (-0.0115 to +0.0477) |
+| (e) trend_hab interval includes 0 | met | +0.0068 (-0.0086 to +0.0296), sign as read for support |
+| (f) top-1 M3 − M1 in −0.015..+0.025 | met | +0.0000 |
+| (g) placebo interval includes 0 | not met | -0.00010 (95% -0.00014 to -0.00001) |
+| (h) T6 2022-dropped same sign as T1 | met | +0.00017 vs +0.00026 |
+| (i) M3 top-20% days ≤ overall + 0.03 | met | top-20% 1.0000 vs overall 0.9890 |
+
+runtime 121 s
+
+M3 h_xhit coefficient (per SD of the shrunk h_xhit, fit 2022–24; descriptive on its own): +0.106697; T1 Confirmed; placebo not Confirmed
+Plan's pass rule on this seed:
+- M3 h_xhit coefficient in 0.05..0.15: yes
+- T1 Confirmed: yes
+- placebo not Confirmed: yes
+
+## planted, seed 9002: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(a_k) + 0.50*z(a_hab) + 0.10*z(h_xhit shrunk); shrunk columns and z from the train-2022-24 fold, applied to all rows; missing -> 0; seed 9002
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## M1 reproduction (plan Section 10 rule 3)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 0.008111 | 0.50972 | 0.7244 | 0.7023 | +0.1985 |
+| WF | 2022-2023 | 2024 | M3 | 0.008111 | 0.50944 | 0.7249 | 0.7023 | +0.1986 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51122 | 0.7220 | 0.7008 | +0.1954 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51094 | 0.7224 | 0.7008 | +0.1955 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.51449 | 0.7138 | 0.6931 | +0.1888 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.008111 | 0.51408 | 0.7146 | 0.6931 | +0.1889 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.0231 | 0.51209 | 0.7187 | 0.6996 | +0.1936 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.008111 | 0.51176 | 0.7193 | 0.6996 | +0.1934 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.008111 | 0.51169 | 0.7189 | 0.6979 | +0.1943 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.008111 | 0.51124 | 0.7197 | 0.6979 | +0.1944 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51122 | 0.7220 | 0.7008 | +0.1954 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51094 | 0.7224 | 0.7008 | +0.1955 |
+| T6 | 2023 | 2024 | M1 | 0.008111 | 0.51361 | 0.7165 | 0.6927 | +0.1913 |
+| T6 | 2023 | 2024 | M3 | 0.008111 | 0.51349 | 0.7169 | 0.6927 | +0.1914 |
+| T6 | 2023-2024 | 2025 | M1 | 0.008111 | 0.51389 | 0.7169 | 0.6951 | +0.1902 |
+| T6 | 2023-2024 | 2025 | M3 | 0.008111 | 0.51363 | 0.7173 | 0.6951 | +0.1903 |
+group H shrinkage m, test 2024: h_hard=47.7, h_gb=61.5, h_ld=750, h_pu=93.3, h_whiff=52.1, h_chase=58.6, h_zcon=56.3, h_xhit=124, h_park_hand=1.32e+03
+group H shrinkage m, test 2025: h_hard=46.5, h_gb=62.7, h_ld=892, h_pu=97.1, h_whiff=52.1, h_chase=60.7, h_zcon=56.1, h_xhit=120, h_park_hand=1.4e+03
+
+## Stop rules
+- Rule 6a, model beats B1 on batter-game AUC in the training inner CV (M1 and M3, each walk-forward fold): PASS
+- Rule 6b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1 and M3, each walk-forward fold): PASS
+
+## T4 — placebo: H columns permuted within date, 2 permutations (seeds 20261250 + k), M3 refitted at each fold's real C; date bootstrap seed 20261204
+placebo gain (log loss M1 − permuted M3, per-row mean over permutations) -0.00005 (95% -0.00008 to +0.00000); per-permutation statistics 2.5–97.5%: -0.00007 to -0.00003
+- Rule 5, placebo interval entirely above 0: no
+
+## T1 — PRIMARY: walk-forward log loss M1 − M3, paired by row (date bootstrap seed 20261201)
+pooled 2024–25: +0.00034 (95% +0.00012 to +0.00052), rows 87021
+   2024: +0.00009 (95% -0.00011 to +0.00051)
+   2025: +0.00059 (95% +0.00036 to +0.00091)
+batter-game log loss M1 0.51505, M3 0.51471; AUC M1 0.7071, M3 0.7076
+**T1 rule: Confirmed** (95% interval entirely above 0 and the point estimate positive in 2024 and in 2025)
+
+## T2 — LOSO log loss M1 − M3 (secondary, seed 20261202): +0.00037 (95% +0.00023 to +0.00054); 2022 +0.00027 (95% +0.00005 to +0.00052); 2023 +0.00044 (95% +0.00017 to +0.00074); 2024 +0.00019 (95% -0.00006 to +0.00046); 2025 +0.00059 (95% +0.00032 to +0.00078). T1's rule applied: Confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261203)
+M3 0.984 (0.965–0.992), M1 0.975 (0.954–0.987), B2 0.962 (0.937–0.977); M3 − M1 +0.0082 (95% +0.0013 to +0.0179) (364 dates); M3 − B2 +0.0220 (95% +0.0080 to +0.0275) (364 dates)
+
+## T5 — EXPLORATORY ablations (walk-forward; date bootstrap seed 20261205); gain = log loss(reference) − log loss(model)
+| model | vs | log-loss gain | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + H1 | M1 | +0.000347 (95% +0.000240 to +0.000536) | +0.0000 (95% -0.0069 to +0.0055) |
+| M3 − H1 | M3 | -0.000246 (95% -0.000436 to -0.000154) | -0.0083 (95% -0.0196 to -0.0013) |
+| M1 + H2 | M1 | -0.000007 (95% -0.000035 to +0.000014) | +0.0055 (95% +0.0000 to +0.0110) |
+| M3 − H2 | M3 | +0.000011 (95% -0.000006 to +0.000024) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H3 | M1 | +0.000012 (95% -0.000006 to +0.000024) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H3 | M3 | -0.000006 (95% -0.000013 to +0.000004) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H4 | M1 | +0.000007 (95% -0.000013 to +0.000032) | +0.0027 (95% +0.0000 to +0.0055) |
+| M3 − H4 | M3 | -0.000017 (95% -0.000040 to +0.000032) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H5 | M1 | +0.000102 (95% +0.000047 to +0.000204) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H5 | M3 | +0.000019 (95% -0.000058 to +0.000094) | -0.0027 (95% -0.0082 to +0.0000) |
+
+## M3 standardised coefficients, fit on 2022–24 at C 0.008111 (date bootstrap seed 20261207); group H rows
+| feature | coef | lo | hi |
+|---|---|---|---|
+| h_hard | +0.0050 | -0.0101 | +0.0362 |
+| h_xhit | +0.1098 | +0.0767 | +0.1369 |
+| h_gb | +0.0232 | +0.0009 | +0.0480 |
+| h_ld | +0.0196 | +0.0069 | +0.0444 |
+| h_pu | +0.0091 | -0.0043 | +0.0286 |
+| H1_miss | +0.0018 | -0.0221 | +0.0364 |
+| h_whiff | -0.0014 | -0.0373 | +0.0294 |
+| h_chase | -0.0006 | -0.0188 | +0.0147 |
+| h_zcon | +0.0109 | -0.0184 | +0.0319 |
+| H2_miss | +0.0069 | -0.0129 | +0.0192 |
+| h_same | +0.0057 | -0.0068 | +0.0174 |
+| h_same_miss | +0.0000 | +0.0000 | +0.0000 |
+| h_park_hand | +0.0090 | -0.0241 | +0.0477 |
+| h_speed | +0.0195 | +0.0066 | +0.0265 |
+| h_speed_miss | +0.0015 | -0.0066 | +0.0132 |
+| h_age | +0.0051 | -0.0140 | +0.0189 |
+| h_age2 | -0.0097 | -0.0203 | +0.0016 |
+| sp_age | -0.0251 | -0.0316 | -0.0117 |
+| sp_age2 | +0.0149 | -0.0046 | +0.0249 |
+| trend_hab | +0.0189 | +0.0086 | +0.0351 |
+| trend_xhit | -0.0120 | -0.0268 | -0.0048 |
+| H5_trend_miss | -0.0116 | -0.0295 | +0.0034 |
+M3 + x_speed_gb (exploratory, same C and resamples): x_speed_gb -0.0003 (-0.0130 to +0.0083)
+
+## T6 — DIAGNOSTICS (seed 20261206)
+2022 dropped from training: +0.00037 (95% +0.00009 to +0.00055); 2024 +0.00017 (95% -0.00004 to +0.00039); 2025 +0.00058 (95% +0.00025 to +0.00080)
+batter side R: +0.00031 (95% +0.00001 to +0.00059), rows 46954
+batter side L: +0.00027 (95% -0.00006 to +0.00073), rows 30750
+batter side S: +0.00075 (95% +0.00012 to +0.00124), rows 9317
+
+## T7 — hypothesis checks (proposed by Claude; kept by William; coefficients from the table above; no rule)
+V1: h_xhit +0.1098 (+0.0767 to +0.1369), sign as read for support; h_hard +0.0050 (-0.0101 to +0.0362), sign as read for support
+V2: h_zcon +0.0109 (-0.0184 to +0.0319), sign as read for support; h_whiff -0.0014 (-0.0373 to +0.0294), sign as read for support
+V3: h_same +0.0057 (-0.0068 to +0.0174), sign against
+V4: h_speed +0.0195 (+0.0066 to +0.0265), sign as read for support; x_speed_gb -0.0003 (-0.0130 to +0.0083), sign against
+V5: age contrast 34 vs 29 (logit) -0.0094 (-0.0439 to +0.0148), sign as read for support; trend_hab +0.0189 (+0.0086 to +0.0351), sign as read for support
+V6: h_chase -0.0006 (-0.0188 to +0.0147), sign as read for support
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) T1 gain in +0.0002..+0.0010 | met | +0.00034; interval excludes 0: True |
+| (b) M1 + H1 has the largest gain of the five M1 + Hk | met | H1 +0.000347, H2 -0.000007, H3 +0.000012, H4 +0.000007, H5 +0.000102 |
+| (c) h_same < 0, interval excludes 0 | not met | +0.0057 (-0.0068 to +0.0174), sign against |
+| (d) h_whiff, h_chase, h_zcon intervals each include 0 | met |  |
+| (e) |h_speed| < 0.02 per SD | met | +0.0195 |
+| (e) age contrast interval excludes 0 | not met | -0.0094 (-0.0439 to +0.0148) |
+| (e) trend_hab interval includes 0 | not met | +0.0189 (+0.0086 to +0.0351), sign as read for support |
+| (f) top-1 M3 − M1 in −0.015..+0.025 | met | +0.0082 |
+| (g) placebo interval includes 0 | met | -0.00005 (95% -0.00008 to +0.00000) |
+| (h) T6 2022-dropped same sign as T1 | met | +0.00037 vs +0.00034 |
+| (i) M3 top-20% days ≤ overall + 0.03 | met | top-20% 1.0000 vs overall 0.9835 |
+
+runtime 119 s
+
+M3 h_xhit coefficient (per SD of the shrunk h_xhit, fit 2022–24; descriptive on its own): +0.109756; T1 Confirmed; placebo not Confirmed
+Plan's pass rule on this seed:
+- M3 h_xhit coefficient in 0.05..0.15: yes
+- T1 Confirmed: yes
+- placebo not Confirmed: yes
+
+## planted-null, seed 9003: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(a_k) + 0.50*z(a_hab) + 0.00*z(h_xhit shrunk); shrunk columns and z from the train-2022-24 fold, applied to all rows; missing -> 0; seed 9003
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## M1 reproduction (plan Section 10 rule 3)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 0.0231 | 0.51234 | 0.7177 | 0.6897 | +0.1787 |
+| WF | 2022-2023 | 2024 | M3 | 0.008111 | 0.51254 | 0.7173 | 0.6897 | +0.1785 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51394 | 0.7157 | 0.6874 | +0.1746 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51406 | 0.7155 | 0.6874 | +0.1746 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.51661 | 0.7104 | 0.6842 | +0.1653 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.008111 | 0.51673 | 0.7102 | 0.6842 | +0.1653 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.008111 | 0.51556 | 0.7110 | 0.6865 | +0.1777 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.008111 | 0.51564 | 0.7108 | 0.6865 | +0.1777 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.008111 | 0.51442 | 0.7130 | 0.6878 | +0.1754 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.008111 | 0.51451 | 0.7128 | 0.6878 | +0.1755 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51394 | 0.7157 | 0.6874 | +0.1746 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51406 | 0.7155 | 0.6874 | +0.1746 |
+| T6 | 2023 | 2024 | M1 | 0.008111 | 0.51433 | 0.7161 | 0.6862 | +0.1596 |
+| T6 | 2023 | 2024 | M3 | 0.008111 | 0.51459 | 0.7154 | 0.6862 | +0.1596 |
+| T6 | 2023-2024 | 2025 | M1 | 0.008111 | 0.51566 | 0.7139 | 0.6843 | +0.1632 |
+| T6 | 2023-2024 | 2025 | M3 | 0.008111 | 0.51587 | 0.7135 | 0.6843 | +0.1632 |
+group H shrinkage m, test 2024: h_hard=47.7, h_gb=61.5, h_ld=750, h_pu=93.3, h_whiff=52.1, h_chase=58.6, h_zcon=56.3, h_xhit=124, h_park_hand=1.32e+03
+group H shrinkage m, test 2025: h_hard=46.5, h_gb=62.7, h_ld=892, h_pu=97.1, h_whiff=52.1, h_chase=60.7, h_zcon=56.1, h_xhit=120, h_park_hand=1.4e+03
+
+## Stop rules
+- Rule 6a, model beats B1 on batter-game AUC in the training inner CV (M1 and M3, each walk-forward fold): PASS
+- Rule 6b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1 and M3, each walk-forward fold): PASS
+
+## T4 — placebo: H columns permuted within date, 2 permutations (seeds 20261250 + k), M3 refitted at each fold's real C; date bootstrap seed 20261204
+placebo gain (log loss M1 − permuted M3, per-row mean over permutations) -0.00009 (95% -0.00018 to -0.00002); per-permutation statistics 2.5–97.5%: -0.00011 to -0.00006
+- Rule 5, placebo interval entirely above 0: no
+
+## T1 — PRIMARY: walk-forward log loss M1 − M3, paired by row (date bootstrap seed 20261201)
+pooled 2024–25: -0.00008 (95% -0.00016 to -0.00003), rows 87021
+   2024: -0.00018 (95% -0.00029 to -0.00008)
+   2025: +0.00003 (95% -0.00007 to +0.00010)
+batter-game log loss M1 0.51799, M3 0.51807; AUC M1 0.7005, M3 0.7003
+**T1 rule: not confirmed** (95% interval entirely above 0 and the point estimate positive in 2024 and in 2025)
+
+## T2 — LOSO log loss M1 − M3 (secondary, seed 20261202): -0.00009 (95% -0.00012 to -0.00005); 2022 -0.00010 (95% -0.00021 to -0.00001); 2023 -0.00013 (95% -0.00021 to -0.00000); 2024 -0.00015 (95% -0.00025 to -0.00004); 2025 +0.00003 (95% -0.00004 to +0.00010). T1's rule applied: not confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261203)
+M3 0.973 (0.950–0.985), M1 0.973 (0.950–0.985), B2 0.967 (0.943–0.981); M3 − M1 +0.0000 (95% +0.0000 to +0.0000) (364 dates); M3 − B2 +0.0055 (95% -0.0124 to +0.0165) (364 dates)
+
+## T5 — EXPLORATORY ablations (walk-forward; date bootstrap seed 20261205); gain = log loss(reference) − log loss(model)
+| model | vs | log-loss gain | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + H1 | M1 | -0.000014 (95% -0.000058 to +0.000020) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H1 | M3 | +0.000027 (95% -0.000014 to +0.000078) | +0.0027 (95% +0.0000 to +0.0055) |
+| M1 + H2 | M1 | -0.000009 (95% -0.000024 to +0.000026) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H2 | M3 | +0.000012 (95% -0.000029 to +0.000030) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H3 | M1 | +0.000004 (95% -0.000018 to +0.000028) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H3 | M3 | -0.000004 (95% -0.000027 to +0.000016) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H4 | M1 | -0.000018 (95% -0.000038 to -0.000003) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H4 | M3 | +0.000010 (95% -0.000010 to +0.000024) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H5 | M1 | -0.000028 (95% -0.000056 to -0.000008) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H5 | M3 | +0.000041 (95% +0.000010 to +0.000070) | +0.0000 (95% +0.0000 to +0.0000) |
+
+## M3 standardised coefficients, fit on 2022–24 at C 0.008111 (date bootstrap seed 20261207); group H rows
+| feature | coef | lo | hi |
+|---|---|---|---|
+| h_hard | -0.0021 | -0.0295 | +0.0137 |
+| h_xhit | +0.0287 | +0.0121 | +0.0593 |
+| h_gb | -0.0079 | -0.0365 | +0.0195 |
+| h_ld | +0.0009 | -0.0157 | +0.0201 |
+| h_pu | -0.0054 | -0.0301 | +0.0145 |
+| H1_miss | -0.0107 | -0.0521 | +0.0225 |
+| h_whiff | +0.0029 | -0.0295 | +0.0431 |
+| h_chase | -0.0095 | -0.0283 | +0.0269 |
+| h_zcon | +0.0107 | -0.0196 | +0.0502 |
+| H2_miss | -0.0007 | -0.0143 | +0.0180 |
+| h_same | -0.0006 | -0.0084 | +0.0109 |
+| h_same_miss | +0.0000 | +0.0000 | +0.0000 |
+| h_park_hand | -0.0268 | -0.0696 | -0.0118 |
+| h_speed | +0.0076 | -0.0023 | +0.0208 |
+| h_speed_miss | +0.0054 | -0.0140 | +0.0235 |
+| h_age | +0.0039 | -0.0112 | +0.0242 |
+| h_age2 | -0.0008 | -0.0159 | +0.0111 |
+| sp_age | -0.0050 | -0.0243 | +0.0106 |
+| sp_age2 | +0.0002 | -0.0165 | +0.0167 |
+| trend_hab | +0.0083 | -0.0064 | +0.0273 |
+| trend_xhit | -0.0095 | -0.0260 | +0.0044 |
+| H5_trend_miss | -0.0059 | -0.0223 | +0.0083 |
+M3 + x_speed_gb (exploratory, same C and resamples): x_speed_gb -0.0043 (-0.0148 to +0.0041)
+
+## T6 — DIAGNOSTICS (seed 20261206)
+2022 dropped from training: -0.00023 (95% -0.00034 to -0.00017); 2024 -0.00045 (95% -0.00058 to -0.00023); 2025 -0.00002 (95% -0.00010 to +0.00009)
+batter side R: -0.00009 (95% -0.00019 to -0.00002), rows 46954
+batter side L: -0.00011 (95% -0.00022 to -0.00003), rows 30750
+batter side S: +0.00009 (95% -0.00009 to +0.00033), rows 9317
+
+## T7 — hypothesis checks (proposed by Claude; kept by William; coefficients from the table above; no rule)
+V1: h_xhit +0.0287 (+0.0121 to +0.0593), sign as read for support; h_hard -0.0021 (-0.0295 to +0.0137), sign against
+V2: h_zcon +0.0107 (-0.0196 to +0.0502), sign as read for support; h_whiff +0.0029 (-0.0295 to +0.0431), sign against
+V3: h_same -0.0006 (-0.0084 to +0.0109), sign as read for support
+V4: h_speed +0.0076 (-0.0023 to +0.0208), sign as read for support; x_speed_gb -0.0043 (-0.0148 to +0.0041), sign against
+V5: age contrast 34 vs 29 (logit) +0.0039 (-0.0192 to +0.0301), sign against; trend_hab +0.0083 (-0.0064 to +0.0273), sign as read for support
+V6: h_chase -0.0095 (-0.0283 to +0.0269), sign as read for support
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) T1 gain in +0.0002..+0.0010 | not met | -0.00008; interval excludes 0: True |
+| (b) M1 + H1 has the largest gain of the five M1 + Hk | not met | H1 -0.000014, H2 -0.000009, H3 +0.000004, H4 -0.000018, H5 -0.000028 |
+| (c) h_same < 0, interval excludes 0 | not met | -0.0006 (-0.0084 to +0.0109), sign as read for support |
+| (d) h_whiff, h_chase, h_zcon intervals each include 0 | met |  |
+| (e) |h_speed| < 0.02 per SD | met | +0.0076 |
+| (e) age contrast interval excludes 0 | not met | +0.0039 (-0.0192 to +0.0301) |
+| (e) trend_hab interval includes 0 | met | +0.0083 (-0.0064 to +0.0273), sign as read for support |
+| (f) top-1 M3 − M1 in −0.015..+0.025 | met | +0.0000 |
+| (g) placebo interval includes 0 | not met | -0.00009 (95% -0.00018 to -0.00002) |
+| (h) T6 2022-dropped same sign as T1 | met | -0.00023 vs -0.00008 |
+| (i) M3 top-20% days ≤ overall + 0.03 | met | top-20% 0.9861 vs overall 0.9725 |
+
+runtime 118 s
+
+M3 h_xhit coefficient (per SD of the shrunk h_xhit, fit 2022–24; descriptive on its own): +0.028699; T1 not confirmed; placebo not Confirmed
+Plan's pass rule on this seed:
+- T1 not Confirmed: yes
+
+## planted-null, seed 9004: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(a_k) + 0.50*z(a_hab) + 0.00*z(h_xhit shrunk); shrunk columns and z from the train-2022-24 fold, applied to all rows; missing -> 0; seed 9004
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## M1 reproduction (plan Section 10 rule 3)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 0.008111 | 0.51194 | 0.7187 | 0.6934 | +0.1750 |
+| WF | 2022-2023 | 2024 | M3 | 0.008111 | 0.51209 | 0.7185 | 0.6934 | +0.1751 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51344 | 0.7167 | 0.6917 | +0.1701 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51352 | 0.7166 | 0.6917 | +0.1701 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.51591 | 0.7103 | 0.6847 | +0.1620 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.008111 | 0.51603 | 0.7100 | 0.6847 | +0.1620 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.008111 | 0.51521 | 0.7137 | 0.6885 | +0.1724 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.008111 | 0.51529 | 0.7136 | 0.6885 | +0.1724 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.008111 | 0.51395 | 0.7143 | 0.6883 | +0.1722 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.008111 | 0.51401 | 0.7142 | 0.6883 | +0.1722 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51344 | 0.7167 | 0.6917 | +0.1701 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51352 | 0.7166 | 0.6917 | +0.1701 |
+| T6 | 2023 | 2024 | M1 | 0.008111 | 0.51306 | 0.7133 | 0.6877 | +0.1591 |
+| T6 | 2023 | 2024 | M3 | 0.008111 | 0.51347 | 0.7126 | 0.6877 | +0.1591 |
+| T6 | 2023-2024 | 2025 | M1 | 0.008111 | 0.51483 | 0.7129 | 0.6880 | +0.1596 |
+| T6 | 2023-2024 | 2025 | M3 | 0.008111 | 0.51501 | 0.7126 | 0.6880 | +0.1596 |
+group H shrinkage m, test 2024: h_hard=47.7, h_gb=61.5, h_ld=750, h_pu=93.3, h_whiff=52.1, h_chase=58.6, h_zcon=56.3, h_xhit=124, h_park_hand=1.32e+03
+group H shrinkage m, test 2025: h_hard=46.5, h_gb=62.7, h_ld=892, h_pu=97.1, h_whiff=52.1, h_chase=60.7, h_zcon=56.1, h_xhit=120, h_park_hand=1.4e+03
+
+## Stop rules
+- Rule 6a, model beats B1 on batter-game AUC in the training inner CV (M1 and M3, each walk-forward fold): PASS
+- Rule 6b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1 and M3, each walk-forward fold): PASS
+
+## T4 — placebo: H columns permuted within date, 2 permutations (seeds 20261250 + k), M3 refitted at each fold's real C; date bootstrap seed 20261204
+placebo gain (log loss M1 − permuted M3, per-row mean over permutations) -0.00004 (95% -0.00008 to +0.00001); per-permutation statistics 2.5–97.5%: -0.00005 to -0.00003
+- Rule 5, placebo interval entirely above 0: no
+
+## T1 — PRIMARY: walk-forward log loss M1 − M3, paired by row (date bootstrap seed 20261201)
+pooled 2024–25: -0.00008 (95% -0.00016 to -0.00000), rows 87021
+   2024: -0.00012 (95% -0.00023 to +0.00004)
+   2025: -0.00005 (95% -0.00011 to +0.00004)
+batter-game log loss M1 0.51737, M3 0.51745; AUC M1 0.7024, M3 0.7022
+**T1 rule: not confirmed** (95% interval entirely above 0 and the point estimate positive in 2024 and in 2025)
+
+## T2 — LOSO log loss M1 − M3 (secondary, seed 20261202): -0.00005 (95% -0.00009 to -0.00000); 2022 -0.00004 (95% -0.00012 to +0.00003); 2023 -0.00002 (95% -0.00010 to +0.00006); 2024 -0.00010 (95% -0.00019 to +0.00003); 2025 -0.00005 (95% -0.00016 to +0.00005). T1's rule applied: not confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261203)
+M3 0.978 (0.957–0.989), M1 0.978 (0.957–0.989), B2 0.962 (0.937–0.977); M3 − M1 +0.0000 (95% +0.0000 to +0.0000) (364 dates); M3 − B2 +0.0165 (95% -0.0042 to +0.0357) (364 dates)
+
+## T5 — EXPLORATORY ablations (walk-forward; date bootstrap seed 20261205); gain = log loss(reference) − log loss(model)
+| model | vs | log-loss gain | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + H1 | M1 | -0.000015 (95% -0.000045 to +0.000032) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H1 | M3 | +0.000009 (95% -0.000034 to +0.000054) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H2 | M1 | -0.000001 (95% -0.000021 to +0.000014) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H2 | M3 | +0.000002 (95% -0.000015 to +0.000023) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H3 | M1 | -0.000014 (95% -0.000037 to +0.000007) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H3 | M3 | +0.000015 (95% -0.000007 to +0.000040) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H4 | M1 | +0.000002 (95% -0.000007 to +0.000009) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H4 | M3 | +0.000021 (95% -0.000007 to +0.000054) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H5 | M1 | -0.000034 (95% -0.000071 to +0.000012) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H5 | M3 | +0.000058 (95% +0.000010 to +0.000104) | +0.0000 (95% +0.0000 to +0.0000) |
+
+## M3 standardised coefficients, fit on 2022–24 at C 0.008111 (date bootstrap seed 20261207); group H rows
+| feature | coef | lo | hi |
+|---|---|---|---|
+| h_hard | +0.0095 | -0.0089 | +0.0257 |
+| h_xhit | +0.0231 | +0.0020 | +0.0447 |
+| h_gb | -0.0081 | -0.0291 | +0.0233 |
+| h_ld | +0.0040 | -0.0096 | +0.0229 |
+| h_pu | +0.0065 | -0.0140 | +0.0314 |
+| H1_miss | -0.0039 | -0.0396 | +0.0236 |
+| h_whiff | -0.0238 | -0.0638 | +0.0151 |
+| h_chase | +0.0085 | -0.0170 | +0.0281 |
+| h_zcon | -0.0218 | -0.0578 | -0.0044 |
+| H2_miss | +0.0004 | -0.0117 | +0.0164 |
+| h_same | -0.0081 | -0.0242 | +0.0072 |
+| h_same_miss | +0.0000 | +0.0000 | +0.0000 |
+| h_park_hand | +0.0164 | -0.0120 | +0.0554 |
+| h_speed | +0.0075 | -0.0043 | +0.0194 |
+| h_speed_miss | +0.0131 | +0.0009 | +0.0245 |
+| h_age | +0.0042 | -0.0088 | +0.0201 |
+| h_age2 | -0.0048 | -0.0247 | +0.0046 |
+| sp_age | -0.0031 | -0.0202 | +0.0110 |
+| sp_age2 | +0.0060 | -0.0107 | +0.0223 |
+| trend_hab | +0.0033 | -0.0196 | +0.0125 |
+| trend_xhit | -0.0023 | -0.0135 | +0.0161 |
+| H5_trend_miss | -0.0150 | -0.0260 | -0.0013 |
+M3 + x_speed_gb (exploratory, same C and resamples): x_speed_gb -0.0063 (-0.0185 to +0.0050)
+
+## T6 — DIAGNOSTICS (seed 20261206)
+2022 dropped from training: -0.00019 (95% -0.00032 to -0.00011); 2024 -0.00029 (95% -0.00053 to -0.00013); 2025 -0.00010 (95% -0.00021 to +0.00001)
+batter side R: -0.00005 (95% -0.00017 to +0.00007), rows 46954
+batter side L: -0.00016 (95% -0.00028 to -0.00005), rows 30750
+batter side S: +0.00003 (95% -0.00029 to +0.00021), rows 9317
+
+## T7 — hypothesis checks (proposed by Claude; kept by William; coefficients from the table above; no rule)
+V1: h_xhit +0.0231 (+0.0020 to +0.0447), sign as read for support; h_hard +0.0095 (-0.0089 to +0.0257), sign as read for support
+V2: h_zcon -0.0218 (-0.0578 to -0.0044), sign against; h_whiff -0.0238 (-0.0638 to +0.0151), sign as read for support
+V3: h_same -0.0081 (-0.0242 to +0.0072), sign as read for support
+V4: h_speed +0.0075 (-0.0043 to +0.0194), sign as read for support; x_speed_gb -0.0063 (-0.0185 to +0.0050), sign against
+V5: age contrast 34 vs 29 (logit) -0.0023 (-0.0201 to +0.0075), sign as read for support; trend_hab +0.0033 (-0.0196 to +0.0125), sign as read for support
+V6: h_chase +0.0085 (-0.0170 to +0.0281), sign against
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) T1 gain in +0.0002..+0.0010 | not met | -0.00008; interval excludes 0: True |
+| (b) M1 + H1 has the largest gain of the five M1 + Hk | not met | H1 -0.000015, H2 -0.000001, H3 -0.000014, H4 +0.000002, H5 -0.000034 |
+| (c) h_same < 0, interval excludes 0 | not met | -0.0081 (-0.0242 to +0.0072), sign as read for support |
+| (d) h_whiff, h_chase, h_zcon intervals each include 0 | not met |  |
+| (e) |h_speed| < 0.02 per SD | met | +0.0075 |
+| (e) age contrast interval excludes 0 | not met | -0.0023 (-0.0201 to +0.0075) |
+| (e) trend_hab interval includes 0 | met | +0.0033 (-0.0196 to +0.0125), sign as read for support |
+| (f) top-1 M3 − M1 in −0.015..+0.025 | met | +0.0000 |
+| (g) placebo interval includes 0 | met | -0.00004 (95% -0.00008 to +0.00001) |
+| (h) T6 2022-dropped same sign as T1 | met | -0.00019 vs -0.00008 |
+| (i) M3 top-20% days ≤ overall + 0.03 | met | top-20% 0.9861 vs overall 0.9780 |
+
+runtime 112 s
+
+M3 h_xhit coefficient (per SD of the shrunk h_xhit, fit 2022–24; descriptive on its own): +0.023082; T1 not confirmed; placebo not Confirmed
+Plan's pass rule on this seed:
+- T1 not Confirmed: yes
+
+## planted-null, seed 9005: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(a_k) + 0.50*z(a_hab) + 0.00*z(h_xhit shrunk); shrunk columns and z from the train-2022-24 fold, applied to all rows; missing -> 0; seed 9005
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## M1 reproduction (plan Section 10 rule 3)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 0.008111 | 0.51155 | 0.7207 | 0.6946 | +0.1819 |
+| WF | 2022-2023 | 2024 | M3 | 0.008111 | 0.51173 | 0.7204 | 0.6946 | +0.1819 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51369 | 0.7184 | 0.6923 | +0.1758 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51378 | 0.7182 | 0.6923 | +0.1758 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.51636 | 0.7104 | 0.6859 | +0.1681 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.008111 | 0.51644 | 0.7102 | 0.6859 | +0.1681 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.0231 | 0.51500 | 0.7133 | 0.6892 | +0.1755 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.008111 | 0.51508 | 0.7130 | 0.6892 | +0.1754 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.008111 | 0.51350 | 0.7141 | 0.6897 | +0.1779 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.008111 | 0.51360 | 0.7139 | 0.6897 | +0.1779 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51369 | 0.7184 | 0.6923 | +0.1758 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51378 | 0.7182 | 0.6923 | +0.1758 |
+| T6 | 2023 | 2024 | M1 | 0.008111 | 0.51377 | 0.7161 | 0.6897 | +0.1706 |
+| T6 | 2023 | 2024 | M3 | 0.008111 | 0.51392 | 0.7159 | 0.6897 | +0.1707 |
+| T6 | 2023-2024 | 2025 | M1 | 0.008111 | 0.51579 | 0.7150 | 0.6887 | +0.1672 |
+| T6 | 2023-2024 | 2025 | M3 | 0.008111 | 0.51587 | 0.7149 | 0.6887 | +0.1672 |
+group H shrinkage m, test 2024: h_hard=47.7, h_gb=61.5, h_ld=750, h_pu=93.3, h_whiff=52.1, h_chase=58.6, h_zcon=56.3, h_xhit=124, h_park_hand=1.32e+03
+group H shrinkage m, test 2025: h_hard=46.5, h_gb=62.7, h_ld=892, h_pu=97.1, h_whiff=52.1, h_chase=60.7, h_zcon=56.1, h_xhit=120, h_park_hand=1.4e+03
+
+## Stop rules
+- Rule 6a, model beats B1 on batter-game AUC in the training inner CV (M1 and M3, each walk-forward fold): PASS
+- Rule 6b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1 and M3, each walk-forward fold): PASS
+
+## T4 — placebo: H columns permuted within date, 2 permutations (seeds 20261250 + k), M3 refitted at each fold's real C; date bootstrap seed 20261204
+placebo gain (log loss M1 − permuted M3, per-row mean over permutations) -0.00011 (95% -0.00017 to -0.00006); per-permutation statistics 2.5–97.5%: -0.00012 to -0.00011
+- Rule 5, placebo interval entirely above 0: no
+
+## T1 — PRIMARY: walk-forward log loss M1 − M3, paired by row (date bootstrap seed 20261201)
+pooled 2024–25: -0.00005 (95% -0.00013 to +0.00004), rows 87021
+   2024: -0.00010 (95% -0.00022 to +0.00003)
+   2025: -0.00000 (95% -0.00009 to +0.00011)
+batter-game log loss M1 0.51779, M3 0.51784; AUC M1 0.7017, M3 0.7017
+**T1 rule: not confirmed** (95% interval entirely above 0 and the point estimate positive in 2024 and in 2025)
+
+## T2 — LOSO log loss M1 − M3 (secondary, seed 20261202): -0.00006 (95% -0.00010 to -0.00001); 2022 -0.00009 (95% -0.00017 to +0.00006); 2023 -0.00009 (95% -0.00020 to +0.00002); 2024 -0.00004 (95% -0.00014 to +0.00003); 2025 -0.00000 (95% -0.00010 to +0.00009). T1's rule applied: not confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261203)
+M3 0.973 (0.950–0.985), M1 0.973 (0.950–0.985), B2 0.962 (0.937–0.977); M3 − M1 +0.0000 (95% +0.0000 to +0.0000) (364 dates); M3 − B2 +0.0110 (95% -0.0110 to +0.0192) (364 dates)
+
+## T5 — EXPLORATORY ablations (walk-forward; date bootstrap seed 20261205); gain = log loss(reference) − log loss(model)
+| model | vs | log-loss gain | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + H1 | M1 | +0.000007 (95% -0.000017 to +0.000046) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H1 | M3 | -0.000017 (95% -0.000057 to +0.000007) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H2 | M1 | -0.000043 (95% -0.000088 to -0.000001) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H2 | M3 | +0.000038 (95% -0.000007 to +0.000087) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H3 | M1 | -0.000005 (95% -0.000016 to +0.000005) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H3 | M3 | +0.000005 (95% -0.000005 to +0.000015) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H4 | M1 | -0.000011 (95% -0.000044 to +0.000030) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H4 | M3 | -0.000000 (95% -0.000045 to +0.000030) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H5 | M1 | -0.000015 (95% -0.000052 to +0.000022) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H5 | M3 | +0.000006 (95% -0.000033 to +0.000040) | +0.0000 (95% +0.0000 to +0.0000) |
+
+## M3 standardised coefficients, fit on 2022–24 at C 0.008111 (date bootstrap seed 20261207); group H rows
+| feature | coef | lo | hi |
+|---|---|---|---|
+| h_hard | +0.0112 | -0.0095 | +0.0418 |
+| h_xhit | -0.0103 | -0.0324 | +0.0229 |
+| h_gb | +0.0109 | -0.0183 | +0.0437 |
+| h_ld | +0.0226 | +0.0060 | +0.0435 |
+| h_pu | +0.0049 | -0.0142 | +0.0256 |
+| H1_miss | -0.0248 | -0.0457 | +0.0020 |
+| h_whiff | -0.0084 | -0.0441 | +0.0213 |
+| h_chase | +0.0042 | -0.0165 | +0.0187 |
+| h_zcon | +0.0150 | -0.0282 | +0.0438 |
+| H2_miss | +0.0134 | +0.0010 | +0.0285 |
+| h_same | -0.0023 | -0.0134 | +0.0064 |
+| h_same_miss | +0.0000 | +0.0000 | +0.0000 |
+| h_park_hand | -0.0042 | -0.0301 | +0.0330 |
+| h_speed | -0.0046 | -0.0169 | +0.0070 |
+| h_speed_miss | -0.0175 | -0.0338 | +0.0003 |
+| h_age | +0.0067 | -0.0081 | +0.0219 |
+| h_age2 | +0.0016 | -0.0146 | +0.0174 |
+| sp_age | -0.0048 | -0.0199 | +0.0113 |
+| sp_age2 | +0.0036 | -0.0142 | +0.0175 |
+| trend_hab | +0.0041 | -0.0186 | +0.0227 |
+| trend_xhit | -0.0110 | -0.0321 | +0.0051 |
+| H5_trend_miss | +0.0179 | +0.0001 | +0.0414 |
+M3 + x_speed_gb (exploratory, same C and resamples): x_speed_gb -0.0086 (-0.0216 to +0.0009)
+
+## T6 — DIAGNOSTICS (seed 20261206)
+2022 dropped from training: -0.00013 (95% -0.00025 to -0.00003); 2024 -0.00024 (95% -0.00049 to -0.00006); 2025 -0.00001 (95% -0.00017 to +0.00007)
+batter side R: -0.00008 (95% -0.00020 to +0.00002), rows 46954
+batter side L: +0.00005 (95% -0.00005 to +0.00016), rows 30750
+batter side S: -0.00022 (95% -0.00052 to +0.00000), rows 9317
+
+## T7 — hypothesis checks (proposed by Claude; kept by William; coefficients from the table above; no rule)
+V1: h_xhit -0.0103 (-0.0324 to +0.0229), sign against; h_hard +0.0112 (-0.0095 to +0.0418), sign as read for support
+V2: h_zcon +0.0150 (-0.0282 to +0.0438), sign as read for support; h_whiff -0.0084 (-0.0441 to +0.0213), sign as read for support
+V3: h_same -0.0023 (-0.0134 to +0.0064), sign as read for support
+V4: h_speed -0.0046 (-0.0169 to +0.0070), sign against; x_speed_gb -0.0086 (-0.0216 to +0.0009), sign against
+V5: age contrast 34 vs 29 (logit) +0.0118 (-0.0092 to +0.0351), sign against; trend_hab +0.0041 (-0.0186 to +0.0227), sign as read for support
+V6: h_chase +0.0042 (-0.0165 to +0.0187), sign against
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) T1 gain in +0.0002..+0.0010 | not met | -0.00005; interval excludes 0: False |
+| (b) M1 + H1 has the largest gain of the five M1 + Hk | met | H1 +0.000007, H2 -0.000043, H3 -0.000005, H4 -0.000011, H5 -0.000015 |
+| (c) h_same < 0, interval excludes 0 | not met | -0.0023 (-0.0134 to +0.0064), sign as read for support |
+| (d) h_whiff, h_chase, h_zcon intervals each include 0 | met |  |
+| (e) |h_speed| < 0.02 per SD | met | -0.0046 |
+| (e) age contrast interval excludes 0 | not met | +0.0118 (-0.0092 to +0.0351) |
+| (e) trend_hab interval includes 0 | met | +0.0041 (-0.0186 to +0.0227), sign as read for support |
+| (f) top-1 M3 − M1 in −0.015..+0.025 | met | +0.0000 |
+| (g) placebo interval includes 0 | not met | -0.00011 (95% -0.00017 to -0.00006) |
+| (h) T6 2022-dropped same sign as T1 | met | -0.00013 vs -0.00005 |
+| (i) M3 top-20% days ≤ overall + 0.03 | met | top-20% 0.9722 vs overall 0.9725 |
+
+runtime 109 s
+
+M3 h_xhit coefficient (per SD of the shrunk h_xhit, fit 2022–24; descriptive on its own): -0.010344; T1 not confirmed; placebo not Confirmed
+Plan's pass rule on this seed:
+- T1 not Confirmed: yes
+
+## planted-null, seed 9006: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(a_k) + 0.50*z(a_hab) + 0.00*z(h_xhit shrunk); shrunk columns and z from the train-2022-24 fold, applied to all rows; missing -> 0; seed 9006
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## M1 reproduction (plan Section 10 rule 3)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 0.008111 | 0.51145 | 0.7192 | 0.6932 | +0.1772 |
+| WF | 2022-2023 | 2024 | M3 | 0.008111 | 0.51154 | 0.7192 | 0.6932 | +0.1772 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51333 | 0.7181 | 0.6924 | +0.1712 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51338 | 0.7180 | 0.6924 | +0.1712 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.51697 | 0.7117 | 0.6860 | +0.1682 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.008111 | 0.51702 | 0.7116 | 0.6860 | +0.1682 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.0231 | 0.51668 | 0.7154 | 0.6915 | +0.1749 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.008111 | 0.51676 | 0.7153 | 0.6915 | +0.1748 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.0231 | 0.51481 | 0.7151 | 0.6897 | +0.1777 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.0231 | 0.51485 | 0.7150 | 0.6897 | +0.1777 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.008111 | 0.51333 | 0.7181 | 0.6924 | +0.1712 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51338 | 0.7180 | 0.6924 | +0.1712 |
+| T6 | 2023 | 2024 | M1 | 0.008111 | 0.51207 | 0.7130 | 0.6850 | +0.1670 |
+| T6 | 2023 | 2024 | M3 | 0.008111 | 0.51230 | 0.7126 | 0.6850 | +0.1670 |
+| T6 | 2023-2024 | 2025 | M1 | 0.008111 | 0.51462 | 0.7144 | 0.6879 | +0.1630 |
+| T6 | 2023-2024 | 2025 | M3 | 0.008111 | 0.51467 | 0.7143 | 0.6879 | +0.1630 |
+group H shrinkage m, test 2024: h_hard=47.7, h_gb=61.5, h_ld=750, h_pu=93.3, h_whiff=52.1, h_chase=58.6, h_zcon=56.3, h_xhit=124, h_park_hand=1.32e+03
+group H shrinkage m, test 2025: h_hard=46.5, h_gb=62.7, h_ld=892, h_pu=97.1, h_whiff=52.1, h_chase=60.7, h_zcon=56.1, h_xhit=120, h_park_hand=1.4e+03
+
+## Stop rules
+- Rule 6a, model beats B1 on batter-game AUC in the training inner CV (M1 and M3, each walk-forward fold): PASS
+- Rule 6b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1 and M3, each walk-forward fold): PASS
+
+## T4 — placebo: H columns permuted within date, 2 permutations (seeds 20261250 + k), M3 refitted at each fold's real C; date bootstrap seed 20261204
+placebo gain (log loss M1 − permuted M3, per-row mean over permutations) -0.00016 (95% -0.00020 to -0.00007); per-permutation statistics 2.5–97.5%: -0.00020 to -0.00011
+- Rule 5, placebo interval entirely above 0: no
+
+## T1 — PRIMARY: walk-forward log loss M1 − M3, paired by row (date bootstrap seed 20261201)
+pooled 2024–25: -0.00012 (95% -0.00021 to +0.00000), rows 87021
+   2024: -0.00013 (95% -0.00030 to +0.00001)
+   2025: -0.00012 (95% -0.00026 to -0.00003)
+batter-game log loss M1 0.51953, M3 0.51965; AUC M1 0.7037, M3 0.7034
+**T1 rule: not confirmed** (95% interval entirely above 0 and the point estimate positive in 2024 and in 2025)
+
+## T2 — LOSO log loss M1 − M3 (secondary, seed 20261202): -0.00006 (95% -0.00014 to -0.00001); 2022 -0.00005 (95% -0.00018 to +0.00008); 2023 +0.00002 (95% -0.00004 to +0.00011); 2024 -0.00009 (95% -0.00018 to -0.00003); 2025 -0.00012 (95% -0.00024 to +0.00005). T1's rule applied: not confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261203)
+M3 0.984 (0.965–0.992), M1 0.984 (0.965–0.992), B2 0.967 (0.943–0.981); M3 − M1 +0.0000 (95% +0.0000 to +0.0000) (364 dates); M3 − B2 +0.0165 (95% +0.0013 to +0.0317) (364 dates)
+
+## T5 — EXPLORATORY ablations (walk-forward; date bootstrap seed 20261205); gain = log loss(reference) − log loss(model)
+| model | vs | log-loss gain | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + H1 | M1 | -0.000040 (95% -0.000073 to -0.000013) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H1 | M3 | +0.000055 (95% +0.000019 to +0.000089) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H2 | M1 | -0.000021 (95% -0.000067 to +0.000032) | -0.0027 (95% -0.0082 to +0.0000) |
+| M3 − H2 | M3 | +0.000021 (95% -0.000032 to +0.000061) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H3 | M1 | -0.000010 (95% -0.000036 to +0.000044) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H3 | M3 | +0.000014 (95% -0.000041 to +0.000042) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H4 | M1 | -0.000027 (95% -0.000066 to +0.000001) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H4 | M3 | +0.000012 (95% -0.000013 to +0.000038) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H5 | M1 | -0.000026 (95% -0.000071 to +0.000054) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H5 | M3 | +0.000022 (95% -0.000063 to +0.000063) | +0.0000 (95% +0.0000 to +0.0000) |
+
+## M3 standardised coefficients, fit on 2022–24 at C 0.008111 (date bootstrap seed 20261207); group H rows
+| feature | coef | lo | hi |
+|---|---|---|---|
+| h_hard | +0.0156 | -0.0069 | +0.0308 |
+| h_xhit | -0.0039 | -0.0398 | +0.0337 |
+| h_gb | +0.0074 | -0.0110 | +0.0255 |
+| h_ld | +0.0093 | -0.0042 | +0.0263 |
+| h_pu | +0.0074 | -0.0143 | +0.0264 |
+| H1_miss | -0.0021 | -0.0235 | +0.0168 |
+| h_whiff | -0.0611 | -0.1058 | -0.0273 |
+| h_chase | +0.0129 | -0.0122 | +0.0353 |
+| h_zcon | -0.0362 | -0.0727 | -0.0055 |
+| H2_miss | -0.0043 | -0.0171 | +0.0068 |
+| h_same | -0.0061 | -0.0204 | +0.0077 |
+| h_same_miss | +0.0000 | +0.0000 | +0.0000 |
+| h_park_hand | +0.0533 | +0.0278 | +0.0888 |
+| h_speed | +0.0080 | -0.0031 | +0.0204 |
+| h_speed_miss | -0.0061 | -0.0199 | +0.0060 |
+| h_age | -0.0067 | -0.0222 | +0.0120 |
+| h_age2 | +0.0153 | -0.0066 | +0.0310 |
+| sp_age | -0.0148 | -0.0291 | -0.0042 |
+| sp_age2 | +0.0161 | +0.0009 | +0.0303 |
+| trend_hab | +0.0156 | -0.0061 | +0.0289 |
+| trend_xhit | +0.0001 | -0.0147 | +0.0175 |
+| H5_trend_miss | -0.0109 | -0.0208 | +0.0029 |
+M3 + x_speed_gb (exploratory, same C and resamples): x_speed_gb -0.0095 (-0.0169 to -0.0022)
+
+## T6 — DIAGNOSTICS (seed 20261206)
+2022 dropped from training: -0.00011 (95% -0.00018 to +0.00001); 2024 -0.00005 (95% -0.00018 to +0.00013); 2025 -0.00016 (95% -0.00032 to -0.00000)
+batter side R: -0.00006 (95% -0.00022 to +0.00007), rows 46954
+batter side L: -0.00020 (95% -0.00030 to +0.00001), rows 30750
+batter side S: -0.00021 (95% -0.00041 to -0.00001), rows 9317
+
+## T7 — hypothesis checks (proposed by Claude; kept by William; coefficients from the table above; no rule)
+V1: h_xhit -0.0039 (-0.0398 to +0.0337), sign against; h_hard +0.0156 (-0.0069 to +0.0308), sign as read for support
+V2: h_zcon -0.0362 (-0.0727 to -0.0055), sign against; h_whiff -0.0611 (-0.1058 to -0.0273), sign as read for support
+V3: h_same -0.0061 (-0.0204 to +0.0077), sign as read for support
+V4: h_speed +0.0080 (-0.0031 to +0.0204), sign as read for support; x_speed_gb -0.0095 (-0.0169 to -0.0022), sign against
+V5: age contrast 34 vs 29 (logit) +0.0167 (-0.0099 to +0.0381), sign against; trend_hab +0.0156 (-0.0061 to +0.0289), sign as read for support
+V6: h_chase +0.0129 (-0.0122 to +0.0353), sign against
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) T1 gain in +0.0002..+0.0010 | not met | -0.00012; interval excludes 0: False |
+| (b) M1 + H1 has the largest gain of the five M1 + Hk | not met | H1 -0.000040, H2 -0.000021, H3 -0.000010, H4 -0.000027, H5 -0.000026 |
+| (c) h_same < 0, interval excludes 0 | not met | -0.0061 (-0.0204 to +0.0077), sign as read for support |
+| (d) h_whiff, h_chase, h_zcon intervals each include 0 | not met |  |
+| (e) |h_speed| < 0.02 per SD | met | +0.0080 |
+| (e) age contrast interval excludes 0 | not met | +0.0167 (-0.0099 to +0.0381) |
+| (e) trend_hab interval includes 0 | met | +0.0156 (-0.0061 to +0.0289), sign as read for support |
+| (f) top-1 M3 − M1 in −0.015..+0.025 | met | +0.0000 |
+| (g) placebo interval includes 0 | not met | -0.00016 (95% -0.00020 to -0.00007) |
+| (h) T6 2022-dropped same sign as T1 | met | -0.00011 vs -0.00012 |
+| (i) M3 top-20% days ≤ overall + 0.03 | met | top-20% 1.0000 vs overall 0.9835 |
+
+runtime 107 s
+
+M3 h_xhit coefficient (per SD of the shrunk h_xhit, fit 2022–24; descriptive on its own): -0.003897; T1 not confirmed; placebo not Confirmed
+Plan's pass rule on this seed:
+- T1 not Confirmed: yes
+
+## planted-null, seed 9007: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(a_k) + 0.50*z(a_hab) + 0.00*z(h_xhit shrunk); shrunk columns and z from the train-2022-24 fold, applied to all rows; missing -> 0; seed 9007
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## M1 reproduction (plan Section 10 rule 3)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 35.11 | 0.51068 | 0.7178 | 0.6916 | +0.1851 |
+| WF | 2022-2023 | 2024 | M3 | 35.11 | 0.51083 | 0.7175 | 0.6916 | +0.1851 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.002848 | 0.51241 | 0.7163 | 0.6896 | +0.1824 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51241 | 0.7162 | 0.6896 | +0.1828 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.51580 | 0.7099 | 0.6843 | +0.1708 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.008111 | 0.51590 | 0.7097 | 0.6843 | +0.1708 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.008111 | 0.51441 | 0.7118 | 0.6854 | +0.1771 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.008111 | 0.51446 | 0.7118 | 0.6854 | +0.1771 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.008111 | 0.51340 | 0.7125 | 0.6868 | +0.1760 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.008111 | 0.51351 | 0.7123 | 0.6868 | +0.1760 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.002848 | 0.51241 | 0.7163 | 0.6896 | +0.1824 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51241 | 0.7162 | 0.6896 | +0.1828 |
+| T6 | 2023 | 2024 | M1 | 0.008111 | 0.51309 | 0.7148 | 0.6900 | +0.1750 |
+| T6 | 2023 | 2024 | M3 | 0.008111 | 0.51323 | 0.7145 | 0.6900 | +0.1749 |
+| T6 | 2023-2024 | 2025 | M1 | 0.008111 | 0.51437 | 0.7138 | 0.6878 | +0.1769 |
+| T6 | 2023-2024 | 2025 | M3 | 0.008111 | 0.51443 | 0.7136 | 0.6878 | +0.1769 |
+group H shrinkage m, test 2024: h_hard=47.7, h_gb=61.5, h_ld=750, h_pu=93.3, h_whiff=52.1, h_chase=58.6, h_zcon=56.3, h_xhit=124, h_park_hand=1.32e+03
+group H shrinkage m, test 2025: h_hard=46.5, h_gb=62.7, h_ld=892, h_pu=97.1, h_whiff=52.1, h_chase=60.7, h_zcon=56.1, h_xhit=120, h_park_hand=1.4e+03
+
+## Stop rules
+- Rule 6a, model beats B1 on batter-game AUC in the training inner CV (M1 and M3, each walk-forward fold): PASS
+- Rule 6b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1 and M3, each walk-forward fold): PASS
+
+## T4 — placebo: H columns permuted within date, 2 permutations (seeds 20261250 + k), M3 refitted at each fold's real C; date bootstrap seed 20261204
+placebo gain (log loss M1 − permuted M3, per-row mean over permutations) -0.00008 (95% -0.00015 to -0.00003); per-permutation statistics 2.5–97.5%: -0.00009 to -0.00008
+- Rule 5, placebo interval entirely above 0: no
+
+## T1 — PRIMARY: walk-forward log loss M1 − M3, paired by row (date bootstrap seed 20261201)
+pooled 2024–25: -0.00010 (95% -0.00016 to -0.00001), rows 87021
+   2024: +0.00000 (95% -0.00018 to +0.00016)
+   2025: -0.00019 (95% -0.00035 to -0.00005)
+batter-game log loss M1 0.51731, M3 0.51740; AUC M1 0.7021, M3 0.7019
+**T1 rule: not confirmed** (95% interval entirely above 0 and the point estimate positive in 2024 and in 2025)
+
+## T2 — LOSO log loss M1 − M3 (secondary, seed 20261202): -0.00007 (95% -0.00011 to -0.00004); 2022 -0.00003 (95% -0.00009 to +0.00010); 2023 -0.00012 (95% -0.00023 to -0.00002); 2024 +0.00006 (95% -0.00002 to +0.00015); 2025 -0.00019 (95% -0.00033 to -0.00006). T1's rule applied: not confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261203)
+M3 0.975 (0.954–0.987), M1 0.975 (0.954–0.987), B2 0.953 (0.927–0.971); M3 − M1 +0.0000 (95% +0.0000 to +0.0000) (364 dates); M3 − B2 +0.0220 (95% +0.0038 to +0.0399) (364 dates)
+
+## T5 — EXPLORATORY ablations (walk-forward; date bootstrap seed 20261205); gain = log loss(reference) − log loss(model)
+| model | vs | log-loss gain | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + H1 | M1 | -0.000031 (95% -0.000087 to +0.000031) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H1 | M3 | +0.000033 (95% -0.000026 to +0.000088) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H2 | M1 | -0.000027 (95% -0.000047 to -0.000001) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H2 | M3 | +0.000028 (95% +0.000001 to +0.000059) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H3 | M1 | -0.000011 (95% -0.000051 to +0.000030) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H3 | M3 | +0.000013 (95% -0.000036 to +0.000055) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H4 | M1 | +0.000014 (95% -0.000026 to +0.000037) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H4 | M3 | -0.000006 (95% -0.000019 to +0.000014) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H5 | M1 | -0.000018 (95% -0.000058 to +0.000017) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H5 | M3 | +0.000027 (95% +0.000004 to +0.000060) | +0.0000 (95% +0.0000 to +0.0000) |
+
+## M3 standardised coefficients, fit on 2022–24 at C 0.008111 (date bootstrap seed 20261207); group H rows
+| feature | coef | lo | hi |
+|---|---|---|---|
+| h_hard | -0.0096 | -0.0312 | +0.0097 |
+| h_xhit | -0.0310 | -0.0620 | -0.0028 |
+| h_gb | +0.0242 | -0.0007 | +0.0451 |
+| h_ld | +0.0346 | +0.0187 | +0.0558 |
+| h_pu | -0.0023 | -0.0223 | +0.0158 |
+| H1_miss | -0.0039 | -0.0312 | +0.0298 |
+| h_whiff | -0.0073 | -0.0557 | +0.0261 |
+| h_chase | +0.0100 | -0.0042 | +0.0299 |
+| h_zcon | -0.0117 | -0.0431 | +0.0118 |
+| H2_miss | +0.0008 | -0.0137 | +0.0115 |
+| h_same | +0.0160 | +0.0073 | +0.0311 |
+| h_same_miss | +0.0000 | +0.0000 | +0.0000 |
+| h_park_hand | -0.0303 | -0.0544 | -0.0067 |
+| h_speed | +0.0018 | -0.0139 | +0.0123 |
+| h_speed_miss | +0.0107 | -0.0001 | +0.0213 |
+| h_age | +0.0076 | -0.0030 | +0.0212 |
+| h_age2 | -0.0070 | -0.0124 | +0.0073 |
+| sp_age | -0.0074 | -0.0317 | +0.0066 |
+| sp_age2 | +0.0094 | -0.0043 | +0.0283 |
+| trend_hab | -0.0030 | -0.0229 | +0.0103 |
+| trend_xhit | +0.0057 | -0.0113 | +0.0214 |
+| H5_trend_miss | +0.0119 | -0.0036 | +0.0246 |
+M3 + x_speed_gb (exploratory, same C and resamples): x_speed_gb -0.0085 (-0.0168 to -0.0001)
+
+## T6 — DIAGNOSTICS (seed 20261206)
+2022 dropped from training: -0.00024 (95% -0.00042 to -0.00020); 2024 -0.00026 (95% -0.00052 to -0.00010); 2025 -0.00022 (95% -0.00038 to -0.00007)
+batter side R: -0.00009 (95% -0.00022 to +0.00001), rows 46954
+batter side L: -0.00010 (95% -0.00025 to +0.00002), rows 30750
+batter side S: -0.00010 (95% -0.00053 to +0.00020), rows 9317
+
+## T7 — hypothesis checks (proposed by Claude; kept by William; coefficients from the table above; no rule)
+V1: h_xhit -0.0310 (-0.0620 to -0.0028), sign against; h_hard -0.0096 (-0.0312 to +0.0097), sign against
+V2: h_zcon -0.0117 (-0.0431 to +0.0118), sign against; h_whiff -0.0073 (-0.0557 to +0.0261), sign as read for support
+V3: h_same +0.0160 (+0.0073 to +0.0311), sign against
+V4: h_speed +0.0018 (-0.0139 to +0.0123), sign as read for support; x_speed_gb -0.0085 (-0.0168 to -0.0001), sign against
+V5: age contrast 34 vs 29 (logit) -0.0015 (-0.0151 to +0.0179), sign as read for support; trend_hab -0.0030 (-0.0229 to +0.0103), sign against
+V6: h_chase +0.0100 (-0.0042 to +0.0299), sign against
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) T1 gain in +0.0002..+0.0010 | not met | -0.00010; interval excludes 0: True |
+| (b) M1 + H1 has the largest gain of the five M1 + Hk | not met | H1 -0.000031, H2 -0.000027, H3 -0.000011, H4 +0.000014, H5 -0.000018 |
+| (c) h_same < 0, interval excludes 0 | not met | +0.0160 (+0.0073 to +0.0311), sign against |
+| (d) h_whiff, h_chase, h_zcon intervals each include 0 | met |  |
+| (e) |h_speed| < 0.02 per SD | met | +0.0018 |
+| (e) age contrast interval excludes 0 | not met | -0.0015 (-0.0151 to +0.0179) |
+| (e) trend_hab interval includes 0 | met | -0.0030 (-0.0229 to +0.0103), sign against |
+| (f) top-1 M3 − M1 in −0.015..+0.025 | met | +0.0000 |
+| (g) placebo interval includes 0 | not met | -0.00008 (95% -0.00015 to -0.00003) |
+| (h) T6 2022-dropped same sign as T1 | met | -0.00024 vs -0.00010 |
+| (i) M3 top-20% days ≤ overall + 0.03 | met | top-20% 0.9583 vs overall 0.9753 |
+
+runtime 110 s
+
+M3 h_xhit coefficient (per SD of the shrunk h_xhit, fit 2022–24; descriptive on its own): -0.031022; T1 not confirmed; placebo not Confirmed
+Plan's pass rule on this seed:
+- T1 not Confirmed: yes
+
+## planted-null, seed 9008: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(a_k) + 0.50*z(a_hab) + 0.00*z(h_xhit shrunk); shrunk columns and z from the train-2022-24 fold, applied to all rows; missing -> 0; seed 9008
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## M1 reproduction (plan Section 10 rule 3)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 0.008111 | 0.51155 | 0.7202 | 0.6932 | +0.1768 |
+| WF | 2022-2023 | 2024 | M3 | 0.008111 | 0.51160 | 0.7200 | 0.6932 | +0.1768 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.002848 | 0.51537 | 0.7160 | 0.6885 | +0.1713 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51541 | 0.7159 | 0.6885 | +0.1716 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.51712 | 0.7103 | 0.6833 | +0.1606 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.008111 | 0.51721 | 0.7101 | 0.6833 | +0.1606 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.008111 | 0.51443 | 0.7138 | 0.6889 | +0.1736 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.008111 | 0.51452 | 0.7135 | 0.6889 | +0.1736 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.002848 | 0.51171 | 0.7167 | 0.6908 | +0.1720 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.008111 | 0.51183 | 0.7165 | 0.6908 | +0.1723 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.002848 | 0.51537 | 0.7160 | 0.6885 | +0.1713 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.008111 | 0.51541 | 0.7159 | 0.6885 | +0.1716 |
+| T6 | 2023 | 2024 | M1 | 0.0231 | 0.51567 | 0.7148 | 0.6848 | +0.1572 |
+| T6 | 2023 | 2024 | M3 | 0.008111 | 0.51610 | 0.7144 | 0.6848 | +0.1568 |
+| T6 | 2023-2024 | 2025 | M1 | 0.0231 | 0.51936 | 0.7110 | 0.6818 | +0.1593 |
+| T6 | 2023-2024 | 2025 | M3 | 0.0231 | 0.51947 | 0.7110 | 0.6818 | +0.1593 |
+group H shrinkage m, test 2024: h_hard=47.7, h_gb=61.5, h_ld=750, h_pu=93.3, h_whiff=52.1, h_chase=58.6, h_zcon=56.3, h_xhit=124, h_park_hand=1.32e+03
+group H shrinkage m, test 2025: h_hard=46.5, h_gb=62.7, h_ld=892, h_pu=97.1, h_whiff=52.1, h_chase=60.7, h_zcon=56.1, h_xhit=120, h_park_hand=1.4e+03
+
+## Stop rules
+- Rule 6a, model beats B1 on batter-game AUC in the training inner CV (M1 and M3, each walk-forward fold): PASS
+- Rule 6b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1 and M3, each walk-forward fold): PASS
+
+## T4 — placebo: H columns permuted within date, 2 permutations (seeds 20261250 + k), M3 refitted at each fold's real C; date bootstrap seed 20261204
+placebo gain (log loss M1 − permuted M3, per-row mean over permutations) -0.00013 (95% -0.00020 to -0.00003); per-permutation statistics 2.5–97.5%: -0.00013 to -0.00012
+- Rule 5, placebo interval entirely above 0: no
+
+## T1 — PRIMARY: walk-forward log loss M1 − M3, paired by row (date bootstrap seed 20261201)
+pooled 2024–25: -0.00009 (95% -0.00018 to -0.00003), rows 87021
+   2024: -0.00007 (95% -0.00027 to +0.00011)
+   2025: -0.00011 (95% -0.00022 to -0.00003)
+batter-game log loss M1 0.51795, M3 0.51804; AUC M1 0.7012, M3 0.7010
+**T1 rule: not confirmed** (95% interval entirely above 0 and the point estimate positive in 2024 and in 2025)
+
+## T2 — LOSO log loss M1 − M3 (secondary, seed 20261202): -0.00008 (95% -0.00012 to -0.00004); 2022 -0.00009 (95% -0.00023 to -0.00000); 2023 -0.00012 (95% -0.00024 to +0.00001); 2024 -0.00001 (95% -0.00010 to +0.00012); 2025 -0.00011 (95% -0.00025 to +0.00004). T1's rule applied: not confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261203)
+M3 0.984 (0.965–0.992), M1 0.984 (0.965–0.992), B2 0.973 (0.950–0.985); M3 − M1 +0.0000 (95% +0.0000 to +0.0000) (364 dates); M3 − B2 +0.0110 (95% -0.0055 to +0.0289) (364 dates)
+
+## T5 — EXPLORATORY ablations (walk-forward; date bootstrap seed 20261205); gain = log loss(reference) − log loss(model)
+| model | vs | log-loss gain | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + H1 | M1 | +0.000002 (95% -0.000032 to +0.000032) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H1 | M3 | +0.000004 (95% -0.000018 to +0.000037) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H2 | M1 | -0.000012 (95% -0.000024 to -0.000003) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H2 | M3 | +0.000002 (95% -0.000011 to +0.000017) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H3 | M1 | -0.000005 (95% -0.000015 to +0.000007) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H3 | M3 | +0.000003 (95% -0.000011 to +0.000012) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H4 | M1 | +0.000003 (95% -0.000026 to +0.000039) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H4 | M3 | +0.000013 (95% -0.000039 to +0.000037) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + H5 | M1 | -0.000078 (95% -0.000128 to -0.000006) | +0.0000 (95% +0.0000 to +0.0000) |
+| M3 − H5 | M3 | +0.000105 (95% +0.000029 to +0.000157) | +0.0000 (95% +0.0000 to +0.0000) |
+
+## M3 standardised coefficients, fit on 2022–24 at C 0.008111 (date bootstrap seed 20261207); group H rows
+| feature | coef | lo | hi |
+|---|---|---|---|
+| h_hard | +0.0281 | +0.0139 | +0.0460 |
+| h_xhit | -0.0449 | -0.0642 | -0.0155 |
+| h_gb | -0.0126 | -0.0348 | +0.0072 |
+| h_ld | +0.0167 | -0.0007 | +0.0340 |
+| h_pu | -0.0094 | -0.0278 | +0.0129 |
+| H1_miss | +0.0024 | -0.0197 | +0.0372 |
+| h_whiff | +0.0038 | -0.0380 | +0.0396 |
+| h_chase | +0.0056 | -0.0130 | +0.0210 |
+| h_zcon | -0.0066 | -0.0349 | +0.0119 |
+| H2_miss | +0.0076 | -0.0076 | +0.0178 |
+| h_same | -0.0082 | -0.0217 | +0.0031 |
+| h_same_miss | +0.0000 | +0.0000 | +0.0000 |
+| h_park_hand | +0.0024 | -0.0280 | +0.0364 |
+| h_speed | -0.0116 | -0.0220 | -0.0024 |
+| h_speed_miss | +0.0166 | +0.0008 | +0.0292 |
+| h_age | -0.0186 | -0.0375 | +0.0027 |
+| h_age2 | -0.0041 | -0.0215 | +0.0105 |
+| sp_age | -0.0002 | -0.0216 | +0.0186 |
+| sp_age2 | +0.0157 | +0.0082 | +0.0375 |
+| trend_hab | -0.0029 | -0.0134 | +0.0132 |
+| trend_xhit | -0.0047 | -0.0242 | +0.0112 |
+| H5_trend_miss | -0.0131 | -0.0241 | +0.0030 |
+M3 + x_speed_gb (exploratory, same C and resamples): x_speed_gb +0.0114 (-0.0014 to +0.0224)
+
+## T6 — DIAGNOSTICS (seed 20261206)
+2022 dropped from training: -0.00011 (95% -0.00019 to -0.00005); 2024 -0.00010 (95% -0.00024 to +0.00008); 2025 -0.00013 (95% -0.00022 to +0.00000)
+batter side R: -0.00006 (95% -0.00012 to +0.00006), rows 46954
+batter side L: -0.00012 (95% -0.00027 to +0.00001), rows 30750
+batter side S: -0.00017 (95% -0.00033 to +0.00010), rows 9317
+
+## T7 — hypothesis checks (proposed by Claude; kept by William; coefficients from the table above; no rule)
+V1: h_xhit -0.0449 (-0.0642 to -0.0155), sign against; h_hard +0.0281 (+0.0139 to +0.0460), sign as read for support
+V2: h_zcon -0.0066 (-0.0349 to +0.0119), sign against; h_whiff +0.0038 (-0.0380 to +0.0396), sign against
+V3: h_same -0.0082 (-0.0217 to +0.0031), sign as read for support
+V4: h_speed -0.0116 (-0.0220 to -0.0024), sign against; x_speed_gb +0.0114 (-0.0014 to +0.0224), sign as read for support
+V5: age contrast 34 vs 29 (logit) -0.0321 (-0.0589 to -0.0028), sign as read for support; trend_hab -0.0029 (-0.0134 to +0.0132), sign against
+V6: h_chase +0.0056 (-0.0130 to +0.0210), sign against
+
+## Claude's pre-registered expectations (met / not met; no decision rule)
+| expectation | result | numbers |
+|---|---|---|
+| (a) T1 gain in +0.0002..+0.0010 | not met | -0.00009; interval excludes 0: True |
+| (b) M1 + H1 has the largest gain of the five M1 + Hk | not met | H1 +0.000002, H2 -0.000012, H3 -0.000005, H4 +0.000003, H5 -0.000078 |
+| (c) h_same < 0, interval excludes 0 | not met | -0.0082 (-0.0217 to +0.0031), sign as read for support |
+| (d) h_whiff, h_chase, h_zcon intervals each include 0 | met |  |
+| (e) |h_speed| < 0.02 per SD | met | -0.0116 |
+| (e) age contrast interval excludes 0 | met | -0.0321 (-0.0589 to -0.0028) |
+| (e) trend_hab interval includes 0 | met | -0.0029 (-0.0134 to +0.0132), sign against |
+| (f) top-1 M3 − M1 in −0.015..+0.025 | met | +0.0000 |
+| (g) placebo interval includes 0 | not met | -0.00013 (95% -0.00020 to -0.00003) |
+| (h) T6 2022-dropped same sign as T1 | met | -0.00011 vs -0.00009 |
+| (i) M3 top-20% days ≤ overall + 0.03 | met | top-20% 0.9861 vs overall 0.9835 |
+
+runtime 105 s
+
+M3 h_xhit coefficient (per SD of the shrunk h_xhit, fit 2022–24; descriptive on its own): -0.044945; T1 not confirmed; placebo not Confirmed
+Plan's pass rule on this seed:
+- T1 not Confirmed: yes
+
+## Second dry run, new generator: summary
+| kind | seed | h_xhit coef | T1 | placebo | pass rule |
+|---|---|---|---|---|---|
+| planted | 9001 | +0.1067 | Confirmed, +0.00026 (95% +0.00016 to +0.00043) | not Confirmed, -0.00010 (95% -0.00014 to -0.00001) | PASS |
+| planted | 9002 | +0.1098 | Confirmed, +0.00034 (95% +0.00012 to +0.00052) | not Confirmed, -0.00005 (95% -0.00008 to +0.00000) | PASS |
+| planted-null | 9003 | +0.0287 | not confirmed, -0.00008 (95% -0.00016 to -0.00003) | not Confirmed, -0.00009 (95% -0.00018 to -0.00002) | PASS |
+| planted-null | 9004 | +0.0231 | not confirmed, -0.00008 (95% -0.00016 to -0.00000) | not Confirmed, -0.00004 (95% -0.00008 to +0.00001) | PASS |
+| planted-null | 9005 | -0.0103 | not confirmed, -0.00005 (95% -0.00013 to +0.00004) | not Confirmed, -0.00011 (95% -0.00017 to -0.00006) | PASS |
+| planted-null | 9006 | -0.0039 | not confirmed, -0.00012 (95% -0.00021 to +0.00000) | not Confirmed, -0.00016 (95% -0.00020 to -0.00007) | PASS |
+| planted-null | 9007 | -0.0310 | not confirmed, -0.00010 (95% -0.00016 to -0.00001) | not Confirmed, -0.00008 (95% -0.00015 to -0.00003) | PASS |
+| planted-null | 9008 | -0.0449 | not confirmed, -0.00009 (95% -0.00018 to -0.00003) | not Confirmed, -0.00013 (95% -0.00020 to -0.00003) | PASS |
+- Freeze condition 1, both planted-H seeds pass the plan's rule: HOLDS
+- Freeze condition 2, T1 Confirmed on at most 1 of 6 planted-null seeds: 0 of 6 -> HOLDS
+FREEZE CONDITIONS: ALL HOLD

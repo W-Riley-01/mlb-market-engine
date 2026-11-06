@@ -1,0 +1,7 @@
+# Beat the Streak lab 3 — null study on FAKE outcomes (Bernoulli(0.75); real hits never loaded)
+seeds 4001-4200 (200), 16 processes, 500 bootstrap resamples, 10 placebo permutations per seed; per-seed rows: btslab3_null_study_seeds.csv
+- T1 false confirmation <= 8%: 0.000 -> PASS
+- T4 false stop <= 8%: 0.000 -> PASS
+- T1 centred: |mean| < 0.25 SD across seeds: mean -0.000066, SD 0.000041 -> FAIL
+runtime 2001 s
+SELF-TEST null: FAIL - stop, do not tune

@@ -1,0 +1,379 @@
+Lab 3 leak checks (2026-11-06 14:51:43 -0600)
+table btslab3_features.parquet: rows 174,348; content sha256 d8dccfe335795fec26b7f5bceb138059c10209bbe9a557463072860f1889bfa1
+same rows and order as lab 1's table (game_pk, id, date): True
+
+## a. Structural: H<k>_max_date < game date, every row; speed season; contact table fit dates
+      group   rows  with history  violations
+H1_max_date 174348        174348           0
+H2_max_date 174348        174348           0
+H3_max_date 174348        174348           0
+H4_max_date 174348        155332           0
+H5_max_date 174348        174348           0
+speed season = game season - 1: rows with a speed 155,332, violations 0
+contact table header: training seasons 2020, 2021, max game_date 2021-10-03 < 2022-01-01: True
+Static attributes, by design (plan Section 3): bat_side, sp_hand (bio), birth dates; ages are computed on D.
+
+## b. Future deletion: rebuild with every source row dated on or after D deleted, compare exactly
+  2022-04-16: 5 rows, 57 columns compared
+  2022-05-04: 11 rows, 57 columns compared
+  2022-05-07: 6 rows, 57 columns compared
+  2022-05-15: 5 rows, 57 columns compared
+  2022-05-28: 6 rows, 57 columns compared
+  2022-06-03: 5 rows, 57 columns compared
+  2022-06-06: 5 rows, 57 columns compared
+  2022-06-08: 5 rows, 57 columns compared
+  2022-06-12: 5 rows, 57 columns compared
+  2022-06-14: 6 rows, 57 columns compared
+  2022-06-16: 5 rows, 57 columns compared
+  2022-06-18: 5 rows, 57 columns compared
+  2022-06-21: 5 rows, 57 columns compared
+  2022-07-07: 5 rows, 57 columns compared
+  2022-07-23: 6 rows, 57 columns compared
+  2022-07-27: 5 rows, 57 columns compared
+  2022-07-29: 5 rows, 57 columns compared
+  2022-09-01: 5 rows, 57 columns compared
+  2022-09-06: 5 rows, 57 columns compared
+  2022-09-20: 6 rows, 57 columns compared
+  2023-04-02: 5 rows, 57 columns compared
+  2023-04-08: 5 rows, 57 columns compared
+  2023-04-18: 5 rows, 57 columns compared
+  2023-04-24: 5 rows, 57 columns compared
+  2023-04-29: 6 rows, 57 columns compared
+  2023-05-12: 5 rows, 57 columns compared
+  2023-05-21: 6 rows, 57 columns compared
+  2023-05-23: 5 rows, 57 columns compared
+  2023-05-28: 5 rows, 57 columns compared
+  2023-06-03: 6 rows, 57 columns compared
+  2023-06-06: 5 rows, 57 columns compared
+  2023-06-14: 6 rows, 57 columns compared
+  2023-06-24: 5 rows, 57 columns compared
+  2023-06-28: 5 rows, 57 columns compared
+  2023-07-03: 5 rows, 57 columns compared
+  2023-07-26: 5 rows, 57 columns compared
+  2023-07-30: 5 rows, 57 columns compared
+  2023-08-12: 6 rows, 57 columns compared
+  2023-09-12: 5 rows, 57 columns compared
+  2023-09-13: 5 rows, 57 columns compared
+  2023-09-16: 6 rows, 57 columns compared
+  2024-03-29: 5 rows, 57 columns compared
+  2024-03-31: 5 rows, 57 columns compared
+  2024-04-02: 5 rows, 57 columns compared
+  2024-04-20: 6 rows, 57 columns compared
+  2024-04-21: 6 rows, 57 columns compared
+  2024-04-23: 5 rows, 57 columns compared
+  2024-05-09: 5 rows, 57 columns compared
+  2024-05-14: 5 rows, 57 columns compared
+  2024-05-19: 5 rows, 57 columns compared
+  2024-06-25: 5 rows, 57 columns compared
+  2024-06-27: 5 rows, 57 columns compared
+  2024-07-03: 5 rows, 57 columns compared
+  2024-07-10: 5 rows, 57 columns compared
+  2024-08-07: 6 rows, 57 columns compared
+  2024-08-09: 6 rows, 57 columns compared
+  2024-08-14: 5 rows, 57 columns compared
+  2024-08-24: 5 rows, 57 columns compared
+  2024-08-26: 6 rows, 57 columns compared
+  2024-09-07: 6 rows, 57 columns compared
+  2024-09-13: 5 rows, 57 columns compared
+  2024-09-22: 5 rows, 57 columns compared
+  2025-04-02: 5 rows, 57 columns compared
+  2025-04-13: 5 rows, 57 columns compared
+  2025-04-24: 6 rows, 57 columns compared
+  2025-04-25: 5 rows, 57 columns compared
+  2025-04-26: 6 rows, 57 columns compared
+  2025-04-30: 6 rows, 57 columns compared
+  2025-05-04: 6 rows, 57 columns compared
+  2025-05-08: 5 rows, 57 columns compared
+  2025-05-13: 5 rows, 57 columns compared
+  2025-06-05: 6 rows, 57 columns compared
+  2025-06-07: 5 rows, 57 columns compared
+  2025-06-10: 5 rows, 57 columns compared
+  2025-06-19: 6 rows, 57 columns compared
+  2025-06-27: 5 rows, 57 columns compared
+  2025-07-02: 5 rows, 57 columns compared
+  2025-07-03: 5 rows, 57 columns compared
+  2025-07-10: 5 rows, 57 columns compared
+  2025-07-12: 5 rows, 57 columns compared
+  2025-07-26: 6 rows, 57 columns compared
+  2025-08-01: 5 rows, 57 columns compared
+  2025-08-22: 5 rows, 57 columns compared
+  2025-09-02: 5 rows, 57 columns compared
+seasons {2022: 111, 2023: 111, 2024: 111, 2025: 117}; doubleheader pairs 25 (both games)
+              rows  dates  mismatched cells  columns  cells
+sample                                                     
+doubleheader   150     25                 0       57   8550
+random         300     60                 0       57  17100
+total cells 25650, mismatches 0
+
+## c. Plain-path recompute: 5 rows per sub-group, plain filtering of vault, pitch_matrix, bio and speed rows
+group    row       date  batter         column               built               plain  match
+   H1  65891 2023-06-27  672695         h1_bip               357.0                 357   True
+   H1  65891 2023-06-27  672695        h1_hard                81.0                  81   True
+   H1  65891 2023-06-27  672695          h1_gb               172.0                 172   True
+   H1  65891 2023-06-27  672695          h1_ld                63.0                  63   True
+   H1  65891 2023-06-27  672695          h1_pu                37.0                  37   True
+   H1  65891 2023-06-27  672695           h1_S           93.598001           93.598001   True
+   H1  65891 2023-06-27  672695           h1_Q           46.395152           46.395152   True
+   H1  65891 2023-06-27  672695        lg_hard            0.389743            0.389743   True
+   H1  65891 2023-06-27  672695          lg_gb            0.447129            0.447129   True
+   H1  65891 2023-06-27  672695          lg_ld            0.219394            0.219394   True
+   H1  65891 2023-06-27  672695          lg_pu            0.092806            0.092806   True
+   H1  65891 2023-06-27  672695        lg_xhit            0.326675            0.326675   True
+   H1  65891 2023-06-27  672695        H1_miss                   0                   0   True
+   H1  65891 2023-06-27  672695    H1_max_date 2023-06-26 00:00:00 2023-06-26 00:00:00   True
+   H1 159177 2025-05-30  646240         h1_bip               417.0                 417   True
+   H1 159177 2025-05-30  646240        h1_hard               234.0                 234   True
+   H1 159177 2025-05-30  646240          h1_gb               182.0                 182   True
+   H1 159177 2025-05-30  646240          h1_ld               100.0                 100   True
+   H1 159177 2025-05-30  646240          h1_pu                35.0                  35   True
+   H1 159177 2025-05-30  646240           h1_S          162.248955          162.248955   True
+   H1 159177 2025-05-30  646240           h1_Q           99.950925           99.950925   True
+   H1 159177 2025-05-30  646240        lg_hard            0.396247            0.396247   True
+   H1 159177 2025-05-30  646240          lg_gb            0.439994            0.439994   True
+   H1 159177 2025-05-30  646240          lg_ld             0.22017             0.22017   True
+   H1 159177 2025-05-30  646240          lg_pu            0.098336            0.098336   True
+   H1 159177 2025-05-30  646240        lg_xhit            0.328599            0.328599   True
+   H1 159177 2025-05-30  646240        H1_miss                   0                   0   True
+   H1 159177 2025-05-30  646240    H1_max_date 2025-05-29 00:00:00 2025-05-29 00:00:00   True
+   H1  27834 2022-10-02  543068         h1_bip               416.0                 416   True
+   H1  27834 2022-10-02  543068        h1_hard               179.0                 179   True
+   H1  27834 2022-10-02  543068          h1_gb               165.0                 165   True
+   H1  27834 2022-10-02  543068          h1_ld                98.0                  98   True
+   H1  27834 2022-10-02  543068          h1_pu                43.0                  43   True
+   H1  27834 2022-10-02  543068           h1_S          148.284922          148.284922   True
+   H1  27834 2022-10-02  543068           h1_Q           89.145032           89.145032   True
+   H1  27834 2022-10-02  543068        lg_hard            0.385593            0.385593   True
+   H1  27834 2022-10-02  543068          lg_gb             0.44798             0.44798   True
+   H1  27834 2022-10-02  543068          lg_ld            0.218356            0.218356   True
+   H1  27834 2022-10-02  543068          lg_pu            0.093172            0.093172   True
+   H1  27834 2022-10-02  543068        lg_xhit            0.324206            0.324206   True
+   H1  27834 2022-10-02  543068        H1_miss                   0                   0   True
+   H1  27834 2022-10-02  543068    H1_max_date 2022-10-01 00:00:00 2022-10-01 00:00:00   True
+   H1 124537 2024-05-08  683737         h1_bip               116.0                 116   True
+   H1 124537 2024-05-08  683737        h1_hard                50.0                  50   True
+   H1 124537 2024-05-08  683737          h1_gb                44.0                  44   True
+   H1 124537 2024-05-08  683737          h1_ld                21.0                  21   True
+   H1 124537 2024-05-08  683737          h1_pu                12.0                  12   True
+   H1 124537 2024-05-08  683737           h1_S           40.210174           40.210174   True
+   H1 124537 2024-05-08  683737           h1_Q           24.763101           24.763101   True
+   H1 124537 2024-05-08  683737        lg_hard            0.394404            0.394404   True
+   H1 124537 2024-05-08  683737          lg_gb            0.445665            0.445665   True
+   H1 124537 2024-05-08  683737          lg_ld             0.21922             0.21922   True
+   H1 124537 2024-05-08  683737          lg_pu            0.093596            0.093596   True
+   H1 124537 2024-05-08  683737        lg_xhit            0.328313            0.328313   True
+   H1 124537 2024-05-08  683737        H1_miss                   0                   0   True
+   H1 124537 2024-05-08  683737    H1_max_date 2024-05-07 00:00:00 2024-05-07 00:00:00   True
+   H1  22119 2022-09-23  621028         h1_bip               245.0                 245   True
+   H1  22119 2022-09-23  621028        h1_hard                69.0                  69   True
+   H1  22119 2022-09-23  621028          h1_gb               111.0                 111   True
+   H1  22119 2022-09-23  621028          h1_ld                57.0                  57   True
+   H1  22119 2022-09-23  621028          h1_pu                20.0                  20   True
+   H1  22119 2022-09-23  621028           h1_S           74.808114           74.808114   True
+   H1  22119 2022-09-23  621028           h1_Q            38.66995            38.66995   True
+   H1  22119 2022-09-23  621028        lg_hard             0.38591             0.38591   True
+   H1  22119 2022-09-23  621028          lg_gb            0.447622            0.447622   True
+   H1  22119 2022-09-23  621028          lg_ld            0.218412            0.218412   True
+   H1  22119 2022-09-23  621028          lg_pu             0.09386             0.09386   True
+   H1  22119 2022-09-23  621028        lg_xhit            0.324245            0.324245   True
+   H1  22119 2022-09-23  621028        H1_miss                   0                   0   True
+   H1  22119 2022-09-23  621028    H1_max_date 2022-09-22 00:00:00 2022-09-22 00:00:00   True
+   H2 119323 2024-08-28  666023       h2_pitch              1316.0                1316   True
+   H2 119323 2024-08-28  666023       h2_swing               669.0                 669   True
+   H2 119323 2024-08-28  666023        h2_miss               148.0                 148   True
+   H2 119323 2024-08-28  666023         h2_out               686.0                 686   True
+   H2 119323 2024-08-28  666023   h2_out_swing               202.0                 202   True
+   H2 119323 2024-08-28  666023    h2_in_swing               467.0                 467   True
+   H2 119323 2024-08-28  666023     h2_in_miss                59.0                  59   True
+   H2 119323 2024-08-28  666023       lg_whiff            0.252176            0.252176   True
+   H2 119323 2024-08-28  666023       lg_chase            0.285108            0.285108   True
+   H2 119323 2024-08-28  666023        lg_zcon            0.826006            0.826006   True
+   H2 119323 2024-08-28  666023        H2_miss                   0                   0   True
+   H2 119323 2024-08-28  666023    H2_max_date 2024-08-27 00:00:00 2024-08-27 00:00:00   True
+   H2 156374 2025-06-11  672761       h2_pitch              1231.0                1231   True
+   H2 156374 2025-06-11  672761       h2_swing               572.0                 572   True
+   H2 156374 2025-06-11  672761        h2_miss               133.0                 133   True
+   H2 156374 2025-06-11  672761         h2_out               642.0                 642   True
+   H2 156374 2025-06-11  672761   h2_out_swing               190.0                 190   True
+   H2 156374 2025-06-11  672761    h2_in_swing               382.0                 382   True
+   H2 156374 2025-06-11  672761     h2_in_miss                66.0                  66   True
+   H2 156374 2025-06-11  672761       lg_whiff             0.25203             0.25203   True
+   H2 156374 2025-06-11  672761       lg_chase            0.284543            0.284543   True
+   H2 156374 2025-06-11  672761        lg_zcon            0.828578            0.828578   True
+   H2 156374 2025-06-11  672761        H2_miss                   0                   0   True
+   H2 156374 2025-06-11  672761    H2_max_date 2025-06-10 00:00:00 2025-06-10 00:00:00   True
+   H2  64265 2023-07-04  673548       h2_pitch              2312.0                2312   True
+   H2  64265 2023-07-04  673548       h2_swing               906.0                 906   True
+   H2  64265 2023-07-04  673548        h2_miss               193.0                 193   True
+   H2  64265 2023-07-04  673548         h2_out              1147.0                1147   True
+   H2  64265 2023-07-04  673548   h2_out_swing               236.0                 236   True
+   H2  64265 2023-07-04  673548    h2_in_swing               670.0                 670   True
+   H2  64265 2023-07-04  673548     h2_in_miss                95.0                  95   True
+   H2  64265 2023-07-04  673548       lg_whiff            0.256115            0.256115   True
+   H2  64265 2023-07-04  673548       lg_chase            0.290105            0.290105   True
+   H2  64265 2023-07-04  673548        lg_zcon            0.822735            0.822735   True
+   H2  64265 2023-07-04  673548        H2_miss                   0                   0   True
+   H2  64265 2023-07-04  673548    H2_max_date 2023-07-03 00:00:00 2023-07-03 00:00:00   True
+   H2  79768 2023-04-30  682928       h2_pitch              1185.0                1185   True
+   H2  79768 2023-04-30  682928       h2_swing               682.0                 682   True
+   H2  79768 2023-04-30  682928        h2_miss               142.0                 142   True
+   H2  79768 2023-04-30  682928         h2_out               587.0                 587   True
+   H2  79768 2023-04-30  682928   h2_out_swing               244.0                 244   True
+   H2  79768 2023-04-30  682928    h2_in_swing               438.0                 438   True
+   H2  79768 2023-04-30  682928     h2_in_miss                62.0                  62   True
+   H2  79768 2023-04-30  682928       lg_whiff            0.254607            0.254607   True
+   H2  79768 2023-04-30  682928       lg_chase            0.292125            0.292125   True
+   H2  79768 2023-04-30  682928        lg_zcon             0.82267             0.82267   True
+   H2  79768 2023-04-30  682928        H2_miss                   0                   0   True
+   H2  79768 2023-04-30  682928    H2_max_date 2023-04-29 00:00:00 2023-04-29 00:00:00   True
+   H2    566 2022-07-26  641511       h2_pitch               155.0                 155   True
+   H2    566 2022-07-26  641511       h2_swing                82.0                  82   True
+   H2    566 2022-07-26  641511        h2_miss                21.0                  21   True
+   H2    566 2022-07-26  641511         h2_out                75.0                  75   True
+   H2    566 2022-07-26  641511   h2_out_swing                20.0                  20   True
+   H2    566 2022-07-26  641511    h2_in_swing                62.0                  62   True
+   H2    566 2022-07-26  641511     h2_in_miss                10.0                  10   True
+   H2    566 2022-07-26  641511       lg_whiff            0.253011            0.253011   True
+   H2    566 2022-07-26  641511       lg_chase            0.285533            0.285533   True
+   H2    566 2022-07-26  641511        lg_zcon            0.823139            0.823139   True
+   H2    566 2022-07-26  641511        H2_miss                   0                   0   True
+   H2    566 2022-07-26  641511    H2_max_date 2022-07-25 00:00:00 2022-07-25 00:00:00   True
+   H3 113243 2024-04-10  668227       bat_side                   R                   R   True
+   H3 113243 2024-04-10  668227        sp_hand                   R                   R   True
+   H3 113243 2024-04-10  668227         c_hand                   R                   R   True
+   H3 113243 2024-04-10  668227        hp_side                   R                   R   True
+   H3 113243 2024-04-10  668227         h_same                   1                   1   True
+   H3 113243 2024-04-10  668227    h_same_miss                   0                   0   True
+   H3 113243 2024-04-10  668227     hp_venue_h              2596.0                2596   True
+   H3 113243 2024-04-10  668227    hp_venue_pa             11738.0               11738   True
+   H3 113243 2024-04-10  668227      hp_road_h              2518.0                2518   True
+   H3 113243 2024-04-10  668227     hp_road_pa             11507.0               11507   True
+   H3 113243 2024-04-10  668227    H3_max_date 2024-04-09 00:00:00 2024-04-09 00:00:00   True
+   H3  83286 2023-04-15  641645       bat_side                   L                   L   True
+   H3  83286 2023-04-15  641645        sp_hand                   R                   R   True
+   H3  83286 2023-04-15  641645         c_hand                   R                   R   True
+   H3  83286 2023-04-15  641645        hp_side                   L                   L   True
+   H3  83286 2023-04-15  641645         h_same                   0                   0   True
+   H3  83286 2023-04-15  641645    h_same_miss                   0                   0   True
+   H3  83286 2023-04-15  641645     hp_venue_h              1120.0                1120   True
+   H3  83286 2023-04-15  641645    hp_venue_pa              5322.0                5322   True
+   H3  83286 2023-04-15  641645      hp_road_h              1146.0                1146   True
+   H3  83286 2023-04-15  641645     hp_road_pa              5432.0                5432   True
+   H3  83286 2023-04-15  641645    H3_max_date 2023-04-14 00:00:00 2023-04-14 00:00:00   True
+   H3  99987 2024-05-08  675961       bat_side                   R                   R   True
+   H3  99987 2024-05-08  675961        sp_hand                   R                   R   True
+   H3  99987 2024-05-08  675961         c_hand                   R                   R   True
+   H3  99987 2024-05-08  675961        hp_side                   R                   R   True
+   H3  99987 2024-05-08  675961         h_same                   1                   1   True
+   H3  99987 2024-05-08  675961    h_same_miss                   0                   0   True
+   H3  99987 2024-05-08  675961     hp_venue_h              2322.0                2322   True
+   H3  99987 2024-05-08  675961    hp_venue_pa             10475.0               10475   True
+   H3  99987 2024-05-08  675961      hp_road_h              2297.0                2297   True
+   H3  99987 2024-05-08  675961     hp_road_pa             10603.0               10603   True
+   H3  99987 2024-05-08  675961    H3_max_date 2024-05-07 00:00:00 2024-05-07 00:00:00   True
+   H3  30209 2022-05-20  596142       bat_side                   R                   R   True
+   H3  30209 2022-05-20  596142        sp_hand                   L                   L   True
+   H3  30209 2022-05-20  596142         c_hand                   L                   L   True
+   H3  30209 2022-05-20  596142        hp_side                   R                   R   True
+   H3  30209 2022-05-20  596142         h_same                   0                   0   True
+   H3  30209 2022-05-20  596142    h_same_miss                   0                   0   True
+   H3  30209 2022-05-20  596142     hp_venue_h              2354.0                2354   True
+   H3  30209 2022-05-20  596142    hp_venue_pa              9794.0                9794   True
+   H3  30209 2022-05-20  596142      hp_road_h              2159.0                2159   True
+   H3  30209 2022-05-20  596142     hp_road_pa              9607.0                9607   True
+   H3  30209 2022-05-20  596142    H3_max_date 2022-05-19 00:00:00 2022-05-19 00:00:00   True
+   H3  79148 2023-05-03  664023       bat_side                   S                   S   True
+   H3  79148 2023-05-03  664023        sp_hand                   R                   R   True
+   H3  79148 2023-05-03  664023         c_hand                 NaN                 NaN   True
+   H3  79148 2023-05-03  664023        hp_side                   L                   L   True
+   H3  79148 2023-05-03  664023         h_same                   0                   0   True
+   H3  79148 2023-05-03  664023    h_same_miss                   0                   0   True
+   H3  79148 2023-05-03  664023     hp_venue_h              1504.0                1504   True
+   H3  79148 2023-05-03  664023    hp_venue_pa              6609.0                6609   True
+   H3  79148 2023-05-03  664023      hp_road_h              1424.0                1424   True
+   H3  79148 2023-05-03  664023     hp_road_pa              6289.0                6289   True
+   H3  79148 2023-05-03  664023    H3_max_date 2023-05-02 00:00:00 2023-05-02 00:00:00   True
+   H4 151588 2025-06-30  676609        h_speed                28.3                28.3   True
+   H4 151588 2025-06-30  676609 h_speed_season              2024.0              2024.0   True
+   H4 151588 2025-06-30  676609   h_speed_miss                   0                   0   True
+   H4 151588 2025-06-30  676609    H4_max_date 2024-09-30 00:00:00 2024-09-30 00:00:00   True
+   H4  60419 2023-07-23  680777        h_speed                26.1                26.1   True
+   H4  60419 2023-07-23  680777 h_speed_season              2022.0              2022.0   True
+   H4  60419 2023-07-23  680777   h_speed_miss                   0                   0   True
+   H4  60419 2023-07-23  680777    H4_max_date 2022-10-05 00:00:00 2022-10-05 00:00:00   True
+   H4 102157 2024-08-06  673357        h_speed                28.7                28.7   True
+   H4 102157 2024-08-06  673357 h_speed_season              2023.0              2023.0   True
+   H4 102157 2024-08-06  673357   h_speed_miss                   0                   0   True
+   H4 102157 2024-08-06  673357    H4_max_date 2023-10-02 00:00:00 2023-10-02 00:00:00   True
+   H4   4685 2022-08-03  553993        h_speed                26.7                26.7   True
+   H4   4685 2022-08-03  553993 h_speed_season              2021.0              2021.0   True
+   H4   4685 2022-08-03  553993   h_speed_miss                   0                   0   True
+   H4   4685 2022-08-03  553993    H4_max_date 2021-10-03 00:00:00 2021-10-03 00:00:00   True
+   H4  17077 2022-06-01  668800        h_speed                25.7                25.7   True
+   H4  17077 2022-06-01  668800 h_speed_season              2021.0              2021.0   True
+   H4  17077 2022-06-01  668800   h_speed_miss                   0                   0   True
+   H4  17077 2022-06-01  668800    H4_max_date 2021-10-03 00:00:00 2021-10-03 00:00:00   True
+   H5 121756 2024-04-25  664761          h_age           -0.273216           -0.273216   True
+   H5 121756 2024-04-25  664761         h_age2            0.074647            0.074647   True
+   H5 121756 2024-04-25  664761         sp_age            5.722801            5.722801   True
+   H5 121756 2024-04-25  664761        sp_age2           32.750447           32.750447   True
+   H5 121756 2024-04-25  664761        t_h_old               180.0                 180   True
+   H5 121756 2024-04-25  664761       t_ab_old               644.0                 644   True
+   H5 121756 2024-04-25  664761    lg_h_ab_old            0.243706            0.243706   True
+   H5 121756 2024-04-25  664761      t_bip_old               527.0                 527   True
+   H5 121756 2024-04-25  664761        t_S_old          184.785558          184.785558   True
+   H5 121756 2024-04-25  664761    lg_xhit_old            0.324908            0.324908   True
+   H5 121756 2024-04-25  664761  H5_trend_miss                   0                   0   True
+   H5 121756 2024-04-25  664761    H5_max_date 2024-04-24 00:00:00 2024-04-24 00:00:00   True
+   H5 133508 2025-09-17  668227          h_age            2.552304            2.552304   True
+   H5 133508 2025-09-17  668227         h_age2            6.514257            6.514257   True
+   H5 133508 2025-09-17  668227         sp_age           -0.234885           -0.234885   True
+   H5 133508 2025-09-17  668227        sp_age2            0.055171            0.055171   True
+   H5 133508 2025-09-17  668227        t_h_old               117.0                 117   True
+   H5 133508 2025-09-17  668227       t_ab_old               535.0                 535   True
+   H5 133508 2025-09-17  668227    lg_h_ab_old            0.243195            0.243195   True
+   H5 133508 2025-09-17  668227      t_bip_old               371.0                 371   True
+   H5 133508 2025-09-17  668227        t_S_old          116.334831          116.334831   True
+   H5 133508 2025-09-17  668227    lg_xhit_old            0.326522            0.326522   True
+   H5 133508 2025-09-17  668227  H5_trend_miss                   0                   0   True
+   H5 133508 2025-09-17  668227    H5_max_date 2025-09-16 00:00:00 2025-09-16 00:00:00   True
+   H5 125254 2024-08-14  642086          h_age            1.166923            1.166923   True
+   H5 125254 2024-08-14  642086         h_age2             1.36171             1.36171   True
+   H5 125254 2024-08-14  642086         sp_age            1.651533            1.651533   True
+   H5 125254 2024-08-14  642086        sp_age2            2.727561            2.727561   True
+   H5 125254 2024-08-14  642086        t_h_old               107.0                 107   True
+   H5 125254 2024-08-14  642086       t_ab_old               402.0                 402   True
+   H5 125254 2024-08-14  642086    lg_h_ab_old            0.246001            0.246001   True
+   H5 125254 2024-08-14  642086      t_bip_old               333.0                 333   True
+   H5 125254 2024-08-14  642086        t_S_old          105.592101          105.592101   True
+   H5 125254 2024-08-14  642086    lg_xhit_old            0.327749            0.327749   True
+   H5 125254 2024-08-14  642086  H5_trend_miss                   0                   0   True
+   H5 125254 2024-08-14  642086    H5_max_date 2024-08-13 00:00:00 2024-08-13 00:00:00   True
+   H5  99458 2024-07-20  607208          h_age            3.056079            3.056079   True
+   H5  99458 2024-07-20  607208         h_age2             9.33962             9.33962   True
+   H5  99458 2024-07-20  607208         sp_age           -2.521037           -2.521037   True
+   H5  99458 2024-07-20  607208        sp_age2             6.35563             6.35563   True
+   H5  99458 2024-07-20  607208        t_h_old               181.0                 181   True
+   H5  99458 2024-07-20  607208       t_ab_old               687.0                 687   True
+   H5  99458 2024-07-20  607208    lg_h_ab_old            0.245606            0.245606   True
+   H5  99458 2024-07-20  607208      t_bip_old               532.0                 532   True
+   H5  99458 2024-07-20  607208        t_S_old          172.937896          172.937896   True
+   H5  99458 2024-07-20  607208    lg_xhit_old            0.326959            0.326959   True
+   H5  99458 2024-07-20  607208  H5_trend_miss                   0                   0   True
+   H5  99458 2024-07-20  607208    H5_max_date 2024-07-19 00:00:00 2024-07-19 00:00:00   True
+   H5 145832 2025-07-27  571912          h_age            6.470249            6.470249   True
+   H5 145832 2025-07-27  571912         h_age2           41.864125           41.864125   True
+   H5 145832 2025-07-27  571912         sp_age           -2.392356           -2.392356   True
+   H5 145832 2025-07-27  571912        sp_age2            5.723366            5.723366   True
+   H5 145832 2025-07-27  571912        t_h_old                35.0                  35   True
+   H5 145832 2025-07-27  571912       t_ab_old               176.0                 176   True
+   H5 145832 2025-07-27  571912    lg_h_ab_old            0.244648            0.244648   True
+   H5 145832 2025-07-27  571912      t_bip_old               120.0                 120   True
+   H5 145832 2025-07-27  571912        t_S_old           38.435844           38.435844   True
+   H5 145832 2025-07-27  571912    lg_xhit_old            0.327172            0.327172   True
+   H5 145832 2025-07-27  571912  H5_trend_miss                   0                   0   True
+   H5 145832 2025-07-27  571912    H5_max_date 2025-07-26 00:00:00 2025-07-26 00:00:00   True
+plain-path cells 265 (25 rows), mismatches 0
+
+runtime 781 s
+LEAK CHECK: PASS
+exit 0

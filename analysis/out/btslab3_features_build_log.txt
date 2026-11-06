@@ -1,0 +1,84 @@
+Lab 3 group H feature build (2026-11-06 14:49:56 -0600); python 3.13.0, pandas 3.1.0
+plan sha256 f3d76f8f57a3d3a4f5cce043adc9f0f70bf8f7895ce81b9e53d2f84eab05a872
+base analysis\cache\btslab_features.parquet: file sha256 matches the recorded 14cf9d8b... (content e1fb5d01...); columns read ['game_pk', 'id', 'date', 'season', 'opp_sp', 'venue_id', 'home_id', 'away_id']; rows 174,348
+inputs: schedule games 15,475 (seasons [np.int32(2019), np.int32(2020), np.int32(2021), np.int32(2022), np.int32(2023), np.int32(2024), np.int32(2025)]); vault rows 4,768,010 (2019-03-20 to 2025-11-01); pitch_matrix rows 4,768,010 (2019-03-20 00:00:00 to 2025-11-01 00:00:00); bio 5,526 (sha256 3299f3db...); sprint 4,175 (sha256 f39f2591...); contact table sha256 d9c402da...
+vault regular-season pitches 4,545,724; null zone 210 (by year {2021: 210}); zone 10 0; pitch_matrix PA rows with null stand 0
+
+wrote analysis\cache\btslab3_features.parquet: rows 174,348, cols 57; same rows and order as the base table (game_pk, id): True; duplicate keys 0
+content sha256 d8dccfe335795fec26b7f5bceb138059c10209bbe9a557463072860f1889bfa1 (sha256 of pandas.util.hash_pandas_object(df, index=False)); file sha256 c05dbe44d16eb10cb4248df98d5b68a3dc9a2726269e8fe104a24217eb6b8f41
+
+## Switch hitters and hands (row counts)
+sp_hand       L      R
+bat_side              
+L         10029  49046
+R         32558  63990
+S          5293  13432
+rows with hp_side missing (switch hitter vs switch pitcher, c_hand unknown -> f_park at fit time): 0; switch vs switch with c_hand used: 0
+
+## Missing flags by season (share of rows)
+        H1_miss  H2_miss  h_same_miss  h_speed_miss  H5_trend_miss
+season                                                            
+2022     0.0038   0.0033          0.0        0.1281         0.1459
+2023     0.0027   0.0025          0.0        0.1080         0.1698
+2024     0.0029   0.0025          0.0        0.0889         0.1316
+2025     0.0030   0.0026          0.0        0.1111         0.1323
+
+## Feature summary, all rows (raw = unshrunk window rate; shrinkage is applied per fold at fit time)
+                                               missing      mean        sd        min      max
+h_hard raw                                   0.0030973   0.39813  0.085822          0        1
+h_xhit raw                                   0.0030973   0.33014  0.037244          0  0.99217
+h_gb raw                                     0.0030973   0.44356  0.079842          0        1
+h_ld raw                                     0.0030973   0.22016  0.043303          0        1
+h_pu raw                                     0.0030973  0.094093  0.040943          0        1
+H1_miss                                              0 0.0030973  0.055567          0        1
+h_whiff raw                                  0.0027416   0.25249  0.066034          0        1
+h_chase raw                                  0.0028621   0.28685  0.063985          0        1
+h_zcon raw                                   0.0027875   0.82564  0.058169          0        1
+H2_miss                                              0  0.002713  0.052016          0        1
+h_same                                               0   0.42455   0.49428          0        1
+h_same_miss                                          0         0         0          0        0
+h_park_hand raw (venue/road H per PA)       0.00020648    1.0011  0.055077    0.72305    1.561
+h_speed                                        0.10907    27.371      1.34       22.1     30.7
+h_speed_miss                                         0   0.10907   0.31173          0        1
+h_age                                                0   0.52138    3.6805    -7.9503   15.002
+h_age2                                               0    13.818    20.243 3.3058e-07   225.05
+sp_age                                               0    1.1237    3.9245    -7.9914   17.381
+sp_age2                                              0    16.664    28.904 3.3058e-07   302.09
+H/AB older window raw (trend_hab 2nd term)     0.14489   0.24553  0.048817          0        1
+xhit older window raw (trend_xhit 2nd term)    0.14555   0.32887  0.041734    0.00438  0.92978
+trend_xhit raw                                 0.14607 0.0019275  0.039539   -0.60687  0.64398
+H5_trend_miss                                        0   0.14489   0.35199          0        1
+h1_bip                                               0     283.5    143.53          0      628
+h1_hard                                              0    114.95     64.89          0      313
+h1_gb                                                0    125.07    66.449          0      326
+h1_ld                                                0     63.01    33.675          0      177
+h1_pu                                                0    26.715    16.728          0      102
+h1_S                                                 0    94.353    49.442          0   229.38
+h1_Q                                                 0    53.448     29.01          0   143.96
+lg_hard                                              0   0.39198 0.0061133    0.38504  0.41014
+lg_gb                                                0   0.44484 0.0036226    0.43841   0.4518
+lg_ld                                                0   0.21946 0.0008157    0.21782  0.22134
+lg_pu                                                0  0.094881 0.0023508   0.091962 0.099232
+lg_xhit                                              0   0.32714  0.002017    0.32398  0.33291
+h2_pitch                                             0      1612    789.98          0     3227
+h2_swing                                             0     767.8     375.1          0     1608
+h2_miss                                              0    190.46    104.37          0      542
+h2_out                                               0    822.26    408.91          0     1728
+h2_out_swing                                         0    233.57    123.09          0      642
+h2_in_swing                                          0    534.19    261.38          0     1068
+h2_in_miss                                           0    91.138    53.022          0      314
+lg_whiff                                             0    0.2544 0.0019926    0.25103  0.25817
+lg_chase                                             0   0.28607  0.003361    0.27767  0.29239
+lg_zcon                                              0   0.82427  0.002775     0.8175  0.82942
+hp_venue_h                                           0    2136.6    601.92          0     4136
+hp_venue_pa                                          0    9705.5    2547.5          0    15837
+hp_road_h                                            0    2191.9    541.33        847     3769
+hp_road_pa                                           0    9961.2    2310.8       4362    16258
+t_h_old                                              0    74.731    56.286          0      221
+t_ab_old                                             0    293.16    207.27          0      716
+lg_h_ab_old                                          0    0.2441 0.0018374    0.24008  0.24819
+t_bip_old                                            0     223.9    163.53          0      605
+t_S_old                                              0    74.725    55.725          0   219.83
+lg_xhit_old                                          0   0.32646 0.0012693    0.32402  0.32928
+
+runtime 17 s

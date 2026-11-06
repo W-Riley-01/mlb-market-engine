@@ -45,3 +45,12 @@ frozen: 2026-11-06 10:10:04 -06:00
 Beat the Streak lab 2 addendum A2 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A2.md (amendments before any 2026 pitch pull and before the second validation week):
 lab2 A2 sha256: f0300c33f2a6fd3f43a3f4d1f8a1cebe8a875111a25fc3a9c8d77a8a557655e9
 frozen: 2026-11-06 11:49:59 -06:00
+
+Beat the Streak lab 3 plan analysis/BEAT_THE_STREAK_LAB3_PROFILE_PLAN.md (frozen before any lab 3 feature, model or outcome read):
+lab3 sha256: 579ee7af6c655a7b7031d8d280e94237e2dbbb342499042efe2a1166a7ec5879
+frozen: 2026-11-06 14:22:57 -06:00
+superseded before publication on 2026-11-06 14:27:05 -06:00: disclosure correction in Section 2 and Resolved choice 8; no rule changed
+
+Beat the Streak lab 3 plan analysis/BEAT_THE_STREAK_LAB3_PROFILE_PLAN.md (frozen before any lab 3 feature, model or outcome read):
+lab3 sha256: f3d76f8f57a3d3a4f5cce043adc9f0f70bf8f7895ce81b9e53d2f84eab05a872
+frozen: 2026-11-06 14:27:05 -06:00

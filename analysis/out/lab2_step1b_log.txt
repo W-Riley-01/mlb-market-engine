@@ -137,3 +137,135 @@ analysis/cache/btslab_features.parquet (174,348 rows x 64 cols): content sha256 
   First recorded 2026-11-06, after lab 1's real run, from an exact-content comparison (assert_frame_equal, check_exact)
   against a rebuild with the committed btslab_features.py. File bytes differ only by writer (original pandas 3.1.0 /
   pyarrow 26.0.0; rebuild pandas 3.0.5 / pyarrow 25.0.1): file sha256 14cf9d8b75516ce1349558a7e378e130a517fd145296b35ab68b7692e8f63497.
+
+## Step 1b continued under lab 2 addendum A2 (commit 478847a), 2026-11-06 12:12:51 -06:00
+vault before: 136310064 bytes, modified 2026-04-22 14:50:34.738954800 -0500; 72 existing data/ files hashed (56 in data/statcast_chunks)
+
+### Week-2 validation: the independent test of the amended rule (lab2_step1b.py as committed in 478847a)
+validation week 2025-08-04 to 2025-08-10, source pybaseball (lab2_step1b_val_pybaseball_2025-08-04_2025-08-10.parquet): vault rows 27,574; re-pull rows 27,574; difference +0.0000% (limit +/-0.5%): pass
+  by game_type: vault {'R': 27574}; re-pull {'R': 27574}
+  distinct game_pk: vault 93; re-pull 93
+  keys: matched 27,574; vault only 0; re-pull only 0
+  per-pitch family agreement: 0.99746 (70 differ; limit >= 0.995): pass
+  release speed and launch speed equal: 1.00000 (release 1.00000, launch 1.00000; limit >= 0.995): pass
+  descriptive only:
+    exact pitch_type agreement 0.99329 (185 differ: 115 within family, 70 across); events agreement 1.00000
+    family counts (the plan's former rule): fastball 15,028 vs 15,010 (-0.12%); breaking 8,679 vs 8,684 (+0.06%); offspeed 3,840 vs 3,853 (+0.34%); other 27 vs 27 (+0.00%)
+    relabels (vault -> re-pull): SL -> ST x37; CU -> KC x33; FC -> SL x29; SL -> FC x24; CH -> FS x15; SI -> FS x15; FS -> CH x13; SI -> FF x10; CU -> ST x5; FC -> FF x2; CH -> SI x1; CH -> FF x1
+    relabelled pitchers 17 of 413; pitches per pitcher [33, 26, 25, 20, 15, 15, 9, 9, 7, 6, 5, 5, 4, 3, 1, 1, 1]
+VALIDATION pybaseball 2025-08-04 to 2025-08-10 (plan 10.1 as amended by lab 2 addendum A2): PASS
+
+### Current-vintage pull (A2 d), pybaseball 2.2.7
+lab2_step1b.py changed after 478847a for this step: cmd_pull rewritten for PULL_RANGE 2025-03-01 to 2026-11-05; chunks to
+data/statcast_chunks_current/ (monthly; an off-season month is saved as an empty chunk); output data/statcast_current_2025_2026.parquet
+(refuses to overwrite); reports by year and game_type, the file's SHA-256 and a descriptive 2025 comparison with the vault. validate unchanged.
+  [saved] statcast_2025-03.parquet: 2025-03-01 to 2025-03-31, 48,392 rows
+  [saved] statcast_2025-04.parquet: 2025-04-01 to 2025-04-30, 114,395 rows
+  [saved] statcast_2025-05.parquet: 2025-05-01 to 2025-05-31, 119,814 rows
+  [saved] statcast_2025-06.parquet: 2025-06-01 to 2025-06-30, 115,249 rows
+  [saved] statcast_2025-07.parquet: 2025-07-01 to 2025-07-31, 106,883 rows
+  [saved] statcast_2025-08.parquet: 2025-08-01 to 2025-08-31, 123,886 rows
+  [saved] statcast_2025-09.parquet: 2025-09-01 to 2025-09-30, 111,103 rows
+  [saved] statcast_2025-10.parquet: 2025-10-01 to 2025-10-31, 12,597 rows
+  [saved] statcast_2025-11.parquet: 2025-11-01 to 2025-11-30, 364 rows
+  [saved] statcast_2025-12.parquet: 2025-12-01 to 2025-12-31, 0 rows
+  [saved] statcast_2026-01.parquet: 2026-01-01 to 2026-01-31, 0 rows
+  [saved] statcast_2026-02.parquet: 2026-02-01 to 2026-02-28, 0 rows
+  [saved] statcast_2026-03.parquet: 2026-03-01 to 2026-03-31, 60,171 rows
+  [saved] statcast_2026-04.parquet: 2026-04-01 to 2026-04-30, 116,797 rows
+  [saved] statcast_2026-05.parquet: 2026-05-01 to 2026-05-31, 121,444 rows
+  [saved] statcast_2026-06.parquet: 2026-06-01 to 2026-06-30, 115,446 rows
+  [saved] statcast_2026-07.parquet: 2026-07-01 to 2026-07-31, 109,012 rows
+  [saved] statcast_2026-08.parquet: 2026-08-01 to 2026-08-31, 122,870 rows
+  [saved] statcast_2026-09.parquet: 2026-09-01 to 2026-09-30, 108,324 rows
+  [saved] statcast_2026-10.parquet: 2026-10-01 to 2026-10-31, 9,198 rows
+  [saved] statcast_2026-11.parquet: 2026-11-01 to 2026-11-05, 0 rows
+
+rows across chunks 1,515,945; duplicate keys across chunks 0 (dropped)
+wrote data\statcast_current_2025_2026.parquet on 2026-11-06: 1,515,945 rows; 43,960,839 bytes; sha256 23c6e74dda251c19cba107f6c043d68de76fb79e33cb5515e8f9a00f3640a23e
+pull range 2025-03-01 to 2026-11-05; game_date 2025-03-15 to 2026-10-28; duplicate keys in the file 0
+rows by year and game_type:
+game_type     D     F     L       R      S     W
+game_year                                       
+2025       5488  3145  3079  709906  28681  2384
+2026       4629  2592  2772  714113  37636  1520
+distinct game_pk by year and game_type:
+game_type   D   F   L     R    S  W
+game_year                          
+2025       18  11  11  2430   98  7
+2026       16   9  10  2429  129  5
+total distinct game_pk 5,173
+null share per column:
+game_pk            0.0000
+game_date          0.0000
+game_year          0.0000
+game_type          0.0000
+home_team          0.0000
+away_team          0.0000
+inning             0.0000
+inning_topbot      0.0000
+outs_when_up       0.0000
+on_1b              0.6904
+on_2b              0.8104
+on_3b              0.9049
+at_bat_number      0.0000
+pitch_number       0.0000
+pitcher            0.0000
+batter             0.0000
+stand              0.0000
+p_throws           0.0000
+events             0.7429
+description        0.0000
+type               0.0000
+post_away_score    0.0000
+post_home_score    0.0000
+away_score         0.0000
+home_score         0.0000
+pitch_type         0.0000
+release_speed      0.0000
+pfx_x              0.0001
+pfx_z              0.0000
+plate_x            0.0000
+plate_z            0.0000
+balls              0.0000
+strikes            0.0000
+zone               0.0000
+launch_speed       0.6689
+launch_angle       0.6684
+hc_x               0.8253
+hc_y               0.8253
+2026 regular season: schedule Final 2,429 (expected 2,429 played); in this file 2,429; schedule-only []; file-only []
+
+2025 regular season (descriptive): rows vault 709,906, current 709,906 (+0.0000%); distinct games vault 2,430, current 2,430
+pitch counts by family:
+             vault  current  diff  diff_pct
+pitch_type                                 
+fastball    391191   390468  -723    -0.185
+breaking    220710   221069   359     0.163
+offspeed     96810    97229   419     0.433
+other         1195     1140   -55    -4.603
+pitch counts by label:
+             vault  current  diff
+pitch_type                       
+FF          226287   226410   123
+SI          110611   110084  -527
+SL          103476   102505  -971
+CH           73024    73260   236
+FC           53395    53073  -322
+ST           52985    54467  1482
+CU           47596    46770  -826
+FS           23237    23212   -25
+KC           12693    13337   644
+SV            3562     3540   -22
+EP             991      935   -56
+FA             898      901     3
+FO             542      750   208
+CS             398      450    52
+KN             136      137     1
+PO              54       54     0
+UN              14       14     0
+SC               7        7     0
+
+### Existing data/ files after
+vault after: 136310064 bytes, modified 2026-04-22 14:50:34.738954800 -0500
+all 72 pre-existing data/ files byte-identical (sha256 before/after), sizes and modified times identical; data/statcast_chunks still 56 files

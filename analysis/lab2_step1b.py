@@ -2,9 +2,9 @@
 
   python analysis/lab2_step1b.py sched                 # 2026 schedules + box scores into analysis/cache/api/
   python analysis/lab2_step1b.py validate pybaseball 2025-08-04 2025-08-10   # re-pull one week, compare with the vault
-  python analysis/lab2_step1b.py pull pybaseball       # 2026 regular-season date range, monthly chunks, resumable
+  python analysis/lab2_step1b.py pull pybaseball       # 2025-03-01 to 2026-11-05, monthly chunks, resumable (A2 d)
 
-Writes only new files: data/statcast_2026.parquet, analysis/cache/statcast_2026_chunks/, analysis/cache/lab2_step1b_val_*.parquet,
+Writes only new files: data/statcast_current_2025_2026.parquet, data/statcast_chunks_current/, analysis/cache/lab2_step1b_val_*.parquet,
 and new 2026 files under analysis/cache/api/. Never writes the vault, data/statcast_chunks or any existing data/ file.
 """
 import json
@@ -22,8 +22,9 @@ sys.path[:0] = [str(ROOT / "analysis"), str(ROOT)]
 from backtest_v4 import API, get_json  # noqa: E402
 
 VAULT = ROOT / "data" / "master_physics_vault.parquet"
-OUT_2026 = ROOT / "data" / "statcast_2026.parquet"
-CHUNKS = ROOT / "analysis" / "cache" / "statcast_2026_chunks"
+OUT_CURRENT = ROOT / "data" / "statcast_current_2025_2026.parquet"  # lab 2 addendum A2 d: one current-vintage pull
+CHUNKS = ROOT / "data" / "statcast_chunks_current"
+PULL_RANGE = (date(2025, 3, 1), date(2026, 11, 5))
 WEEK1 = ("2025-06-02", "2025-06-08")  # Monday-Sunday; week 2 (lab 2 addendum A2 c) is 2025-08-04 to 2025-08-10
 FAMILY = {**dict.fromkeys(["FF", "SI", "FA", "FC"], "fastball"), **dict.fromkeys(["SL", "ST", "SV", "CU", "KC", "CS"], "breaking"),
           **dict.fromkeys(["CH", "FS", "FO", "SC"], "offspeed")}  # plan Section 4; other codes -> "other"
@@ -163,13 +164,12 @@ def cmd_validate(source: str, start: str, end: str):
 
 
 def cmd_pull(source: str):
-    S = season_games(2026)
-    fin = S[S.game_type.eq("R") & S.final]
-    first, last = date.fromisoformat(fin.file_date.min()), date.fromisoformat(fin.file_date.max())
+    """Lab 2 addendum A2 d: ONE current-vintage pull, 2025-03-01 to 2026-11-05, monthly chunks, resumable."""
+    import hashlib
     CHUNKS.mkdir(parents=True, exist_ok=True)
-    chunks, d = [], first
-    while d <= last:
-        end = min(date(d.year + (d.month == 12), d.month % 12 + 1, 1) - timedelta(days=1), last)
+    chunks, d = [], PULL_RANGE[0]
+    while d <= PULL_RANGE[1]:
+        end = min(date(d.year + (d.month == 12), d.month % 12 + 1, 1) - timedelta(days=1), PULL_RANGE[1])
         chunks.append((d, end))
         d = end + timedelta(days=1)
     for a, b in chunks:
@@ -177,25 +177,42 @@ def cmd_pull(source: str):
         if f.exists():
             print(f"  [skip] {f.name}")
             continue
-        t = core(fetch(source, a.isoformat(), b.isoformat()))
+        raw = fetch(source, a.isoformat(), b.isoformat())
+        t = SCHEMA.empty_table() if raw is None or raw.empty else core(raw)  # off-season month: empty chunk
         pq.write_table(t, f.with_suffix(".tmp"))
         f.with_suffix(".tmp").replace(f)  # a crash never leaves a partial chunk under the final name
         print(f"  [saved] {f.name}: {a} to {b}, {t.num_rows:,} rows")
     D = pd.concat([pd.read_parquet(CHUNKS / f"statcast_{a:%Y-%m}.parquet") for a, _ in chunks], ignore_index=True)
+    print(f"\nrows across chunks {len(D):,}; duplicate keys across chunks {int(D.duplicated(KEY).sum()):,} (dropped)")
     D = D.drop_duplicates(KEY).sort_values(["game_date"] + KEY)
-    assert not OUT_2026.exists() or OUT_2026.stat().st_size > 0
-    pq.write_table(pa.Table.from_pandas(D, schema=SCHEMA, preserve_index=False), OUT_2026)
-    print(f"\nwrote {OUT_2026.relative_to(ROOT)}: {len(D):,} rows; pull range {first} to {last}; "
-          f"game_date {D.game_date.min().date()} to {D.game_date.max().date()}")
-    print("rows by game_type:", D.game_type.value_counts().to_dict())
-    print("distinct game_pk by game_type:", D.groupby("game_type").game_pk.nunique().to_dict(), f"; total {D.game_pk.nunique():,}")
+    assert not OUT_CURRENT.exists(), f"{OUT_CURRENT} already exists; not overwritten"
+    pq.write_table(pa.Table.from_pandas(D, schema=SCHEMA, preserve_index=False), OUT_CURRENT)
+    sha = hashlib.sha256(OUT_CURRENT.read_bytes()).hexdigest()
+    print(f"wrote {OUT_CURRENT.relative_to(ROOT)} on {date.today()}: {len(D):,} rows; {OUT_CURRENT.stat().st_size:,} bytes; sha256 {sha}")
+    print(f"pull range {PULL_RANGE[0]} to {PULL_RANGE[1]}; game_date {D.game_date.min().date()} to {D.game_date.max().date()}; "
+          f"duplicate keys in the file {int(D.duplicated(KEY).sum())}")
+    print("rows by year and game_type:\n" + D.groupby(["game_year", "game_type"]).size().unstack(fill_value=0).to_string())
+    print("distinct game_pk by year and game_type:\n" + D.groupby(["game_year", "game_type"]).game_pk.nunique().unstack(fill_value=0).to_string()
+          + f"\ntotal distinct game_pk {D.game_pk.nunique():,}")
     print("null share per column:\n" + D.isna().mean().round(4).to_string())
-    sched_r = set(fin.game_pk)
-    got_r = set(D.game_pk[D.game_type.eq("R")])
-    print(f"regular-season games: schedule Final {len(sched_r):,} (expected 2,430); in statcast_2026 {len(got_r):,}; "
-          f"schedule-only {len(sched_r - got_r)}; statcast-only {len(got_r - sched_r)} {sorted(got_r - sched_r)[:10]}")
-    if sched_r - got_r:
-        print("  schedule-only gamePk:", sorted(sched_r - got_r)[:20])
+    fin = season_games(2026)
+    sched_r = set(fin.game_pk[fin.game_type.eq("R") & fin.final])
+    got_r = set(D.game_pk[D.game_type.eq("R") & D.game_year.eq(2026)])
+    print(f"2026 regular season: schedule Final {len(sched_r):,} (expected 2,429 played); in this file {len(got_r):,}; "
+          f"schedule-only {sorted(sched_r - got_r)[:20]}; file-only {sorted(got_r - sched_r)[:20]}")
+    # descriptive: 2025 regular season, this pull vs the vault (counts and pitch-type labels only)
+    V = pd.read_parquet(VAULT, columns=["game_pk", "game_year", "game_type", "pitch_type"],
+                        filters=[("game_year", "==", 2025), ("game_type", "==", "R")])
+    C = D[D.game_year.eq(2025) & D.game_type.eq("R")]
+    print(f"\n2025 regular season (descriptive): rows vault {len(V):,}, current {len(C):,} ({len(C) / len(V) - 1:+.4%}); "
+          f"distinct games vault {V.game_pk.nunique():,}, current {C.game_pk.nunique():,}")
+    fam = pd.DataFrame({"vault": V.pitch_type.map(FAMILY).fillna("other").value_counts(),
+                        "current": C.pitch_type.map(FAMILY).fillna("other").value_counts()}).fillna(0).astype(int)
+    fam["diff"], fam["diff_pct"] = fam.current - fam.vault, (fam.current / fam.vault - 1).mul(100).round(3)
+    print("pitch counts by family:\n" + fam.to_string())
+    lab = pd.DataFrame({"vault": V.pitch_type.value_counts(), "current": C.pitch_type.value_counts()}).fillna(0).astype(int)
+    lab["diff"] = lab.current - lab.vault
+    print("pitch counts by label:\n" + lab.sort_values("vault", ascending=False).to_string())
 
 
 if __name__ == "__main__":

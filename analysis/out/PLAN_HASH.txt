@@ -41,3 +41,7 @@ Beat the Streak lab 2 addendum A1 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A1.md (
 revised before first commit; earlier unpublished hash fe3e202d…
 lab2 A1 sha256: 74e182c7c236fd4daebccc474e246daf8403f6afb4a3c903b91ae0aa181708ba
 frozen: 2026-11-06 10:10:04 -06:00
+
+Beat the Streak lab 2 addendum A2 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A2.md (amendments before any 2026 pitch pull and before the second validation week):
+lab2 A2 sha256: f0300c33f2a6fd3f43a3f4d1f8a1cebe8a875111a25fc3a9c8d77a8a557655e9
+frozen: 2026-11-06 11:49:59 -06:00

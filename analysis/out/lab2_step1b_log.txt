@@ -1,0 +1,139 @@
+Lab 2 Step 1b - 2026 data collection log (2026-11-06 10:55:52 -06:00)
+python: Python 3.13.0 (analysis/.venv)
+installed: pybaseball==2.2.7 (latest PyPI release, uploaded 2023-09-08) and its dependencies:
+  attrs==26.1.0
+  beautifulsoup4==4.15.0
+  cffi==2.1.1
+  colorama==0.4.6
+  cryptography==50.0.2
+  lxml==6.1.3
+  pybaseball==2.2.7
+  pycparser==3.12
+  PyGithub==2.10.0
+  PyJWT==2.15.1
+  PyNaCl==1.6.2
+  soupsieve==4.0.1
+  tqdm==4.70.1
+pandas 3.1.0; pyarrow 26.0.0
+vault before: 136310064 bytes, modified 2026-04-22 14:50:34.738954800 -0500
+
+## Step 4: schedules and box scores
+schedule days 2026-03-01 to 2026-11-05: 250; newly fetched 250; failed 0 []
+schedule entries by gameType (one row per game-day listing): {'R': 2459, 'S': 321, 'E': 36, 'D': 16, 'L': 11, 'F': 9, 'W': 5, 'A': 1}
+regular season: distinct gamePk listed 2,430; Final 2,429; dates with a Final game 2026-03-25 to 2026-09-27
+regular-season gamePk never Final: 1; last states {'Cancelled': 1}
+box scores for Final regular-season games: 2,429; newly fetched 2,429; failed 0 []
+
+## Step 2: validation (pybaseball 2.2.7, then pybaseballstats 0.6.4 installed after it failed, then direct Savant CSV)
+validation week 2025-06-02 to 2025-06-08, source pybaseball: vault rows 27,134; re-pull rows 27,134; difference +0.0000% (limit +/-0.5%)
+  by game_type: vault {'R': 27134}; re-pull {'R': 27134}
+  distinct game_pk: vault 94; re-pull 94
+  keys: matched 27,134; vault only 0; re-pull only 0
+  agree on pitch_type: 0.99488 (139 disagree)
+  agree on events: 1.00000 (0 disagree)
+  agree on launch_speed: 1.00000 (0 disagree)
+  agree on all three: 0.99488 (139 disagree)
+  pitch_type disagreements, top pairs (vault -> re-pull): SL -> ST x70; SI -> FS x24; CU -> KC x23; FC -> SL x10; FS -> CH x9
+VALIDATION pybaseball: FAIL (row counts within 0.5%; all three fields agree on >= 99.5% of matched pitches)
+validation week 2025-06-02 to 2025-06-08, source pybaseballstats: vault rows 27,134; re-pull rows 27,134; difference +0.0000% (limit +/-0.5%)
+  by game_type: vault {'R': 27134}; re-pull {'R': 27134}
+  distinct game_pk: vault 94; re-pull 94
+  keys: matched 27,134; vault only 0; re-pull only 0
+  agree on pitch_type: 0.99488 (139 disagree)
+  agree on events: 1.00000 (0 disagree)
+  agree on launch_speed: 1.00000 (0 disagree)
+  agree on all three: 0.99488 (139 disagree)
+  pitch_type disagreements, top pairs (vault -> re-pull): SL -> ST x70; SI -> FS x24; CU -> KC x23; FC -> SL x10; FS -> CH x9
+VALIDATION pybaseballstats: FAIL (row counts within 0.5%; all three fields agree on >= 99.5% of matched pitches)
+validation week 2025-06-02 to 2025-06-08, source savant: vault rows 27,134; re-pull rows 27,134; difference +0.0000% (limit +/-0.5%)
+  by game_type: vault {'R': 27134}; re-pull {'R': 27134}
+  distinct game_pk: vault 94; re-pull 94
+  keys: matched 27,134; vault only 0; re-pull only 0
+  agree on pitch_type: 0.99488 (139 disagree)
+  agree on events: 1.00000 (0 disagree)
+  agree on launch_speed: 1.00000 (0 disagree)
+  agree on all three: 0.99488 (139 disagree)
+  pitch_type disagreements, top pairs (vault -> re-pull): SL -> ST x70; SI -> FS x24; CU -> KC x23; FC -> SL x10; FS -> CH x9
+VALIDATION savant: FAIL (row counts within 0.5%; all three fields agree on >= 99.5% of matched pitches)
+  diagnosis (all three sources): the 139 pitch_type changes are 9 of 421 pitchers (23.6% of those pitchers' pitches relabelled,
+  e.g. SL -> ST, CU -> KC): Baseball Savant has reclassified pitch types since the vault was pulled (2026-04-22). Among matched
+  rows, events, description, release_speed, launch_speed, launch_angle, zone, pitcher and game_type are identical; plate_x
+  differs only by float rounding (max 4.4e-16); batter differs on 1 row. The pybaseball, pybaseballstats and direct-CSV pulls
+  are identical in content (same endpoint).
+NO SOURCE VALIDATED (pitch_type agreement 99.488% < 99.5%): stop - 2026 Statcast not pulled; data/statcast_2026.parquet not written.
+
+## Step 5: existing files
+vault after: 136310064 bytes, modified 2026-04-22 14:50:34.738954800 -0500
+data/statcast_chunks newest file: statcast_2025-10.parquet 2026-04-22 14:26:41.102185600 -0500
+data/statcast_2026.parquet exists: no
+
+## Installed after pybaseball failed: pybaseballstats==0.6.4 (PyPI 2026-09-21; requires Python >= 3.11, venv is 3.13.0) and its dependencies:
+  aiohappyeyeballs==2.7.1
+  aiohttp==3.14.5
+  aiosignal==1.4.0
+  bs4==0.0.2
+  curl_cffi==0.17.0
+  frozenlist==1.8.0
+  greenlet==3.5.6
+  markdown-it-py==4.2.0
+  mdurl==0.1.2
+  multidict==7.2.1
+  nest-asyncio==1.6.0
+  playwright==1.64.1
+  playwright-stealth==2.0.3
+  polars==2.1.0
+  polars-runtime-32==2.1.0
+  propcache==0.5.4
+  pybaseballstats==0.6.4
+  pyee==14.0.0
+  Pygments==2.21.0
+  rich==15.0.0
+  yarl==1.25.1
+
+## Lab 2 addendum A2 (lab2 A2 sha256 f0300c33...55e9), 2026-11-06 11:50:45 -06:00
+validate now implements plan 10.1 as amended by A2 c and takes the week as arguments.
+Script-correctness check on the already-cached week-1 files only (no pull). DESCRIPTIVE, NOT A TEST: A2 c was chosen after
+seeing week 1, so its PASS below is not independent. The independent test is week 2 (2025-08-04 to 2025-08-10, pybaseball), not yet pulled.
+validation week 2025-06-02 to 2025-06-08, source pybaseball (lab2_step1b_val_pybaseball.parquet): vault rows 27,134; re-pull rows 27,134; difference +0.0000% (limit +/-0.5%): pass
+  by game_type: vault {'R': 27134}; re-pull {'R': 27134}
+  distinct game_pk: vault 94; re-pull 94
+  keys: matched 27,134; vault only 0; re-pull only 0
+  per-pitch family agreement: 0.99875 (34 differ; limit >= 0.995): pass
+  release speed and launch speed equal: 1.00000 (release 1.00000, launch 1.00000; limit >= 0.995): pass
+  descriptive only:
+    exact pitch_type agreement 0.99488 (139 differ: 105 within family, 34 across); events agreement 1.00000
+    family counts (the plan's former rule): fastball 14,869 vs 14,835 (-0.23%); breaking 8,579 vs 8,589 (+0.12%); offspeed 3,655 vs 3,679 (+0.66%); other 31 vs 31 (+0.00%)
+    relabels (vault -> re-pull): SL -> ST x70; SI -> FS x24; CU -> KC x23; FC -> SL x10; FS -> CH x9; KC -> ST x2; SI -> FF x1
+    relabelled pitchers 9 of 421; pitches per pitcher [49, 24, 23, 15, 10, 9, 6, 2, 1]
+VALIDATION pybaseball 2025-06-02 to 2025-06-08 (plan 10.1 as amended by lab 2 addendum A2): PASS
+validation week 2025-06-02 to 2025-06-08, source pybaseballstats (lab2_step1b_val_pybaseballstats.parquet): vault rows 27,134; re-pull rows 27,134; difference +0.0000% (limit +/-0.5%): pass
+  by game_type: vault {'R': 27134}; re-pull {'R': 27134}
+  distinct game_pk: vault 94; re-pull 94
+  keys: matched 27,134; vault only 0; re-pull only 0
+  per-pitch family agreement: 0.99875 (34 differ; limit >= 0.995): pass
+  release speed and launch speed equal: 1.00000 (release 1.00000, launch 1.00000; limit >= 0.995): pass
+  descriptive only:
+    exact pitch_type agreement 0.99488 (139 differ: 105 within family, 34 across); events agreement 1.00000
+    family counts (the plan's former rule): fastball 14,869 vs 14,835 (-0.23%); breaking 8,579 vs 8,589 (+0.12%); offspeed 3,655 vs 3,679 (+0.66%); other 31 vs 31 (+0.00%)
+    relabels (vault -> re-pull): SL -> ST x70; SI -> FS x24; CU -> KC x23; FC -> SL x10; FS -> CH x9; KC -> ST x2; SI -> FF x1
+    relabelled pitchers 9 of 421; pitches per pitcher [49, 24, 23, 15, 10, 9, 6, 2, 1]
+VALIDATION pybaseballstats 2025-06-02 to 2025-06-08 (plan 10.1 as amended by lab 2 addendum A2): PASS
+validation week 2025-06-02 to 2025-06-08, source savant (lab2_step1b_val_savant.parquet): vault rows 27,134; re-pull rows 27,134; difference +0.0000% (limit +/-0.5%): pass
+  by game_type: vault {'R': 27134}; re-pull {'R': 27134}
+  distinct game_pk: vault 94; re-pull 94
+  keys: matched 27,134; vault only 0; re-pull only 0
+  per-pitch family agreement: 0.99875 (34 differ; limit >= 0.995): pass
+  release speed and launch speed equal: 1.00000 (release 1.00000, launch 1.00000; limit >= 0.995): pass
+  descriptive only:
+    exact pitch_type agreement 0.99488 (139 differ: 105 within family, 34 across); events agreement 1.00000
+    family counts (the plan's former rule): fastball 14,869 vs 14,835 (-0.23%); breaking 8,579 vs 8,589 (+0.12%); offspeed 3,655 vs 3,679 (+0.66%); other 31 vs 31 (+0.00%)
+    relabels (vault -> re-pull): SL -> ST x70; SI -> FS x24; CU -> KC x23; FC -> SL x10; FS -> CH x9; KC -> ST x2; SI -> FF x1
+    relabelled pitchers 9 of 421; pitches per pitcher [49, 24, 23, 15, 10, 9, 6, 2, 1]
+VALIDATION savant 2025-06-02 to 2025-06-08 (plan 10.1 as amended by lab 2 addendum A2): PASS
+
+## Lab 1 feature table content hash
+analysis/cache/btslab_features.parquet (174,348 rows x 64 cols): content sha256 e1fb5d01cf19f18eab46b561575a5975867348cca1f16f29656d203bf7600f9a
+  method: sha256 of pandas.util.hash_pandas_object(df, index=False) bytes (row content, not file bytes).
+  First recorded 2026-11-06, after lab 1's real run, from an exact-content comparison (assert_frame_equal, check_exact)
+  against a rebuild with the committed btslab_features.py. File bytes differ only by writer (original pandas 3.1.0 /
+  pyarrow 26.0.0; rebuild pandas 3.0.5 / pyarrow 25.0.1): file sha256 14cf9d8b75516ce1349558a7e378e130a517fd145296b35ab68b7692e8f63497.

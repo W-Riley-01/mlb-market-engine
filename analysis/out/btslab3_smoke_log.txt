@@ -1395,3 +1395,15 @@ Plan's pass rule on this seed:
 - Freeze condition 1, both planted-H seeds pass the plan's rule: HOLDS
 - Freeze condition 2, T1 Confirmed on at most 1 of 6 planted-null seeds: 0 of 6 -> HOLDS
 FREEZE CONDITIONS: ALL HOLD
+
+
+# SMOKE TEST ONLY (not a result): confirmation null-study code path (addendum A3), throwaway seed 9009 (not registered), 1 process, 20 bootstrap resamples, 2 placebo permutations; one seed, so the SD-based check is undefined
+# Beat the Streak lab 3 — confirmation null study (addendum A3) on FAKE outcomes (Bernoulli(0.75); real hits never loaded)
+Pass rule (addendum A3 item 3): T1 false confirmation <= 8% AND T4 false stop <= 8% AND mean T1 <= +0.25 SD
+seeds 9009-9009 (1), 1 processes, 20 bootstrap resamples, 2 placebo permutations per seed; per-seed rows: btslab3_smoke_null2_seed.csv
+- T1 false confirmation <= 8%: 0.000 -> PASS
+- T4 false stop <= 8%: 0.000 -> PASS
+- T1 no upward bias: mean <= +0.25 SD across seeds: mean -0.000043, SD nan -> FAIL
+runtime 27 s
+descriptive: T1 SD nan, 2.5–97.5% -0.000043 to -0.000043, seeds with T1 > 0: 0; mean placebo gain -0.0001033
+SELF-TEST null-2: FAIL - stop, do not tune

@@ -7,6 +7,7 @@ given; without --real the hit column is never loaded (lab 1's load() guard).
   python analysis/btslab3_analysis.py --fake planted-null     # self-test, seed 4301 -> btslab3_selftest_planted_null_log.txt
   python analysis/btslab3_analysis.py --selftest-eval         # descriptive h_xhit coefficient difference, appended to both logs
   python analysis/btslab3_analysis.py --null-study            # seeds 4001-4200, parallel -> btslab3_null_study_log.txt
+  python analysis/btslab3_analysis.py --null-study-2          # confirmation, seeds 4401-4600 -> btslab3_null_study2_log.txt
   python analysis/btslab3_analysis.py --smoke                 # guard checks + throwaway seeds 9001/9002 -> btslab3_smoke_log.txt
   python analysis/btslab3_analysis.py --time                  # times one M3 fit and one inner CV; projects runtimes
   python analysis/btslab3_analysis.py --real                  # the real run, once -> analysis/out/lab3_results_log.txt
@@ -30,8 +31,11 @@ from v4_analysis import ci, ll, md_table, wilson_s  # noqa: E402
 
 OUT = ba.OUT
 RESULTS = OUT / "lab3_results_log.txt"  # plan Section 11 step 3: --real refuses to run if it exists
+# --real preconditions (stop rule 4, addendum A3): planted, planted-null and the confirmation null study (study 2)
 SELFTEST = {"planted": OUT / "btslab3_selftest_planted_log.txt", "planted-null": OUT / "btslab3_selftest_planted_null_log.txt",
-            "null": OUT / "btslab3_null_study_log.txt"}
+            "null-2": OUT / "btslab3_null_study2_log.txt"}
+NULL1_LOG = OUT / "btslab3_null_study_log.txt"  # study 1 (seeds 4001-4200): a registered FAIL, kept as evidence
+NULL2_CSV = OUT / "btslab3_null_study2_seeds.csv"
 SEED = 20261201  # + test number (plan Section 6)
 PERM_SEED = 20261250  # + k
 BASE_CONTENT = "e1fb5d01cf19f18eab46b561575a5975867348cca1f16f29656d203bf7600f9a"
@@ -502,7 +506,8 @@ def _null_seed(seed):
             "C M1": wf[0]["M1"]["C"], "C M3": wf[0]["M3"]["C"]}
 
 
-def null_study(seeds, procs, nperm, nboot, log: Path, csv: Path):
+def null_study(seeds, procs, nperm, nboot, log: Path, csv: Path, one_sided=False):
+    """one_sided=False: study 1's rule (|mean T1| < 0.25 SD). True: addendum A3's rule (mean T1 <= +0.25 SD)."""
     from multiprocessing import Pool
     t0 = time.perf_counter()
     with Pool(procs, initializer=_null_init, initargs=(nperm, nboot)) as pool_:
@@ -513,12 +518,25 @@ def null_study(seeds, procs, nperm, nboot, log: Path, csv: Path):
     sd = R.T1.std(ddof=1) if len(R) > 1 else np.nan
     checks = [("T1 false confirmation <= 8%", R["T1 Confirmed"].mean() <= 0.08, f"{R['T1 Confirmed'].mean():.3f}"),
               ("T4 false stop <= 8%", R["placebo stop"].mean() <= 0.08, f"{R['placebo stop'].mean():.3f}"),
+              ("T1 no upward bias: mean <= +0.25 SD across seeds", R.T1.mean() <= 0.25 * sd, f"mean {R.T1.mean():+.6f}, SD {sd:.6f}")
+              if one_sided else
               ("T1 centred: |mean| < 0.25 SD across seeds", abs(R.T1.mean()) < 0.25 * sd, f"mean {R.T1.mean():+.6f}, SD {sd:.6f}")]
     for n, ok, v in checks:
         say(f"- {n}: {v} -> {'PASS' if ok else 'FAIL'}")
     passed = all(ok for _, ok, _ in checks)
     say(f"runtime {time.perf_counter() - t0:.0f} s")
     return passed, R
+
+
+def null_study2(seeds, procs, nperm, nboot, log: Path, csv: Path) -> bool:
+    """Confirmation null study (addendum A3): fresh seeds, same code path, one-sided 'no upward bias' rule."""
+    say("# Beat the Streak lab 3 — confirmation null study (addendum A3) on FAKE outcomes (Bernoulli(0.75); real hits never loaded)")
+    say("Pass rule (addendum A3 item 3): T1 false confirmation <= 8% AND T4 false stop <= 8% AND mean T1 <= +0.25 SD")
+    passed, R = null_study(seeds, procs, nperm, nboot, log, csv, one_sided=True)
+    say(f"descriptive: T1 SD {R.T1.std(ddof=1):.7f}, 2.5–97.5% {R.T1.quantile(.025):+.6f} to {R.T1.quantile(.975):+.6f}, "
+        f"seeds with T1 > 0: {int((R.T1 > 0).sum())}; mean placebo gain {R.placebo.mean():+.7f}")
+    say(f"SELF-TEST null-2: {'PASS' if passed else 'FAIL - stop, do not tune'}")
+    return passed
 
 
 # ---------------------------------------------------------------- checks of the guards and the new code
@@ -569,6 +587,7 @@ def main():
     g.add_argument("--real", action="store_true", help="the real run (real hit column), once")
     g.add_argument("--fake", choices=["planted", "planted-null"], help="self-test on seeded fake outcomes")
     g.add_argument("--null-study", action="store_true", help="200 fake null seeds 4001-4200 in parallel")
+    g.add_argument("--null-study-2", action="store_true", help="confirmation null study, seeds 4401-4600 (addendum A3)")
     g.add_argument("--smoke", action="store_true", help="smoke test: guard checks, seeds 9001/9002, tiny settings")
     g.add_argument("--time", action="store_true", help="time one fit and one inner CV; project runtimes")
     g.add_argument("--selftest-eval", action="store_true", help="descriptive coefficient difference of the planted runs (4300, 4301)")
@@ -576,8 +595,8 @@ def main():
     ap.add_argument("--procs", type=int, default=os.cpu_count())
     ap.add_argument("--ignore-stops", action="store_true", help="fake runs only: continue past stop rules")
     a = ap.parse_args()
-    if not (a.real or a.fake or a.null_study or a.smoke or a.time or a.selftest_eval or a.dry_criterion):
-        sys.exit("refusing to run: choose --fake planted|planted-null, --selftest-eval, --null-study, --smoke, --dry-criterion, "
+    if not (a.real or a.fake or a.null_study or a.null_study_2 or a.smoke or a.time or a.selftest_eval or a.dry_criterion):
+        sys.exit("refusing to run: choose --fake planted|planted-null, --selftest-eval, --null-study, --null-study-2, --smoke, --dry-criterion, "
                  "--time, or --real (uses the real hit column)")
     if a.real and a.ignore_stops:
         sys.exit("--ignore-stops is not allowed with --real")
@@ -606,9 +625,18 @@ def main():
     if a.null_study:
         ba.LOG.clear()
         say("# Beat the Streak lab 3 — null study on FAKE outcomes (Bernoulli(0.75); real hits never loaded)")
-        passed, _ = null_study(range(4001, 4201), a.procs, 10, 500, SELFTEST["null"], OUT / "btslab3_null_study_seeds.csv")
+        passed, _ = null_study(range(4001, 4201), a.procs, 10, 500, NULL1_LOG, OUT / "btslab3_null_study_seeds.csv")
         say(f"SELF-TEST null: {'PASS' if passed else 'FAIL - stop, do not tune'}")
-        SELFTEST["null"].write_text("\n".join(ba.LOG) + "\n", encoding="utf-8")
+        NULL1_LOG.write_text("\n".join(ba.LOG) + "\n", encoding="utf-8")
+        sys.exit(0 if passed else 1)
+
+    if a.null_study_2:
+        for p in (SELFTEST["null-2"], NULL2_CSV):
+            if p.exists():
+                sys.exit(f"refusing to run: {p} already exists (the confirmation study is run once, addendum A3 item 4)")
+        ba.LOG.clear()
+        passed = null_study2(range(4401, 4601), a.procs, 10, 500, SELFTEST["null-2"], NULL2_CSV)
+        SELFTEST["null-2"].write_text("\n".join(ba.LOG) + "\n", encoding="utf-8")
         sys.exit(0 if passed else 1)
 
     if a.smoke:

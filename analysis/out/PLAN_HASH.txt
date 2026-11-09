@@ -71,3 +71,22 @@ frozen: 2026-11-06 16:30:19 -06:00
 Beat the Streak lab 3 addendum A3 analysis/BEAT_THE_STREAK_LAB3_ADDENDUM_A3.md (replacement of the failed null-study centring check, confirmation study; written after the registered planted runs and null study, before the confirmation study or any real-outcome read):
 lab3 A3 sha256: f59c47f0d984eca7e5b0414ff8832afe6a3bb00d7581690302e3d1221464f6ad
 frozen: 2026-11-06 17:52:27 -06:00
+
+Beat the Streak lab 2 addendum A3 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A3.md (design fixes after lab 3's real run: 2026 test withdrawn to a combined plan, T1b against M3, planted generator, one-sided null check, reproduction rules, seeds, implementation clarifications; written before any lab 2 feature, model, self-test or outcome read):
+lab2 A3 sha256: cc437ec8262c24b677012b578cc74397aa5d3b8b6db9de6568f1c7848cffe331
+frozen: 2026-11-09 13:54:54 -06:00
+superseded before publication on 2026-11-09 13:55:13 -06:00: lab 3 results log commit status corrected (committed in aab2c84); no rule, threshold, seed or pass rule changed
+
+Beat the Streak lab 2 addendum A3 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A3.md (design fixes after lab 3's real run: 2026 test withdrawn to a combined plan, T1b against M3, planted generator, one-sided null check, reproduction rules, seeds, implementation clarifications; written before any lab 2 feature, model, self-test or outcome read):
+lab2 A3 sha256: 30c1d73487b669319e82df59ca62f894d1520c4eeaf7658051e80d0373d348b3
+frozen: 2026-11-09 13:55:13 -06:00
+superseded before publication on 2026-11-09 14:03:51 -06:00: reviewed by Claude (chat), P1-P17 accepted, amendments 1-7 added (T1b confirmatory, T5 unit bootstrap, min_n rule, seeds, M4 scope, resolving power, status notes); no other rule, threshold, seed or pass rule changed
+
+Beat the Streak lab 2 addendum A3 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A3.md (design fixes after lab 3's real run: 2026 test withdrawn to a combined plan, T1b against M3, planted generator, one-sided null check, reproduction rules, seeds, implementation clarifications; reviewed by Claude (chat); written before any lab 2 feature, model, self-test or outcome read):
+lab2 A3 sha256: 416251e299ef01bdc6931b601d71f26c223ce8a1acc6ca96faf5e52675eced24
+frozen: 2026-11-09 14:03:51 -06:00
+superseded before publication on 2026-11-09 14:15:08 -06:00: P18 accepted; amendments 8-11 added (unit-season rule stated by value, with the earlier game_pk finding retracted on re-measurement; min_n logging; row-order rule and shuffle check); no other rule, threshold, seed or pass rule changed
+
+Beat the Streak lab 2 addendum A3 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A3.md (design fixes after lab 3's real run: 2026 test withdrawn to a combined plan, T1b against M3, planted generator, one-sided null check, reproduction rules, seeds, implementation clarifications; reviewed by Claude (chat); written before any lab 2 feature, model, self-test or outcome read):
+lab2 A3 sha256: 21efe8e55e69a69690472d30831f99ef5fe4c10cf3af660fc9f7fba1bd92538f
+frozen: 2026-11-09 14:15:08 -06:00

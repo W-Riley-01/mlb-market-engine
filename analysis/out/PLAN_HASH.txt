@@ -94,3 +94,17 @@ frozen: 2026-11-09 14:15:08 -06:00
 Beat the Streak lab 2 addendum A4 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A4.md (implementation definitions for Step 1c: I_gap deferred, R_b and R_p(s) targets, pooled family-measure m, A3 header status, readings and fold list; written before any lab 2 feature table or outcome read):
 lab2 A4 sha256: 70cd932297016a70579832560f7f16d13d049b44b0055453327a8f02baec5af2
 frozen: 2026-11-09 15:01:29 -06:00
+
+Beat the Streak lab 2 addendum A5 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A5.md (per-trial variance of the per-AB measure: pooled within-unit variance replaces the binomial bound for R_b, R_p(s), r_b(f), r_p(f|s); written after the first Step 1c build stopped with I1 identically zero, before any leak check, outcome read or fit):
+lab2 A5 sha256: c7cd5b649542550e35998045b1104391d2323c02794a3aef6017bd6291e257eb
+frozen: 2026-11-09 15:58:07 -06:00
+superseded before publication on 2026-11-09 16:03:18 -06:00: item 8 added (T5 uses the A5 replacement; search for every other use of the binomial variance on an x-based measure), item 6 and Unchanged updated; no other line changed
+
+Beat the Streak lab 2 addendum A5 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A5.md (per-trial variance of the per-AB measure: pooled within-unit variance replaces the binomial bound for R_b, R_p(s), r_b(f), r_p(f|s) and T5; written after the first Step 1c build stopped with I1 identically zero, before any leak check, outcome read or fit):
+lab2 A5 sha256: d6cea80c589d34e45adad07bbdcba04cf899338612fdfaba9f239d3ecb646f71
+frozen: 2026-11-09 16:03:18 -06:00
+superseded before publication on 2026-11-09 16:06:37 -06:00: item 8 completed (T5 overall-skill spread and SD ratio defined; alternative grouping re-estimates grouping-dependent prior strengths, R_b and R_p(s) reused); no other line changed
+
+Beat the Streak lab 2 addendum A5 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A5.md (per-trial variance of the per-AB measure: pooled within-unit variance replaces the binomial bound for R_b, R_p(s), r_b(f), r_p(f|s) and T5; written after the first Step 1c build stopped with I1 identically zero, before any leak check, outcome read or fit):
+lab2 A5 sha256: 3180e9f19956ab4b130abccdc21dce41cb46e32747532cf95dac17471dda31d8
+frozen: 2026-11-09 16:06:37 -06:00

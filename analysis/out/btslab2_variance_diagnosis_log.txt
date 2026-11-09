@@ -1,0 +1,20 @@
+﻿Lab 2 variance diagnosis (2026-11-09 15:56:53 -0600); descriptive, no fit, no m
+vault rows read (game_date 2022-2023) and kept as regular season with effective date 2022-2023: 1,425,789; dates 2022-04-07 to 2023-10-02
+AB-ending pitches (three families, truncated_pa dropped): 327,250
+
+Per cell. units: unit-seasons (batter-season, or pitcher-season) with n >= min_n AB-ending pitches in the cell;
+within-unit var: pooled, sum over units of (sum x^2 - n * mean^2) / sum over units of (n - 1);
+league var: variance of x over all AB-ending pitches in the cell; binomial bound: mu(1 - mu) at the cell's mean x.
+estimator   cell  units  min_n  AB-ending pitches  mean x  within-unit var  league var  binomial bound mu(1-mu)  within / bound  league / bound
+      R_b    all    906    100             327250  0.2449           0.0775      0.0776                   0.1849          0.4193          0.4194
+   R_p(s) side L    424    100             130752  0.2439           0.0769      0.0772                   0.1844          0.4172          0.4188
+   R_p(s) side R    763    100             196498  0.2456           0.0771      0.0778                   0.1853          0.4161          0.4198
+   r_b(f)     fb    719    100             178990  0.2635           0.0809      0.0803                   0.1941          0.4167          0.4140
+   r_b(f)     br    473    100             101072  0.2172           0.0753      0.0737                   0.1700          0.4429          0.4334
+   r_b(f)     os     42    100              47188  0.2338           0.0733      0.0723                   0.1791          0.4093          0.4035
+ r_p(f|s)   fb/L    192    100              71060  0.2617           0.0804      0.0806                   0.1932          0.4161          0.4172
+ r_p(f|s)   fb/R    364    100             107930  0.2646           0.0801      0.0801                   0.1946          0.4115          0.4118
+ r_p(f|s)   br/L     37    100              35989  0.2125           0.0729      0.0729                   0.1673          0.4354          0.4355
+ r_p(f|s)   br/R    160    100              65083  0.2197           0.0739      0.0741                   0.1715          0.4311          0.4322
+ r_p(f|s)   os/L     29    100              23703  0.2381           0.0676      0.0712                   0.1814          0.3726          0.3927
+ r_p(f|s)   os/R     43    100              23485  0.2295           0.0712      0.0733                   0.1768          0.4026          0.4146

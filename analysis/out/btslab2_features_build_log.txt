@@ -1,0 +1,222 @@
+﻿Lab 2 Step 1c feature build (2026-11-09 16:22:59 -0600); python 3.13.0, pandas 3.1.0
+BEAT_THE_STREAK_LAB2_ARSENAL_PLAN.md sha256 0c226655a95fc862e08677a6c88211883f81c2111d2885eca80426a4dd4327ee
+BEAT_THE_STREAK_LAB2_ADDENDUM_A1.md sha256 74e182c7c236fd4daebccc474e246daf8403f6afb4a3c903b91ae0aa181708ba
+BEAT_THE_STREAK_LAB2_ADDENDUM_A2.md sha256 f0300c33f2a6fd3f43a3f4d1f8a1cebe8a875111a25fc3a9c8d77a8a557655e9
+BEAT_THE_STREAK_LAB2_ADDENDUM_A3.md sha256 21efe8e55e69a69690472d30831f99ef5fe4c10cf3af660fc9f7fba1bd92538f
+BEAT_THE_STREAK_LAB2_ADDENDUM_A4.md sha256 70cd932297016a70579832560f7f16d13d049b44b0055453327a8f02baec5af2
+BEAT_THE_STREAK_LAB2_ADDENDUM_A5.md sha256 3180e9f19956ab4b130abccdc21dce41cb46e32747532cf95dac17471dda31d8
+base analysis\cache\btslab_features.parquet: file sha256 matches the recorded 14cf9d8b... (content e1fb5d01..., not recomputed here: that needs the outcome column); columns read ['game_pk', 'id', 'date', 'season', 'opp_sp']; rows 174,348
+schedule: regular-season games 15,475, seasons [2019, 2020, 2021, 2022, 2023, 2024, 2025] (2026 files skipped as lab 3's load_schedule); vault master_physics_vault.parquet rows read 4,768,010, regular-season rows kept 4,545,724 (2019-03-28 to 2025-09-28); duplicate vault keys 0
+contact table lab2_contact_table.csv sha256 d9c402da06c0d1b97ec0a14045e1fa7d4414d3a48f050a7e4c43e52561d9f6e4; vault sha256 not hashed (136 MB, unchanged file per Step 1b log)
+truncated_pa rows dropped 1,794; other-code pitches (KN, EP, PO, UN) 4,969 by code {'EP': 2842, 'KN': 1808, 'PO': 305, 'UN': 14}
+
+wrote analysis\cache\btslab2_features.parquet: rows 174,348, cols 103; order (date, game_pk, id); duplicate keys 0
+content sha256 62445424bda0c468f7dab50225a5a1d7fb346206e113a5cb18ef7367b7beb8f7 (sha256 of pandas.util.hash_pandas_object(df, index=False)); file sha256 de4b4b5d470d486aaffaeaf827951f7326468eb1932df7c44dcd9ea830b8bec9
+checks: I_max_date < D on every row; L and every L_f finite on every row (both groupings); family counts sum to totals
+
+## I1_miss by season
+         rows  I1_miss    rate  no side s  batter no AB-ending  starter no pitches to s
+season                                                                                 
+2022    43686      697  0.0160        188                  151                      675
+2023    43524      675  0.0155        136                  113                      643
+2024    43524      765  0.0176        118                  110                      734
+2025    43614      689  0.0158        120                  113                      666
+all seasons: 2,826 of 174,348 (0.0162)
+
+side s: L 72,351, R 101,435, missing 562; rows with a switch hitter (>= 20% each side) 18,348; c_hand missing 1,674
+league levels (per-AB measure), mean over rows: L 0.24544; L_fb 0.26374; L_br 0.21780; L_os 0.23439; L_fb_alt 0.26040; L_br_alt 0.22735; L_os_alt 0.24047
+
+## Prior strengths per fold (A3 item 13a, A4 items 2-3, 5e); n >= 100 qualifying unit-season rows
+The LOSO fold training on 2022-2023-2024 has the same training set as WF 2022-2023-2024, hence the same m values.
+x-based estimators (R_b, R_p(s), pooled r_b, pooled r_p): noise term = pooled within-unit variance per cell (A5 item 3)
+
+### WF | 2022-2023 | 2024  (unit-seasons: batter 1,321, starter 748, starter-side 1,493)
+      estimator       cell k100  k20 min_n     m    weight                                                                      detail
+  usage L1 u(f)         fb  716  736   100 21.22  588533.0                                                                            
+  usage L1 u(f)         br  716  736   100 13.35  313229.0                                                                            
+  usage L1 u(f)         os  716  736   100  11.7  147880.0                                                                            
+  usage L1 u(f)   combined                 17.53                                                                                      
+usage L2 u(f|s)         fb 1355 1458   100 32.55  584956.0                                                                            
+usage L2 u(f|s)         br 1355 1458   100 11.14  311477.0                                                                            
+usage L2 u(f|s)         os 1355 1458   100 5.198  147214.0                                                                            
+usage L2 u(f|s)   combined                  22.3                                                                                      
+            R_b        all  985 1223   100 147.3                                                                                      
+         R_p(s) both sides  900 1375   100 169.2                                                                  {'L': 387, 'R': 513}
+  pooled r_b(f)     pooled 1356 3109   100 279.7                                                      {'fb': 792, 'br': 520, 'os': 44}
+pooled r_p(f|s)     pooled  870 2762   100 59.91           {'fb/L': 208, 'fb/R': 354, 'br/L': 46, 'br/R': 175, 'os/L': 34, 'os/R': 53}
+variance used per cell (qualifying rows), and its ratio to the mean binomial bound mu(1-mu) over those rows:
+      estimator cell  rows  variance  mean mu(1-mu)   ratio
+            R_b  all   985   0.07728        0.18488 0.41798
+         R_p(s)    L   387   0.07741        0.18487 0.41872
+         R_p(s)    R   513   0.07844        0.18487 0.42428
+  pooled r_b(f)   br   520   0.07511        0.17265 0.43503
+  pooled r_b(f)   fb   792   0.08058        0.19297 0.41756
+  pooled r_b(f)   os    44   0.07284        0.18902 0.38535
+pooled r_p(f|s) br/L    46   0.07315        0.16878 0.43338
+pooled r_p(f|s) br/R   175   0.07432        0.17098 0.43464
+pooled r_p(f|s) fb/L   208   0.08065        0.19545 0.41264
+pooled r_p(f|s) fb/R   354   0.08075        0.19682 0.41026
+pooled r_p(f|s) os/L    34   0.06755        0.18021 0.37483
+pooled r_p(f|s) os/R    53   0.07104        0.18413 0.38580
+fallbacks to min_n = 20: none; m = inf: none
+I1 (descriptive, no outcome) on all rows with this fold's m: rows with I1_miss = 0 171,522; mean +4.210e-04, SD 9.105e-03; usage sums to 1 within 1e-9: True
+
+### WF | 2022-2023-2024 | 2025  (unit-seasons: batter 1,966, starter 1,117, starter-side 2,231)
+      estimator       cell k100  k20 min_n     m    weight                                                                      detail
+  usage L1 u(f)         fb 1061 1094   100 22.17  871633.0                                                                            
+  usage L1 u(f)         br 1061 1094   100 14.42  461922.0                                                                            
+  usage L1 u(f)         os 1061 1094   100  11.8  225557.0                                                                            
+  usage L1 u(f)   combined                 18.37                                                                                      
+usage L2 u(f|s)         fb 2001 2172   100 34.14  866326.0                                                                            
+usage L2 u(f|s)         br 2001 2172   100 11.23  459143.0                                                                            
+usage L2 u(f|s)         os 2001 2172   100 5.155  224624.0                                                                            
+usage L2 u(f|s)   combined                 23.15                                                                                      
+            R_b        all 1471 1822   100 147.1                                                                                      
+         R_p(s) both sides 1341 2028   100 179.5                                                                  {'L': 586, 'R': 755}
+  pooled r_b(f)     pooled 2042 4636   100 288.8                                                     {'fb': 1190, 'br': 780, 'os': 72}
+pooled r_p(f|s)     pooled 1272 4113   100  63.3           {'fb/L': 310, 'fb/R': 513, 'br/L': 67, 'br/R': 256, 'os/L': 53, 'os/R': 73}
+variance used per cell (qualifying rows), and its ratio to the mean binomial bound mu(1-mu) over those rows:
+      estimator cell  rows  variance  mean mu(1-mu)   ratio
+            R_b  all  1471   0.07732        0.18488 0.41824
+         R_p(s)    L   586   0.07791        0.18489 0.42140
+         R_p(s)    R   755   0.07845        0.18489 0.42431
+  pooled r_b(f)   br   780   0.07527        0.17245 0.43646
+  pooled r_b(f)   fb  1190   0.08049        0.19276 0.41758
+  pooled r_b(f)   os    72   0.07365        0.18737 0.39305
+pooled r_p(f|s) br/L    67   0.07403        0.16901 0.43799
+pooled r_p(f|s) br/R   256   0.07406        0.17019 0.43518
+pooled r_p(f|s) fb/L   310   0.08135        0.19591 0.41522
+pooled r_p(f|s) fb/R   513   0.08064        0.19620 0.41099
+pooled r_p(f|s) os/L    53   0.06866        0.18064 0.38010
+pooled r_p(f|s) os/R    73   0.07125        0.18405 0.38714
+fallbacks to min_n = 20: none; m = inf: none
+I1 (descriptive, no outcome) on all rows with this fold's m: rows with I1_miss = 0 171,522; mean +4.182e-04, SD 9.059e-03; usage sums to 1 within 1e-9: True
+
+### LOSO | 2023-2024-2025 | 2022  (unit-seasons: batter 1,949, starter 1,118, starter-side 2,235)
+      estimator       cell k100  k20 min_n     m    weight                                                                      detail
+  usage L1 u(f)         fb 1066 1099   100 24.01  878540.0                                                                            
+  usage L1 u(f)         br 1066 1099   100 15.78  472602.0                                                                            
+  usage L1 u(f)         os 1066 1099   100 12.45  230918.0                                                                            
+  usage L1 u(f)   combined                 19.87                                                                                      
+usage L2 u(f|s)         fb 2010 2185   100 35.44  873321.0                                                                            
+usage L2 u(f|s)         br 2010 2185   100 12.17  469533.0                                                                            
+usage L2 u(f|s)         os 2010 2185   100 5.166  230012.0                                                                            
+usage L2 u(f|s)   combined                 24.07                                                                                      
+            R_b        all 1465 1828   100 157.9                                                                                      
+         R_p(s) both sides 1362 2040   100 186.7                                                                  {'L': 610, 'R': 752}
+  pooled r_b(f)     pooled 2045 4653   100 254.7                                                     {'fb': 1179, 'br': 780, 'os': 86}
+pooled r_p(f|s)     pooled 1267 4197   100 58.84           {'fb/L': 323, 'fb/R': 503, 'br/L': 74, 'br/R': 246, 'os/L': 56, 'os/R': 65}
+variance used per cell (qualifying rows), and its ratio to the mean binomial bound mu(1-mu) over those rows:
+      estimator cell  rows  variance  mean mu(1-mu)   ratio
+            R_b  all  1465   0.07818        0.18593 0.42050
+         R_p(s)    L   610   0.07917        0.18587 0.42591
+         R_p(s)    R   752   0.07876        0.18583 0.42381
+  pooled r_b(f)   br   780   0.07638        0.17451 0.43771
+  pooled r_b(f)   fb  1179   0.08130        0.19376 0.41960
+  pooled r_b(f)   os    86   0.07414        0.18562 0.39942
+pooled r_p(f|s) br/L    74   0.07530        0.17256 0.43637
+pooled r_p(f|s) br/R   246   0.07453        0.17243 0.43225
+pooled r_p(f|s) fb/L   323   0.08238        0.19775 0.41660
+pooled r_p(f|s) fb/R   503   0.08083        0.19624 0.41189
+pooled r_p(f|s) os/L    56   0.06962        0.17979 0.38727
+pooled r_p(f|s) os/R    65   0.07210        0.18202 0.39612
+fallbacks to min_n = 20: none; m = inf: none
+I1 (descriptive, no outcome) on all rows with this fold's m: rows with I1_miss = 0 171,522; mean +4.903e-04, SD 9.540e-03; usage sums to 1 within 1e-9: True
+
+### LOSO | 2022-2024-2025 | 2023  (unit-seasons: batter 1,984, starter 1,102, starter-side 2,200)
+      estimator       cell k100  k20 min_n     m    weight                                                                      detail
+  usage L1 u(f)         fb 1042 1079   100 24.01  851887.0                                                                            
+  usage L1 u(f)         br 1042 1079   100 16.02  455351.0                                                                            
+  usage L1 u(f)         os 1042 1079   100 13.03  223928.0                                                                            
+  usage L1 u(f)   combined                 20.03                                                                                      
+usage L2 u(f|s)         fb 1977 2141   100 36.61  847067.0                                                                            
+usage L2 u(f|s)         br 1977 2141   100 11.34  452662.0                                                                            
+usage L2 u(f|s)         os 1977 2141   100 5.155  223174.0                                                                            
+usage L2 u(f|s)   combined                 24.49                                                                                      
+            R_b        all 1464 1827   100 158.1                                                                                      
+         R_p(s) both sides 1322 2003   100 179.4                                                                  {'L': 589, 'R': 733}
+  pooled r_b(f)     pooled 2017 4662   100   328                                                     {'fb': 1175, 'br': 762, 'os': 80}
+pooled r_p(f|s)     pooled 1243 4105   100 66.43           {'fb/L': 319, 'fb/R': 491, 'br/L': 62, 'br/R': 247, 'os/L': 58, 'os/R': 66}
+variance used per cell (qualifying rows), and its ratio to the mean binomial bound mu(1-mu) over those rows:
+      estimator cell  rows  variance  mean mu(1-mu)   ratio
+            R_b  all  1464   0.07774        0.18559 0.41886
+         R_p(s)    L   589   0.07854        0.18563 0.42307
+         R_p(s)    R   733   0.07846        0.18557 0.42283
+  pooled r_b(f)   br   762   0.07579        0.17400 0.43558
+  pooled r_b(f)   fb  1175   0.08092        0.19357 0.41805
+  pooled r_b(f)   os    80   0.07421        0.18630 0.39831
+pooled r_p(f|s) br/L    62   0.07539        0.17098 0.44091
+pooled r_p(f|s) br/R   247   0.07386        0.17168 0.43021
+pooled r_p(f|s) fb/L   319   0.08199        0.19718 0.41580
+pooled r_p(f|s) fb/R   491   0.08052        0.19653 0.40971
+pooled r_p(f|s) os/L    58   0.06913        0.18133 0.38125
+pooled r_p(f|s) os/R    66   0.07158        0.18298 0.39121
+fallbacks to min_n = 20: none; m = inf: none
+I1 (descriptive, no outcome) on all rows with this fold's m: rows with I1_miss = 0 171,522; mean +4.073e-04, SD 8.832e-03; usage sums to 1 within 1e-9: True
+
+### LOSO | 2022-2023-2025 | 2024  (unit-seasons: batter 1,982, starter 1,115, starter-side 2,226)
+      estimator       cell k100  k20 min_n     m    weight                                                                      detail
+  usage L1 u(f)         fb 1067 1099   100 22.88  876380.0                                                                            
+  usage L1 u(f)         br 1067 1099   100  14.6  471898.0                                                                            
+  usage L1 u(f)         os 1067 1099   100 12.61  223686.0                                                                            
+  usage L1 u(f)   combined                 18.93                                                                                      
+usage L2 u(f|s)         fb 2025 2178   100 34.26  871302.0                                                                            
+usage L2 u(f|s)         br 2025 2178   100 11.65  469170.0                                                                            
+usage L2 u(f|s)         os 2025 2178   100 5.201  222790.0                                                                            
+usage L2 u(f|s)   combined                 23.33                                                                                      
+            R_b        all 1471 1840   100 158.2                                                                                      
+         R_p(s) both sides 1351 2056   100 172.4                                                                  {'L': 594, 'R': 757}
+  pooled r_b(f)     pooled 2023 4685   100 277.2                                                     {'fb': 1175, 'br': 771, 'os': 77}
+pooled r_p(f|s)     pooled 1288 4181   100 59.03           {'fb/L': 323, 'fb/R': 515, 'br/L': 70, 'br/R': 253, 'os/L': 55, 'os/R': 72}
+variance used per cell (qualifying rows), and its ratio to the mean binomial bound mu(1-mu) over those rows:
+      estimator cell  rows  variance  mean mu(1-mu)   ratio
+            R_b  all  1471   0.07792        0.18576 0.41945
+         R_p(s)    L   594   0.07839        0.18575 0.42204
+         R_p(s)    R   757   0.07859        0.18566 0.42332
+  pooled r_b(f)   br   771   0.07593        0.17446 0.43521
+  pooled r_b(f)   fb  1175   0.08120        0.19388 0.41881
+  pooled r_b(f)   os    77   0.07352        0.18726 0.39263
+pooled r_p(f|s) br/L    70   0.07441        0.17153 0.43381
+pooled r_p(f|s) br/R   253   0.07446        0.17283 0.43082
+pooled r_p(f|s) fb/L   323   0.08153        0.19701 0.41383
+pooled r_p(f|s) fb/R   515   0.08079        0.19701 0.41007
+pooled r_p(f|s) os/L    55   0.06834        0.18017 0.37931
+pooled r_p(f|s) os/R    72   0.07156        0.18274 0.39160
+fallbacks to min_n = 20: none; m = inf: none
+I1 (descriptive, no outcome) on all rows with this fold's m: rows with I1_miss = 0 171,522; mean +4.539e-04, SD 9.241e-03; usage sums to 1 within 1e-9: True
+
+### LOSO | 2022-2023-2024 | 2025  (unit-seasons: batter 1,966, starter 1,117, starter-side 2,231)
+      estimator       cell k100  k20 min_n     m    weight                                                                      detail
+  usage L1 u(f)         fb 1061 1094   100 22.17  871633.0                                                                            
+  usage L1 u(f)         br 1061 1094   100 14.42  461922.0                                                                            
+  usage L1 u(f)         os 1061 1094   100  11.8  225557.0                                                                            
+  usage L1 u(f)   combined                 18.37                                                                                      
+usage L2 u(f|s)         fb 2001 2172   100 34.14  866326.0                                                                            
+usage L2 u(f|s)         br 2001 2172   100 11.23  459143.0                                                                            
+usage L2 u(f|s)         os 2001 2172   100 5.155  224624.0                                                                            
+usage L2 u(f|s)   combined                 23.15                                                                                      
+            R_b        all 1471 1822   100 147.1                                                                                      
+         R_p(s) both sides 1341 2028   100 179.5                                                                  {'L': 586, 'R': 755}
+  pooled r_b(f)     pooled 2042 4636   100 288.8                                                     {'fb': 1190, 'br': 780, 'os': 72}
+pooled r_p(f|s)     pooled 1272 4113   100  63.3           {'fb/L': 310, 'fb/R': 513, 'br/L': 67, 'br/R': 256, 'os/L': 53, 'os/R': 73}
+variance used per cell (qualifying rows), and its ratio to the mean binomial bound mu(1-mu) over those rows:
+      estimator cell  rows  variance  mean mu(1-mu)   ratio
+            R_b  all  1471   0.07732        0.18488 0.41824
+         R_p(s)    L   586   0.07791        0.18489 0.42140
+         R_p(s)    R   755   0.07845        0.18489 0.42431
+  pooled r_b(f)   br   780   0.07527        0.17245 0.43646
+  pooled r_b(f)   fb  1190   0.08049        0.19276 0.41758
+  pooled r_b(f)   os    72   0.07365        0.18737 0.39305
+pooled r_p(f|s) br/L    67   0.07403        0.16901 0.43799
+pooled r_p(f|s) br/R   256   0.07406        0.17019 0.43518
+pooled r_p(f|s) fb/L   310   0.08135        0.19591 0.41522
+pooled r_p(f|s) fb/R   513   0.08064        0.19620 0.41099
+pooled r_p(f|s) os/L    53   0.06866        0.18064 0.38010
+pooled r_p(f|s) os/R    73   0.07125        0.18405 0.38714
+fallbacks to min_n = 20: none; m = inf: none
+I1 (descriptive, no outcome) on all rows with this fold's m: rows with I1_miss = 0 171,522; mean +4.182e-04, SD 9.059e-03; usage sums to 1 within 1e-9: True
+
+A5 equivalence assertion (new estimator with v = mu(1-mu) reproduces bf.estimate_m, relative 1e-12): held on all 60 estimator calls
+A5 item 5 stop rule (any prior strength for R_b, R_p(s), r_b(f), r_p(f|s) infinite in any fold): not fired
+
+runtime 16 s

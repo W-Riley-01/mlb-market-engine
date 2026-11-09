@@ -1,5 +1,5 @@
 """Leak checks for analysis/cache/btslab2_features.parquet (lab 2 plan Section 11 rule 1; addendum A3 items 13g, 13j;
-A4). Exits 1 on any mismatch. No outcome column is read: lab 1's table is read for game_pk, id, date, season, opp_sp
+A4; A5, including the stored sums of x^2). Exits 1 on any mismatch. No outcome column is read: lab 1's table is read for game_pk, id, date, season, opp_sp
 and, for the doubleheader sample only, home_id and away_id (A3 item 13d). No box-score file and no 2026 data.
 
   python analysis/btslab2_leakcheck.py > analysis/out/btslab2_leakcheck_log.txt
@@ -194,12 +194,14 @@ def main():
                     P[f"{pre}n"] = len(df)
                     if xs is not None:
                         P[f"{pre}x"] = float(np.sum(xs))
+                        P[f"{pre}xx"] = float(np.sum(xs * xs))  # A5 item 4
                     dates.append(df.d.max() if len(df) else pd.NaT)
                 for f, cs in fams.items():
                     k = df.pitch_type.isin(cs).to_numpy()
                     P[f"{pre}n_{f}{g}"] = int(k.sum())
                     if xs is not None:
                         P[f"{pre}x_{f}{g}"] = float(np.sum(xs[k]))
+                        P[f"{pre}xx_{f}{g}"] = float(np.sum(xs[k] * xs[k]))
             for f in fams:
                 P[f"L_{f}{g}"] = P[f"lg_x_{f}{g}"] / P[f"lg_n_{f}{g}"]
         P["L"] = P["lg_x"] / P["lg_n"]

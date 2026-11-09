@@ -1,5 +1,5 @@
 """Beat the Streak lab 2, Step 1c: pitch-type matchup (I1) as-of feature table (plan BEAT_THE_STREAK_LAB2_ARSENAL_PLAN.md
-Sections 2-6, addenda A1-A4).
+Sections 2-6, addenda A1-A5).
 
 One row per row of lab 1's table, keyed (game_pk, id). Only lab 1's game_pk, id, date, season and opp_sp are read; the
 base file is checked by its recorded file sha256, so no outcome column is ever loaded. No box-score file is opened
@@ -84,13 +84,14 @@ def prepare(raw: dict) -> dict:
 
 # ---------------------------------------------------------------- pitch-level daily tables
 def _daily(df: pd.DataFrame, keys: list, fam: pd.Series, x: pd.Series | None, g: str) -> pd.DataFrame:
-    """Per keys+date: family counts (and x sums) for one grouping, columns named n{f}{g} / x{f}{g}."""
+    """Per keys+date: family counts (and sums of x and x^2, A5 item 4) for one grouping: n_{f}{g}, x_{f}{g}, xx_{f}{g}."""
     k = keys + ["date"]
     n = df.groupby(k + [fam.rename("_f")]).size().unstack("_f", fill_value=0).reindex(columns=F3, fill_value=0)
     out = n.rename(columns={f: f"n_{f}{g}" for f in F3})
     if x is not None:
-        s = df.assign(_x=x).groupby(k + [fam.rename("_f")])._x.sum().unstack("_f", fill_value=0.0).reindex(columns=F3, fill_value=0.0)
-        out = out.join(s.rename(columns={f: f"x_{f}{g}" for f in F3}))
+        for name, val in (("x", x), ("xx", x ** 2)):
+            s = df.assign(_x=val).groupby(k + [fam.rename("_f")])._x.sum().unstack("_f", fill_value=0.0).reindex(columns=F3, fill_value=0.0)
+            out = out.join(s.rename(columns={f: f"{name}_{f}{g}" for f in F3}))
     return out
 
 
@@ -124,6 +125,7 @@ def daily_tables(v: pd.DataFrame, P: np.ndarray) -> dict:
         d.insert(0, "n", d[[f"n_{f}" for f in F3]].sum(axis=1))
         if any(c.startswith("x_") for c in d.columns):
             d.insert(1, "x", d[[f"x_{f}" for f in F3]].sum(axis=1))
+            d.insert(2, "xx", d[[f"xx_{f}" for f in F3]].sum(axis=1))
         T[k] = d.reset_index()
     return T
 
@@ -189,21 +191,61 @@ def check(F: pd.DataFrame) -> None:
         for p in ("ua_", "us_", "lh_", "b_", "p_", "lg_"):
             assert (F[[f"{p}n_{f}{g}" for f in F3]].sum(axis=1) == F[f"{p}n"]).all(), f"{p}n{g}"
         for p in ("b_", "p_", "lg_"):
-            assert np.allclose(F[[f"{p}x_{f}{g}" for f in F3]].sum(axis=1), F[f"{p}x"], rtol=1e-12, atol=1e-9), f"{p}x{g}"
+            for s in ("x", "xx"):
+                assert np.allclose(F[[f"{p}{s}_{f}{g}" for f in F3]].sum(axis=1), F[f"{p}{s}"], rtol=1e-12, atol=1e-9), f"{p}{s}{g}"
 
 
 # ---------------------------------------------------------------- fit time: prior strengths and I1 (A3 item 13, A4)
-def est(x, n, mu, N=None):
-    """estimate_m with A3 item 13a's fallback: min_n 100; if no row qualifies, 20; if none, m = inf (estimate_m's own rule)."""
+def estimate_m_v(x: np.ndarray, n: np.ndarray, mu, v, min_n: float = 100, N=None) -> float:
+    """bf.estimate_m (btslab_features.py lines 354-364) with the per-trial variance w = v, the per-row pooled within-unit
+    variance of the row's cell, in place of mu(1 - mu) (A5 item 3); v is subset along with the other arrays."""
+    mu = np.broadcast_to(np.asarray(mu, float), n.shape)
+    v = np.broadcast_to(np.asarray(v, float), n.shape)
+    c = np.ones(n.shape) if N is None else 1 - n / np.where(N > 0, N, np.nan)
+    k = (n >= min_n) & np.isfinite(mu) & np.isfinite(c)
+    x, n, mu, c, v = x[k], n[k], mu[k], c[k], v[k]
+    w = v  # was: w = mu * (1 - mu)
+    tau2 = ((n * (x / n - mu) ** 2).sum() - (w * c).sum()) / (n * c ** 2).sum()
+    return float(w.mean() / tau2) if tau2 > 0 else np.inf  # no between-unit spread: shrink fully
+
+
+EQUIV = {"calls": 0}  # A5 item 3 equivalence assertion, counted over every estimator call
+
+
+def est(x, n, mu, N=None, xx=None, cell=None):
+    """Prior strength with A3 item 13a's fallback (min_n 100; if no row qualifies, 20; if none, m = inf). With xx and cell
+    (x-based measures, A5 item 3), the noise term is each cell's pooled within-unit variance on the qualifying rows."""
     x, n, mu = (np.asarray(a, float) for a in (x, n, mu))
     Nn = None if N is None else np.asarray(N, float)
+    cells = {}
     with np.errstate(invalid="ignore", divide="ignore"):
         c = np.ones(n.shape) if Nn is None else 1 - n / np.where(Nn > 0, Nn, np.nan)
         ok = np.isfinite(mu) & np.isfinite(c)
         k100, k20 = int((ok & (n >= MIN_N)).sum()), int((ok & (n >= MIN_N_FALLBACK)).sum())
         mn = MIN_N if k100 else MIN_N_FALLBACK
-        m = bf.estimate_m(x, n, mu, min_n=mn, N=Nn) if (k100 or k20) else np.inf
-    return {"m": m, "min_n": mn, "k100": k100, "k20": k20, "used": ok & (n >= mn)}
+        used = ok & (n >= mn)
+        if not (k100 or k20):
+            m = np.inf
+        else:
+            m_bin = bf.estimate_m(x, n, mu, min_n=mn, N=Nn)
+            m_eq = estimate_m_v(x, n, mu, mu * (1 - mu), min_n=mn, N=Nn)
+            assert (np.isinf(m_bin) and np.isinf(m_eq)) or abs(m_eq - m_bin) <= 1e-12 * abs(m_bin), \
+                f"stop: A5 equivalence assertion failed ({m_eq!r} vs {m_bin!r})"
+            EQUIV["calls"] += 1
+            if xx is None:
+                m = m_bin  # usage: counts, unchanged (A5 item 3)
+            else:
+                xx, cell = np.asarray(xx, float), np.asarray(cell)
+                v = np.full(n.shape, np.nan)
+                for cid in sorted(set(cell.tolist())):
+                    sel = used & (cell == cid)
+                    if sel.any():
+                        var = float((xx[sel] - x[sel] ** 2 / n[sel]).sum() / (n[sel] - 1).sum())
+                        v[cell == cid] = var
+                        bound = float((mu[sel] * (1 - mu[sel])).mean())
+                        cells[cid] = {"rows": int(sel.sum()), "variance": var, "mean mu(1-mu)": bound, "ratio": var / bound}
+                m = estimate_m_v(x, n, mu, v, min_n=mn, N=Nn)
+    return {"m": m, "min_n": mn, "k100": k100, "k20": k20, "used": used, "cells": cells}
 
 
 def units(T: pd.DataFrame) -> tuple:
@@ -236,21 +278,25 @@ def fold_m(X: pd.DataFrame, tr: np.ndarray, g: str = "") -> tuple[dict, list]:
                 log.append({"estimator": lvl, "cell": ff, "k100": r["k100"], "k20": r["k20"], "min_n": r["min_n"], "m": r["m"], "weight": wts[-1]})
             m["u1" if pre == "ua_" else "u2"] = _comb(parts, wts)
             log.append({"estimator": lvl, "cell": "combined", "m": m["u1" if pre == "ua_" else "u2"]})
-        r = est(f(bat, "b_x"), f(bat, "b_n"), f(bat, "L"))
+        # x-based measures (A4 items 2-3, A5 item 3): noise term = pooled within-unit variance of the row's cell
+        r = est(f(bat, "b_x"), f(bat, "b_n"), f(bat, "L"), xx=f(bat, "b_xx"), cell=np.full(len(bat), "all"))
         m["Rb"] = r["m"]
-        log.append({"estimator": "R_b", "cell": "all", **{k: r[k] for k in ("k100", "k20", "min_n", "m")}})
-        r = est(f(sps, "p_x"), f(sps, "p_n"), f(sps, "L"))
+        log.append({"estimator": "R_b", "cell": "all", **{k: r[k] for k in ("k100", "k20", "min_n", "m", "cells")}})
+        r = est(f(sps, "p_x"), f(sps, "p_n"), f(sps, "L"), xx=f(sps, "p_xx"), cell=sps.side_s.to_numpy(str))
         m["Rp"] = r["m"]
-        log.append({"estimator": "R_p(s)", "cell": "both sides", **{k: r[k] for k in ("k100", "k20", "min_n", "m")},
+        log.append({"estimator": "R_p(s)", "cell": "both sides", **{k: r[k] for k in ("k100", "k20", "min_n", "m", "cells")},
                     "k100 by side": {s: int((f(sps, "p_n")[sps.side_s.eq(s).to_numpy()] >= MIN_N).sum()) for s in ("L", "R")}})
         # pooled family measures (A4 item 3): rows stacked once per family, mu = raw overall x L_f / L, N = all AB-ending
         for name, d, pre, keyc in (("pooled r_b(f)", bat, "b_", None), ("pooled r_p(f|s)", sps, "p_", "side_s")):
             raw = f(d, f"{pre}x") / f(d, f"{pre}n")
             xs = np.concatenate([f(d, f"{pre}x_{ff}{g}") for ff in F3])
             ns = np.concatenate([f(d, f"{pre}n_{ff}{g}") for ff in F3])
+            xxs = np.concatenate([f(d, f"{pre}xx_{ff}{g}") for ff in F3])
             mus = np.concatenate([raw * f(d, f"L_{ff}{g}") / f(d, "L") for ff in F3])
             Ns = np.tile(f(d, f"{pre}n"), 3)
-            r = est(xs, ns, mus, Ns)
+            side = np.full(len(d), "") if keyc is None else "/" + d[keyc].to_numpy(str)
+            cl = np.concatenate([np.char.add(ff, side) for ff in F3])  # cell: family (batters), family/side (pitchers)
+            r = est(xs, ns, mus, Ns, xx=xxs, cell=cl)
             m["rb" if pre == "b_" else "rp"] = r["m"]
             cells = {}
             for i, ff in enumerate(F3):
@@ -260,7 +306,7 @@ def fold_m(X: pd.DataFrame, tr: np.ndarray, g: str = "") -> tuple[dict, list]:
                 else:
                     for s in ("L", "R"):
                         cells[f"{ff}/{s}"] = int((nn[d[keyc].eq(s).to_numpy()] >= MIN_N).sum())
-            log.append({"estimator": name, "cell": "pooled", **{k: r[k] for k in ("k100", "k20", "min_n", "m")}, "k100 by cell": cells})
+            log.append({"estimator": name, "cell": "pooled", **{k: r[k] for k in ("k100", "k20", "min_n", "m", "cells")}, "k100 by cell": cells})
     return m, log
 
 
@@ -315,7 +361,7 @@ def main():
     pd.set_option("display.width", 250, "display.max_rows", 300, "display.max_colwidth", 200)
     print(f"Lab 2 Step 1c feature build ({datetime.now().astimezone():%Y-%m-%d %H:%M:%S %z}); python {sys.version.split()[0]}, "
           f"pandas {pd.__version__}")
-    for n in ("ARSENAL_PLAN", "ADDENDUM_A1", "ADDENDUM_A2", "ADDENDUM_A3", "ADDENDUM_A4"):
+    for n in ("ARSENAL_PLAN", "ADDENDUM_A1", "ADDENDUM_A2", "ADDENDUM_A3", "ADDENDUM_A4", "ADDENDUM_A5"):
         p = ROOT / "analysis" / f"BEAT_THE_STREAK_LAB2_{n}.md"
         print(f"{p.name} sha256 {b3.sha(p)}")
     raw = load_raw()
@@ -354,20 +400,31 @@ def main():
 
     print("\n## Prior strengths per fold (A3 item 13a, A4 items 2-3, 5e); n >= 100 qualifying unit-season rows")
     print("The LOSO fold training on 2022-2023-2024 has the same training set as WF 2022-2023-2024, hence the same m values.")
+    print("x-based estimators (R_b, R_p(s), pooled r_b, pooled r_p): noise term = pooled within-unit variance per cell (A5 item 3)")
     X = F
+    stop = []
     for d, tr, te in FOLDS:
         trm = X.season.isin(tr).to_numpy()
         m, log = fold_m(X, trm)
         bat, sp, sps = units(X[trm])
         print(f"\n### {fold_label(d, tr, te)}  (unit-seasons: batter {len(bat):,}, starter {len(sp):,}, starter-side {len(sps):,})")
         print(describe_m(log))
+        vt = pd.DataFrame([{"estimator": r["estimator"], "cell": c, **s} for r in log for c, s in r.get("cells", {}).items()])
+        print("variance used per cell (qualifying rows), and its ratio to the mean binomial bound mu(1-mu) over those rows:")
+        print(vt.to_string(index=False, float_format=lambda z: f"{z:.5f}"))
         fb = [r for r in log if r.get("min_n") == MIN_N_FALLBACK]
         fi = [r for r in log if "k100" in r and not np.isfinite(r["m"])]
         print(f"fallbacks to min_n = 20: {[(r['estimator'], r['cell']) for r in fb] or 'none'}; "
               f"m = inf: {[(r['estimator'], r['cell']) for r in fi] or 'none'}")
+        stop += [(fold_label(d, tr, te), k) for k in ("Rb", "Rp", "rb", "rp") if not np.isfinite(m[k])]
         a = apply_m(X, m)
-        print(f"I1 on all rows with this fold's m: rows with I1_miss = 0 {int((a.I1_miss == 0).sum()):,}; "
-              f"I1 mean {a.I1[a.I1_miss == 0].mean():+.6f}, SD {a.I1[a.I1_miss == 0].std():.6f}; usage sums to 1 within 1e-9: True")
+        i1 = a.I1[a.I1_miss == 0]
+        print(f"I1 (descriptive, no outcome) on all rows with this fold's m: rows with I1_miss = 0 {len(i1):,}; "
+              f"mean {i1.mean():+.3e}, SD {i1.std():.3e}; usage sums to 1 within 1e-9: True")
+    print(f"\nA5 equivalence assertion (new estimator with v = mu(1-mu) reproduces bf.estimate_m, relative 1e-12): held on all "
+          f"{EQUIV['calls']} estimator calls")
+    print(f"A5 item 5 stop rule (any prior strength for R_b, R_p(s), r_b(f), r_p(f|s) infinite in any fold): "
+          f"{'FIRED: ' + str(stop) if stop else 'not fired'}")
     print(f"\nruntime {time.time() - t0:.0f} s")
 
 

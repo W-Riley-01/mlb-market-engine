@@ -1,0 +1,9 @@
+# Beat the Streak lab 3 — confirmation null study (addendum A3) on FAKE outcomes (Bernoulli(0.75); real hits never loaded)
+Pass rule (addendum A3 item 3): T1 false confirmation <= 8% AND T4 false stop <= 8% AND mean T1 <= +0.25 SD
+seeds 4401-4600 (200), 16 processes, 500 bootstrap resamples, 10 placebo permutations per seed; per-seed rows: btslab3_null_study2_seeds.csv
+- T1 false confirmation <= 8%: 0.000 -> PASS
+- T4 false stop <= 8%: 0.000 -> PASS
+- T1 no upward bias: mean <= +0.25 SD across seeds: mean -0.000063, SD 0.000038 -> PASS
+runtime 2006 s
+descriptive: T1 SD 0.0000382, 2.5–97.5% -0.000139 to +0.000006, seeds with T1 > 0: 9; mean placebo gain -0.0000783
+SELF-TEST null-2: PASS

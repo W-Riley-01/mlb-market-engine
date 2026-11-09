@@ -90,3 +90,7 @@ superseded before publication on 2026-11-09 14:15:08 -06:00: P18 accepted; amend
 Beat the Streak lab 2 addendum A3 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A3.md (design fixes after lab 3's real run: 2026 test withdrawn to a combined plan, T1b against M3, planted generator, one-sided null check, reproduction rules, seeds, implementation clarifications; reviewed by Claude (chat); written before any lab 2 feature, model, self-test or outcome read):
 lab2 A3 sha256: 21efe8e55e69a69690472d30831f99ef5fe4c10cf3af660fc9f7fba1bd92538f
 frozen: 2026-11-09 14:15:08 -06:00
+
+Beat the Streak lab 2 addendum A4 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A4.md (implementation definitions for Step 1c: I_gap deferred, R_b and R_p(s) targets, pooled family-measure m, A3 header status, readings and fold list; written before any lab 2 feature table or outcome read):
+lab2 A4 sha256: 70cd932297016a70579832560f7f16d13d049b44b0055453327a8f02baec5af2
+frozen: 2026-11-09 15:01:29 -06:00

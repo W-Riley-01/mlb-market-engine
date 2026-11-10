@@ -117,3 +117,17 @@ superseded before publication on 2026-11-09 20:51:27 -06:00: header cross-refere
 Beat the Streak lab 2 addendum A6 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A6.md (Step 1d definitions: placebo P replaces the usage-only placebo as T4 and the M4 placebo by the rule of the outcome-free check, prediction, stop rule 6 gains the lab 2 table, reproduction skip on fake outcomes, T5/T6 definitions, scoring of (c) and (f), recalibration unused, I_gap counts plate appearances, planted-run permutations; written after the placebo design check, before the analysis script, any self-test, fit or outcome read):
 lab2 A6 sha256: 99902c1562aa6292d3f9ac4f6c65cc90a5d3a8e54c9ec8e9b67ab0535e486fab
 frozen: 2026-11-09 20:51:27 -06:00
+
+Beat the Streak lab 2 addendum A7 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A7.md (analysis-script procedure and readings: stop rule 6 in fake modes, check order under --real, I_gap completion line, run-once started marker, three readings, T5 measure and unscored companion column, early view of T5 disclosed; written after the unit checks, smoke run and timing run, before any dry run, registered self-test, null study or outcome read):
+lab2 A7 sha256: 9e97f30b3a29ba230ca3417e2e8eb02100b808f4448ad50902763d40c5a34e3b
+frozen: 2026-11-09 21:53:39 -06:00
+superseded before publication on 2026-11-09 22:13:11 -06:00: item 7 updated after tests were added for the real-only paths (35 unit checks; new script, smoke log and time log hashes; list of paths that first run under --real); no other line changed
+
+Beat the Streak lab 2 addendum A7 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A7.md (analysis-script procedure and readings: stop rule 6 in fake modes, check order under --real, I_gap completion line, run-once started marker, three readings, T5 measure and unscored companion column, early view of T5 disclosed; written after the unit checks, smoke run and timing run, before any dry run, registered self-test, null study or outcome read):
+lab2 A7 sha256: 1577de83de76a4ceb40699d2fea3dbd0719c6dc5addab04944c557f285663284
+frozen: 2026-11-09 22:13:11 -06:00
+superseded before publication on 2026-11-09 22:19:46 -06:00: header basis names the final script, last-line wording, item 6 scaling clause and point-value sentence, item 7 note on appended smoke log and LF blobs; no other line changed
+
+Beat the Streak lab 2 addendum A7 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A7.md (analysis-script procedure and readings: stop rule 6 in fake modes, check order under --real, I_gap completion line, run-once started marker, three readings, T5 measure and unscored companion column, early view of T5 disclosed; written after the unit checks, smoke run and timing run, before any dry run, registered self-test, null study or outcome read):
+lab2 A7 sha256: 71134cd6eb799727a5f9ff6d70215a7b3786e94d7407060d44c514ac76aa2b0c
+frozen: 2026-11-09 22:19:46 -06:00

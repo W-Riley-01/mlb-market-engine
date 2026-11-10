@@ -1,0 +1,173 @@
+btslab2_analysis.py on-disk sha256 e7c568d71e2be641fb7742a87fa8529eab53b18bffa1e6c3ce11e2ad4e90416b
+C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\.venv\Lib\site-packages\sklearn\linear_model\_logistic.py:451: OptimizeWarning: Unknown solver options: iprint
+  opt_res = optimize.minimize(
+# Beat the Streak lab 2 — SMOKE TEST ONLY (not a result): unit checks, then fake outcomes, throwaway seed 9109, 20 bootstrap resamples, 2 placebo permutations. It shows the code runs end to end; nothing here is evidence.
+script sha256 e7c568d71e2be641fb7742a87fa8529eab53b18bffa1e6c3ce11e2ad4e90416b
+
+## Stop rule 6, table identity
+- lab 1 table: file sha256 14cf9d8b75516ce1349558a7e378e130a517fd145296b35ab68b7692e8f63497 matches the recorded file; content-hash recompute skipped in fake mode (it needs the outcome column; as lab 3)
+- lab 3 table content sha256 d8dccfe335795fec26b7f5bceb138059c10209bbe9a557463072860f1889bfa1: PASS
+- lab 2 table content sha256 62445424bda0c468f7dab50225a5a1d7fb346206e113a5cb18ef7367b7beb8f7: PASS
+
+## Unit checks
+- PASS: placebo P deterministic for a given seed (k = 0 twice identical; k = 1 differs)
+- PASS: donor mapping is a permutation within each (season, side) group; 8 groups: 2022/L 4640, 2022/R 4787, 2023/L 4666, 2023/R 4774, 2024/L 4625, 2024/R 4759, 2025/L 4668, 2025/R 4766
+- PASS: at least 99.9% of eligible units get a different donor; k=0 0.99981, k=1 0.99973; units 37,685
+- PASS: shuffle group order is season ascending, then L before R; groups [(2022, 'L'), (2022, 'R'), (2023, 'L'), (2023, 'R'), (2024, 'L'), (2024, 'R'), (2025, 'L'), (2025, 'R')]; a manual draw in that order equals the mapping, R-before-L does not
+- PASS: identity donor mapping reproduces the real I1 exactly
+- PASS: I1_miss rows keep I1 = 0 and I1_miss = 1; 2,826 I1_miss rows
+- PASS: placebo P code reproduces the placebo check's logged fold 2022-2023 -> 2024, k = 0 correlation 0.1030; 0.102987
+- PASS: pooled-variance estimator equals lab 1's estimate_m when v = mu(1 - mu), and T5's tau2 gives estimate_m_v's m; R_b, pooled r_b(br), r_p(os) cells on the 2022-24 training rows
+- PASS: paired log loss and the date bootstrap match a plain-Python recomputation; -0.04986647 (-0.10451003 to +0.00243483) vs -0.04986647 (-0.10451003 to +0.00243483)
+- PASS: T5: family variance not positive gives ratio 0 and is counted; overall not positive is left out and counted; ratios [0.0, 1.0, nan, nan, 0.0], family <= 0: 2, overall <= 0: 2; interval over the 3 defined ratios
+- PASS: expectation (c): within ±0.02 and interval includes 0
+- PASS: expectation (f): all three conditions
+- PASS: expectations (a) and (h): the percent-chance parts are not scored
+- PASS: --real with a missing PASS log refuses and reads no data file; refused: "refusing to run --real (no data file read): missing or failed precondition log(s): leak.txt, planted.txt, planted-null.txt, null.txt, igap.txt"; data files opened: 0
+# Beat the Streak lab 2 — RESULTS (real outcomes)
+script btslab2_analysis.py on-disk sha256 e7c568d71e2be641fb7742a87fa8529eab53b18bffa1e6c3ce11e2ad4e90416b
+## Preconditions (A3 item 13i; A6 items 4, 13; before any data file is read)
+- leak.txt contains 'LEAK CHECK: PASS': PASS
+- planted.txt contains 'SELF-TEST planted: PASS': PASS
+- planted-null.txt contains 'SELF-TEST planted-null: PASS': PASS
+- null.txt contains 'SELF-TEST null: PASS': PASS
+- igap.txt last non-blank line is 'I_GAP REPORT: COMPLETE': PASS
+## Stop rule 6, table identity (A3 item 6; A6 item 4)
+- PASS: --real with every PASS log present (I_gap log ending in the completion line) passes the gate and only then reads data (stop rule 6); first data read after the gate: btslab_features.parquet
+- PASS: I_gap precondition: a log whose last non-blank line is the completion line passes
+- PASS: I_gap precondition: a missing log refuses; "refusing to run --real (no data file read): missing or failed precondition log(s): igap.txt"
+- PASS: I_gap precondition: a log whose last non-blank line is anything else refuses; "refusing to run --real (no data file read): missing or failed precondition log(s): igap.txt"; data files opened by these three gate calls: 0
+- PASS: a second --real refuses (run-once guard)
+- PASS: null study refuses with no time log, and with a time log whose script hash does not match; accepts a match; no log: "refusing to run the null study: time.txt does not exist (A6 item 10; run --time first)"; mismatch: "refusing to run the null study: time.txt records 00000000000000000000000000000000000000000..."
+- PASS: a second run of a registered seed refuses (run-once guard)
+- PASS: fake mode never reads the real outcome column; lab 1 table read with 63 columns, 'h' not among them; 'h' absent from the loaded frame; lab 2/3 tables have no 'h'
+
+## Smoke run, planted generator, seed 9109
+outcome: Bernoulli(p), logit p = logit(0.75) + 0.30*[slot 1-4] - 0.40*z(a_k) + 0.50*z(a_hab) + 0.10*z(I1 shrunk); shrunk columns and z from the train-2022-24 fold, applied to all rows; I1_miss rows z(I1) = 0; seed 9109
+countable rows (AB >= 1): 174117; passes (AB = 0): 231
+
+## Reproduction (stop rule 7: M1 then M3; A3 item 6)
+skipped on fake outcomes (lab 1's numbers are real-outcome numbers); logged as skipped (A6 item 5)
+
+## Folds (inner CV: 5 contiguous date blocks, 12 C values 1e-3..1e2, mean log loss)
+| design | train | test | model | C | inner-CV log loss | AUC (CV) | AUC B1 (CV) | wiring 1-4 minus 9 |
+|---|---|---|---|---|---|---|---|---|
+| WF | 2022-2023 | 2024 | M1 | 100 (grid edge) | 0.50987 | 0.7210 | 0.6965 | +0.1866 |
+| WF | 2022-2023 | 2024 | M2 | 100 (grid edge) | 0.50939 | 0.7220 | 0.6965 | +0.1865 |
+| WF | 2022-2023 | 2024 | M3 | 0.0231 | 0.50988 | 0.7210 | 0.6965 | +0.1864 |
+| WF | 2022-2023 | 2024 | M4 | 100 (grid edge) | 0.50945 | 0.7219 | 0.6965 | +0.1866 |
+| WF | 2022-2023-2024 | 2025 | M1 | 0.0231 | 0.51318 | 0.7190 | 0.6936 | +0.1815 |
+| WF | 2022-2023-2024 | 2025 | M2 | 0.008111 | 0.51275 | 0.7198 | 0.6936 | +0.1813 |
+| WF | 2022-2023-2024 | 2025 | M3 | 0.0231 | 0.51325 | 0.7189 | 0.6936 | +0.1815 |
+| WF | 2022-2023-2024 | 2025 | M4 | 0.0231 | 0.51283 | 0.7197 | 0.6936 | +0.1815 |
+| LOSO | 2023-2024-2025 | 2022 | M1 | 0.008111 | 0.51641 | 0.7122 | 0.6870 | +0.1723 |
+| LOSO | 2023-2024-2025 | 2022 | M2 | 0.008111 | 0.51595 | 0.7132 | 0.6870 | +0.1723 |
+| LOSO | 2023-2024-2025 | 2022 | M3 | 0.0231 | 0.51655 | 0.7120 | 0.6870 | +0.1724 |
+| LOSO | 2022-2024-2025 | 2023 | M1 | 0.0231 | 0.51465 | 0.7156 | 0.6914 | +0.1800 |
+| LOSO | 2022-2024-2025 | 2023 | M2 | 0.0231 | 0.51414 | 0.7165 | 0.6914 | +0.1800 |
+| LOSO | 2022-2024-2025 | 2023 | M3 | 0.0231 | 0.51478 | 0.7154 | 0.6914 | +0.1800 |
+| LOSO | 2022-2023-2025 | 2024 | M1 | 0.0231 | 0.51215 | 0.7160 | 0.6921 | +0.1812 |
+| LOSO | 2022-2023-2025 | 2024 | M2 | 0.008111 | 0.51164 | 0.7170 | 0.6921 | +0.1810 |
+| LOSO | 2022-2023-2025 | 2024 | M3 | 0.0231 | 0.51221 | 0.7159 | 0.6921 | +0.1812 |
+| LOSO | 2022-2023-2024 | 2025 | M1 | 0.0231 | 0.51318 | 0.7190 | 0.6936 | +0.1815 |
+| LOSO | 2022-2023-2024 | 2025 | M2 | 0.008111 | 0.51275 | 0.7198 | 0.6936 | +0.1813 |
+| LOSO | 2022-2023-2024 | 2025 | M3 | 0.0231 | 0.51325 | 0.7189 | 0.6936 | +0.1815 |
+| LOSO | 2022-2023-2024 | 2025 | M4 | 0.0231 | 0.51283 | 0.7197 | 0.6936 | +0.1815 |
+lab 2 prior strengths m, test 2024: u1=17.53, u2=22.3, Rb=147.3, Rp=169.2, rb=279.7, rp=59.91; alternative grouping: u1=16.55, u2=21.26, Rb=147.3, Rp=169.2, rb=359.2, rp=56.11
+lab 2 prior strengths m, test 2025: u1=18.37, u2=23.15, Rb=147.1, Rp=179.5, rb=288.8, rp=63.3; alternative grouping: u1=16.25, u2=21.05, Rb=147.1, Rp=179.5, rb=498.8, rp=60.14
+
+## Stop rules
+- Rule 3, usage shares sum to 1 within 1e-9 on every row with history: PASS (asserted in apply_m for every fold)
+- Rule 5a, model beats B1 on batter-game AUC in the training inner CV (M1-M4, each walk-forward fold): PASS
+- Rule 5b, training mean P(hit) slots 1-4 minus slot 9 > 0 (M1-M4, each walk-forward fold): PASS
+
+## T4 — placebo P (A6 item 2): 2 permutations (seeds 20261150 + k), 37,685 eligible units over 2022-2025, shuffled within (season, side s); M2 refitted at each fold's real C; loss(M2 placebo) − loss(M1); date bootstrap seed 20261105
+placebo statistic (per-row mean over permutations) -0.000014 (95% -0.000036 to +0.000011); per-permutation statistics 2.5–97.5%: -0.000024 to -0.000005; least share of units moved 0.9997
+- Stop rule 2, M2 placebo interval entirely below 0: no
+Real vs placebo-P I1, Pearson correlation on test-season rows with I1_miss = 0 (descriptive, A6 item 2):
+| fold test | mean | min | max |
+|---|---|---|---|
+| 2024 | 0.1163 | 0.1144 | 0.1181 |
+| 2025 | 0.1044 | 0.0926 | 0.1162 |
+per k: 2024.0 k0.0 0.1144; 2025.0 k0.0 0.0926; 2024.0 k1.0 0.1181; 2025.0 k1.0 0.1162
+
+## M4 placebo — placebo P (A6 item 2): 2 permutations (seeds 20261150 + k), 37,685 eligible units over 2022-2025, shuffled within (season, side s); M4 refitted at each fold's real C; loss(M4 placebo) − loss(M3); date bootstrap seed 20261124
+placebo statistic (per-row mean over permutations) -0.000006 (95% -0.000025 to +0.000013); per-permutation statistics 2.5–97.5%: -0.000013 to +0.000001; least share of units moved 0.9997
+- Stop rule 2, M4 placebo interval entirely below 0: no
+
+## T1 — PRIMARY: walk-forward log loss(M2) − log loss(M1), paired by row (date bootstrap seed 20261102)
+pooled 2024–25: -0.000479 (95% -0.000668 to -0.000353), rows 87021
+batter-game log loss M1 0.51828, M2 0.51781, M3 0.51845, M4 0.51795; AUC M1 0.7033, M2 0.7041, M3 0.7029, M4 0.7038, B2 0.6623
+**T1 rule: Confirmed** (Confirmed only if the 95% interval lies entirely below 0)
+
+## T1b — log loss(M4) − log loss(M3), paired by row (date bootstrap seed 20261121; A3 item 3)
+pooled 2024–25: -0.000502 (95% -0.000702 to -0.000322), rows 87021
+**T1b rule: Confirmed**; inclusion rule (A3 item 3): I1 enters the combined 2026 model
+
+## T2 — LOSO log loss(M2) − log loss(M1) (secondary, seed 20261103): -0.000488 (95% -0.000592 to -0.000353), rows 174117; T1's rule applied: Confirmed (not confirmatory)
+
+## T3 — top-1 daily success (descriptive; walk-forward; seed 20261104; no recalibration, A6 item 12)
+M1 0.981 (0.961–0.991), M2 0.978 (0.957–0.989), B2 0.940 (0.910–0.960); M2 − M1 -0.0027 (95% -0.0097 to +0.0000) (364 dates); M2 − B2 +0.0385 (95% +0.0162 to +0.0665) (364 dates)
+
+## T3b — top-1 M4 − M3 (descriptive; seed 20261123): M4 0.978 (0.957–0.989), M3 0.981 (0.961–0.991); -0.0027 (95% -0.0111 to +0.0000) (364 dates)
+
+## T5 — DIAGNOSTIC: between-unit variance of family-specific deviations (walk-forward 2022–24 training unit-season rows; pooled within-unit variance per cell, A5 item 8; player resamples 20, seed 20261106; A6 item 8)
+| units | cell | unit-seasons | min_n | qualifying rows | within-unit variance | between-unit variance (unclipped) | 95% interval | SD ratio | SD ratio 95% | resamples family var <= 0 (ratio 0) | resamples overall var <= 0 (left out) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| batter | fb | 1966 | 100 | 1190 | 0.08049 | +3.137e-04 | +2.425e-04 to +3.999e-04 | 0.773 | 0.698 to 0.888 | 0 | 0 |
+| batter | br | 1966 | 100 | 780 | 0.07527 | +2.298e-04 | +1.260e-04 to +2.909e-04 | 0.661 | 0.490 to 0.749 | 0 | 0 |
+| batter | os | 1966 | 100 | 72 | 0.07365 | +2.596e-04 | -1.354e-05 to +4.143e-04 | 0.703 | 0.116 to 0.914 | 1 | 0 |
+| pitcher | fb/L | 1114 | 100 | 310 | 0.08135 | +1.544e-03 | +1.180e-03 to +1.796e-03 | 1.874 | 1.585 to 2.080 | 0 | 0 |
+| pitcher | br/L | 1114 | 100 | 67 | 0.07403 | +1.166e-03 | +4.034e-04 to +1.661e-03 | 1.629 | 0.877 to 1.993 | 0 | 0 |
+| pitcher | os/L | 1114 | 100 | 53 | 0.06866 | +1.111e-03 | +7.061e-04 to +1.985e-03 | 1.590 | 1.259 to 2.069 | 0 | 0 |
+| pitcher | fb/R | 1117 | 100 | 513 | 0.08064 | +1.117e-03 | +6.757e-04 to +1.505e-03 | 1.605 | 1.262 to 1.836 | 0 | 0 |
+| pitcher | br/R | 1117 | 100 | 256 | 0.07406 | +9.263e-04 | +5.744e-04 to +1.454e-03 | 1.462 | 1.229 to 1.794 | 0 | 0 |
+| pitcher | os/R | 1117 | 100 | 73 | 0.07125 | +1.980e-03 | +7.684e-04 to +3.746e-03 | 2.138 | 1.270 to 3.008 | 0 | 0 |
+Stated plainly (plan Section 8 T5): if the shares are near zero, there is nothing for the fit score to find.
+
+## T6 — EXPLORATORY comparisons (walk-forward; fitted at M2's C; date bootstrap seed 20261107); Δ = loss(model) − loss(reference)
+| model | vs | Δ log loss | Δ top-1 (model − ref) |
+|---|---|---|---|
+| M1 + I1..I4 | M1 | -0.000465 (95% -0.000650 to -0.000314) | -0.0027 (95% -0.0069 to +0.0000) |
+| M1 + I1..I4 | M2 | +0.000014 (95% -0.000001 to +0.000032) | +0.0000 (95% +0.0000 to +0.0000) |
+| M1 + I1 (alternative grouping) | M1 | -0.000316 (95% -0.000466 to -0.000202) | +0.0000 (95% +0.0000 to +0.0000) |
+
+## Standardised I1 coefficients, fit on 2022–24 (date bootstrap 20 resamples, seed 20261120, warm start)
+M2 I1: +0.0876 (+0.0739 to +0.0987) at C 0.008111
+M2 I1_miss: -0.0180 (-0.0668 to +0.0258) at C 0.008111
+M4 I1: +0.0882 (+0.0747 to +0.0996) at C 0.0231
+M4 I1_miss: -0.0360 (-0.1174 to +0.0248) at C 0.0231
+
+## Claude's pre-registered expectations (met / not met; no decision rule; scoring A6 item 11)
+| expectation | result | numbers |
+|---|---|---|
+| (a) loss(M1) − loss(M2) between 0 and 0.0004 | not met | +0.000479; interval excludes 0: True (the 35% chance is not scored, A6 item 11) |
+| (b) I1 coefficient positive and under 0.03 per SD | not met | +0.0876 |
+| (c) top-1 M2 − M1 within ±0.02 and its 95% interval includes 0 | met | -0.0027 (95% -0.0097 to +0.0000) |
+| (d) placebo (T4, placebo P) interval includes 0 | met | (-0.000036 to +0.000011) |
+| (e) M1 + I1..I4 vs M2 log-loss interval includes 0 | met | (-0.000001 to +0.000032) |
+| (f) every T5 cell variance > 0, every SD ratio < 0.5, mean pitcher ratio > mean batter ratio | not met | variances 0.000314, 0.00023, 0.00026, 0.00154, 0.00117, 0.00111, 0.00112, 0.000926, 0.00198; ratios 0.773, 0.661, 0.703, 1.874, 1.629, 1.590, 1.605, 1.462, 2.138; mean pitcher 1.716, batter 0.712 |
+| (g) M2 − B2 top-1 not confirmed by the T1-style rule | not met | (+0.0162 to +0.0665) |
+| (h) loss(M3) − loss(M4) between 0 and 0.0003 | not met | +0.000502; interval excludes 0: True (the 25% chance is not scored, A6 item 11) |
+| (i) loss(M3) − loss(M4) ≤ loss(M1) − loss(M2) | not met | +0.000502 vs +0.000479 |
+
+runtime 113 s
+
+M2 I1 coefficient (per SD, fit 2022–24): +0.087628; T1 Confirmed; T1b Confirmed; M2 placebo not Confirmed; M4 placebo not Confirmed
+SELFTEST-DATA kind=planted seed=9109 i1=+0.087628 t1_confirmed=True t1b_confirmed=True placebo_stop=False placebo4_stop=False
+Pass rule on this throwaway seed (A3 item 4), for information only:
+Traceback (most recent call last):
+  File "C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\btslab2_analysis.py", line 1186, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\btslab2_analysis.py", line 1109, in main
+    verdict(parse_data(ba.LOG[-1]))
+            ~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\W\PyCharmMiscProject\MLB_Analysis\analysis\btslab2_analysis.py", line 622, in parse_data
+    assert len(m) == 1, f"expected one SELFTEST-DATA line, found {len(m)}"
+           ^^^^^^^^^^^
+AssertionError: expected one SELFTEST-DATA line, found 0
+
+real	1m57.746s
+user	0m0.015s
+sys	0m0.015s

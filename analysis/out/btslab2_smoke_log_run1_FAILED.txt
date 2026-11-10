@@ -1,0 +1,28 @@
+# Beat the Streak lab 2 — SMOKE TEST ONLY (not a result): unit checks, then fake outcomes, throwaway seed 9109, 20 bootstrap resamples, 2 placebo permutations. It shows the code runs end to end; nothing here is evidence.
+script sha256 3dac780f7daa8536b227d12d02a317162954ab24cae342959d73fd0a69c89fb2
+
+## Stop rule 6, table identity
+- lab 1 table: file sha256 14cf9d8b75516ce1349558a7e378e130a517fd145296b35ab68b7692e8f63497 matches the recorded file; content-hash recompute skipped in fake mode (it needs the outcome column; as lab 3)
+- lab 3 table content sha256 d8dccfe335795fec26b7f5bceb138059c10209bbe9a557463072860f1889bfa1: PASS
+- lab 2 table content sha256 62445424bda0c468f7dab50225a5a1d7fb346206e113a5cb18ef7367b7beb8f7: PASS
+
+## Unit checks
+- PASS: placebo P deterministic for a given seed (k = 0 twice identical; k = 1 differs)
+- PASS: donor mapping is a permutation within each (season, side) group; 8 groups: 2022/L 4640, 2022/R 4787, 2023/L 4666, 2023/R 4774, 2024/L 4625, 2024/R 4759, 2025/L 4668, 2025/R 4766
+- PASS: at least 99.9% of eligible units get a different donor; k=0 0.99981, k=1 0.99973; units 37,685
+- PASS: shuffle group order is season ascending, then L before R; groups [(2022, 'L'), (2022, 'R'), (2023, 'L'), (2023, 'R'), (2024, 'L'), (2024, 'R'), (2025, 'L'), (2025, 'R')]; a manual draw in that order equals the mapping, R-before-L does not
+- PASS: identity donor mapping reproduces the real I1 exactly
+- PASS: I1_miss rows keep I1 = 0 and I1_miss = 1; 2,826 I1_miss rows
+- PASS: placebo P code reproduces the placebo check's logged fold 2022-2023 -> 2024, k = 0 correlation 0.1030; 0.102987
+- FAIL: pooled-variance estimator equals lab 1's estimate_m when v = mu(1 - mu), and T5's tau2 gives estimate_m_v's m; R_b, pooled r_b(br), r_p(os) cells on the 2022-24 training rows
+- PASS: paired log loss and the date bootstrap match a plain-Python recomputation; -0.04986647 (-0.10451003 to +0.00243483) vs -0.04986647 (-0.10451003 to +0.00243483)
+- PASS: T5: family variance not positive gives ratio 0 and is counted; overall not positive is left out and counted; ratios [0.0, 1.0, nan, nan, 0.0], family <= 0: 2, overall <= 0: 2; interval over the 3 defined ratios
+- PASS: expectation (c): within ±0.02 and interval includes 0
+- PASS: expectation (f): all three conditions
+- PASS: expectations (a) and (h): the percent-chance parts are not scored
+- PASS: --real with a missing PASS log refuses and reads no data file; refused: "refusing to run --real (no data file read): missing or failed precondition log(s): leak.txt, planted.txt, planted-null.txt, null.txt, igap.txt"; data files opened: 0
+- PASS: --real with every PASS log present passes the gate and only then reads data (stop rule 6); first data read after the gate: btslab_features.parquet
+- PASS: a second --real refuses (run-once guard)
+- PASS: null study refuses with no time log, and with a time log whose script hash does not match; accepts a match; no log: "refusing to run the null study: time.txt does not exist (A6 item 10; run --time first)"; mismatch: "refusing to run the null study: time.txt records 00000000000000000000000000000000000000000..."
+- PASS: a second run of a registered seed refuses (run-once guard)
+- PASS: fake mode never reads the real outcome column; lab 1 table read with 63 columns, 'h' not among them; 'h' absent from the loaded frame; lab 2/3 tables have no 'h'

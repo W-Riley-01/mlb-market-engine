@@ -1,0 +1,9 @@
+# Beat the Streak lab 2 — timing (A3 item 9; A6 item 10); fake null outcomes, seed 9109
+script sha256 604115b8dbc4acb11efd33c026c225caf521bd19e9512206838ca9e08bab82d2
+processes for the projection: 16 (os.cpu_count() 16)
+fold preparation, 2 walk-forward folds (lab 1 + lab 3 + lab 2 features, placebo units, 10 mappings): 2.2 s
+one null seed in-process (M1-M4 inner CV on 2 folds, 2 x 10 placebo refits on 2 folds, T1, T1b, 500 resamples): 52.1 s
+inner CV incl. refit, train 2022-24: M1 5.1 s, M2 5.3 s, M3 7.5 s, M4 7.9 s
+one M4 fit at fixed C: 0.24 s; one warm bootstrap refit: 0.16 s; T5 with 2,000 resamples: 0.4 s
+projection, null study 200 seeds: 2.89 h serial, 11 min on 16 processes (plus about 2 s start-up per process; ignores contention between processes)
+projection, real run: 13 min serial (5 distinct folds x M1, M2, M3 inner CV + 2 x M4 + 2 models x 50 placebo refits x 2 folds + 4 exploratory refits + 2 x 2,000 warm bootstrap refits + T5)

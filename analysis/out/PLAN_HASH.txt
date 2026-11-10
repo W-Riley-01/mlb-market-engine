@@ -108,3 +108,12 @@ superseded before publication on 2026-11-09 16:06:37 -06:00: item 8 completed (T
 Beat the Streak lab 2 addendum A5 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A5.md (per-trial variance of the per-AB measure: pooled within-unit variance replaces the binomial bound for R_b, R_p(s), r_b(f), r_p(f|s) and T5; written after the first Step 1c build stopped with I1 identically zero, before any leak check, outcome read or fit):
 lab2 A5 sha256: 3180e9f19956ab4b130abccdc21dce41cb46e32747532cf95dac17471dda31d8
 frozen: 2026-11-09 16:06:37 -06:00
+
+Beat the Streak lab 2 addendum A6 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A6.md (Step 1d definitions: placebo P replaces the usage-only placebo as T4 and the M4 placebo by the rule of the outcome-free check, prediction, stop rule 6 gains the lab 2 table, reproduction skip on fake outcomes, T5/T6 definitions, scoring of (c) and (f), recalibration unused, I_gap counts plate appearances; written after the placebo design check, before the analysis script, any self-test, fit or outcome read):
+lab2 A6 sha256: 0cf6d6deb3aa49a1a0bbe8dd55ef8c1abb2745055ebfbf83fffc75eecd28475e
+frozen: 2026-11-09 18:39:49 -06:00
+superseded before publication on 2026-11-09 20:51:27 -06:00: header cross-reference corrected to item 16; summary's correlation wording corrected; item 2 records the accepted code-terms points, the logged real-versus-placebo-P correlation and 10 permutations for the registered planted runs; item 8 adds undefined T5 ratios when the denominator variance is not positive; long lines re-wrapped; scope and Unchanged updated; no other line changed
+
+Beat the Streak lab 2 addendum A6 analysis/BEAT_THE_STREAK_LAB2_ADDENDUM_A6.md (Step 1d definitions: placebo P replaces the usage-only placebo as T4 and the M4 placebo by the rule of the outcome-free check, prediction, stop rule 6 gains the lab 2 table, reproduction skip on fake outcomes, T5/T6 definitions, scoring of (c) and (f), recalibration unused, I_gap counts plate appearances, planted-run permutations; written after the placebo design check, before the analysis script, any self-test, fit or outcome read):
+lab2 A6 sha256: 99902c1562aa6292d3f9ac4f6c65cc90a5d3a8e54c9ec8e9b67ab0535e486fab
+frozen: 2026-11-09 20:51:27 -06:00

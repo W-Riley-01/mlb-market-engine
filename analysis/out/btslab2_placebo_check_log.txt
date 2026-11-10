@@ -1,0 +1,51 @@
+﻿Lab 2 placebo design check (2026-11-09 17:14:36 -0600); outcome-free
+
+DECISION RULE (fixed before any computation):
+A placebo is usable only if the maximum Pearson correlation between real and placebo I1 over both folds and all five permutations is at most 0.30. Reason: the planted effect (c = 0.10) gives a log-loss gain of about 0.0009; a placebo sharing a fraction r^2 of the real feature's variance reproduces about r^2 of that gain, and r^2 of at most 0.09 keeps it near 0.0001, the test's resolving power. Rule: if U is usable, T4 stays as written. Else if P is usable, P replaces U as T4 and the placebo for M4, with the other mechanics of A3 item 7 unchanged. Else neither is a usable stop-rule placebo: both are reported descriptively, and the Step 1d addendum drops the placebo stop rule and the planted test's 'placebo not Confirmed' condition, stating that plainly.
+
+rule written at 2026-11-09 17:14:36 -0600; computation starts now
+lab2: 0c226655a95fc862e08677a6c88211883f81c2111d2885eca80426a4dd4327ee matches PLAN_HASH.txt
+lab2 A1: 74e182c7c236fd4daebccc474e246daf8403f6afb4a3c903b91ae0aa181708ba matches PLAN_HASH.txt
+lab2 A2: f0300c33f2a6fd3f43a3f4d1f8a1cebe8a875111a25fc3a9c8d77a8a557655e9 matches PLAN_HASH.txt
+lab2 A3: 21efe8e55e69a69690472d30831f99ef5fe4c10cf3af660fc9f7fba1bd92538f matches PLAN_HASH.txt
+lab2 A4: 70cd932297016a70579832560f7f16d13d049b44b0055453327a8f02baec5af2 matches PLAN_HASH.txt
+lab2 A5: 3180e9f19956ab4b130abccdc21dce41cb46e32747532cf95dac17471dda31d8 matches PLAN_HASH.txt
+table btslab2_features.parquet: content sha256 62445424bda0c468f7dab50225a5a1d7fb346206e113a5cb18ef7367b7beb8f7 matches; rows 174,348
+
+fold train 2022-2023 -> test 2024: test rows 43,524; with I1_miss = 0 42,759; eligible units 9,384 (side L 4,625, R 4,759); real I1 equals the builder's I1: True; m = u1 17.53, u2 22.3, Rb 147.3, Rp 169.2, rb 279.7, rp 59.91
+
+fold train 2022-2023-2024 -> test 2025: test rows 43,614; with I1_miss = 0 42,925; eligible units 9,434 (side L 4,668, R 4,766); real I1 equals the builder's I1: True; m = u1 18.37, u2 23.15, Rb 147.1, Rp 179.5, rb 288.8, rp 63.3
+
+## Correlation between real and placebo I1, and SD(placebo I1) / SD(real I1); test-season rows with I1_miss = 0
+                  fold placebo  k     seed   corr  SD ratio  units moved
+     2022-2023 -> 2024       U  0 20261150 0.7861    1.1530       0.9999
+     2022-2023 -> 2024       P  0 20261150 0.1030    1.0140       0.9999
+     2022-2023 -> 2024       U  1 20261151 0.7775    1.1500       0.9999
+     2022-2023 -> 2024       P  1 20261151 0.1175    1.0145       0.9999
+     2022-2023 -> 2024       U  2 20261152 0.7751    1.1635       0.9996
+     2022-2023 -> 2024       P  2 20261152 0.1150    1.0144       0.9996
+     2022-2023 -> 2024       U  3 20261153 0.7775    1.1574       0.9997
+     2022-2023 -> 2024       P  3 20261153 0.0990    1.0185       0.9997
+     2022-2023 -> 2024       U  4 20261154 0.7785    1.1723       0.9998
+     2022-2023 -> 2024       P  4 20261154 0.1132    1.0105       0.9998
+2022-2023-2024 -> 2025       U  0 20261150 0.8166    1.1035       0.9999
+2022-2023-2024 -> 2025       P  0 20261150 0.1069    1.0160       0.9999
+2022-2023-2024 -> 2025       U  1 20261151 0.8144    1.1089       0.9997
+2022-2023-2024 -> 2025       P  1 20261151 0.1143    1.0186       0.9997
+2022-2023-2024 -> 2025       U  2 20261152 0.8123    1.1143       0.9998
+2022-2023-2024 -> 2025       P  2 20261152 0.1043    1.0208       0.9998
+2022-2023-2024 -> 2025       U  3 20261153 0.8135    1.1217       0.9999
+2022-2023-2024 -> 2025       P  3 20261153 0.1095    1.0260       0.9999
+2022-2023-2024 -> 2025       U  4 20261154 0.8081    1.1154       0.9999
+2022-2023-2024 -> 2025       P  4 20261154 0.0986    1.0217       0.9999
+
+## Per placebo, across both folds and k = 0..4
+          mean    min    max
+placebo                     
+P       0.1081 0.0986 0.1175
+U       0.7960 0.7751 0.8166
+
+usable (max correlation <= 0.3): U False, P True
+BRANCH OF THE RULE THAT APPLIES: U is not usable; P is usable: P replaces U as T4 and the placebo for M4, with the other mechanics of A3 item 7 unchanged.
+
+runtime 1 s

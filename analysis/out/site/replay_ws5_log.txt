@@ -1,0 +1,16 @@
+== run 2026-11-18T11:13:13-06:00 ==
+script replay_ws5.py sha256 4e5b2fda6c3ae115d0174c5db7b199836580c12f14c76e5428a91b9ec25ac43a
+matrix pitch: rows 4,768,010; latest game_date 2025-11-01; content sha256 57bc58277721364eaa288b118cd93c3fc73cf0d1167a7d016c3cf06923266b22
+matrix contact: rows 786,886; latest game_date 2025-11-01; content sha256 65936389e494d0151d3488719e66b50dde05d50b2d6c6d484fa9d171ce8b201f
+matrices cut to game_date < 2026-10-28: pitch rows 4,768,010, contact rows 786,886 (2.5s)
+schedule 2026-10-28.json sha256 538db0a18635bb8c00cfde8951ab57e1c988a04895ab9f16e4f0fbca9fbeb3f0
+box score 849799.json sha256 f4b9d17fa0ec2139ea9523108a36664657526ba82242beefdf1c2f51f977a71e
+identity checks passed: gamePk 849799, gameType W, Milwaukee Brewers at Tampa Bay Rays, Tropicana Field
+away starter source: probable
+home starter source: probable
+gamePk 849799; iterations 5000; seed 849799; simulation 11.5s
+prediction ws5_prediction.json sha256 da592dffcdda873f3c277525464d371039e64223b4eee3f8b93c92dfb8a65398 (written)
+line score 849799.json sha256 002246c0692ab7870304d544b3f8842a09c3a2fa668ca26d24683736fbfba494
+page ws5_page.json sha256 e19e9611202f8ed1d62d796491a403cd1ac2eb0cb5b4767bbd6872a22ca4b458
+total 14.3s; finished
+
